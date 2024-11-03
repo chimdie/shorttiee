@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/chimdie/shorttiee#readme",
   "devDependencies": {
-    "@ariga/atlas": "^0.28.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/debug": "^4.1.12",
