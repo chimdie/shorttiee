@@ -39,3 +39,17 @@ export const ForbiddenResponse = (
     error: error ?? "Forbidden"
   });
 };
+
+export const SuccessResponse = <T>(
+  res: Response,
+  data?: T,
+  statusCode?: number,
+  msg?: string
+) => {
+  statusCode ??= 200;
+  statusCode = statusCode < 300 && statusCode > 199 ? statusCode : 200;
+  res.status(statusCode).json({
+    message: msg ?? "Success",
+    data
+  });
+};
