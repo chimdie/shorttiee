@@ -43,8 +43,7 @@ app.use((err: Error, _: Request, res: Response, _next: NextFunction) => {
 });
 
 // zod verify env
-const envValidationResult = EnvDto.safeParse(process.env);
-if (envValidationResult.error) {
+if (EnvDto.safeParse(process.env).error) {
   console.error("Invalid environment variables");
   process.exit(1);
 }
