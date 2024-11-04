@@ -8,6 +8,7 @@ import debug from "debug";
 import { ErrorResponse, NotFoundResponse } from "./utils/response";
 import type { Request, Response } from "express";
 import { oapi } from "./docs";
+import { EnvDto } from "./dto/env.dto";
 
 const app = express();
 
@@ -40,5 +41,12 @@ app.use((err: Error, _: Request, res: Response, _next: NextFunction) => {
   }
   return ErrorResponse(res, err.message);
 });
+
+// zod verify env
+const envValidationResult = EnvDto.safeParse(process.env);
+if (envValidationResult.error) {
+  console.error("Invalid environment variables");
+  process.exit(1);
+}
 
 app.listen(process.env.PORT ?? 3000);
