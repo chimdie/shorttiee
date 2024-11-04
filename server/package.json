@@ -39,6 +39,7 @@
   "dependencies": {
     "@wesleytodd/openapi": "github:micaiah-effiong/express-openapi#502824",
     "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.5.0",
     "cors": "^2.8.5",
     "debug": "^4.3.7",
     "dotenv": "^16.4.5",
