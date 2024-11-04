@@ -1,5 +1,5 @@
 import { oapi } from "./openapi.docs";
-import { RegisterDocSchema, LoginDocSchema } from "./auth";
+import { RegisterDocSchema, LoginDocSchema } from "./auth.docs";
 
 export { oapi };
 
