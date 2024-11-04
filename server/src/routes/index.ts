@@ -1,19 +1,25 @@
 import { Router } from "express";
 import { oapi } from "../docs";
 import { SuccessResponse } from "../utils/response";
+import { docsRouter } from "./docs";
+import { authRouter } from "./auth";
 
 export const router = Router();
 
-router.use("/docs", oapi.swaggerui());
+router.use("/docs", docsRouter);
+router.use("/auth", authRouter);
 
-router.get("/", (_req, res) => {
-  return res.json({ message: "Success" });
-});
+router.get(
+  "/",
+  oapi.path({ responses: { 200: { description: "LGTM" } } }),
+  (_req, res) => {
+    return res.json({ message: "Success" });
+  }
+);
 
 router.get(
   "/hi",
   oapi.validPath({
-    tags: ["root"],
     parameters: [
       { in: "query", name: "find", required: true, schema: { type: "string" } }
     ],
