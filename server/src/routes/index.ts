@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { oapi } from "../docs";
 import { SuccessResponse } from "../utils/response";
-import { docsRouter } from "./docs";
-import { authRouter } from "./auth";
+import { docsRouter } from "./docs.routes";
+import { authRouter } from "./auth.routes";
 
 export const router = Router();
 
