@@ -1,26 +1,30 @@
-import openapi from "@wesleytodd/openapi";
+import { oapi } from "./openapi.docs";
+import { RegisterDocSchema, LoginDocSchema } from "./auth";
 
-export const oapi = openapi(
-  "/api/v1/docs/openapi",
-  {
-    openapi: "3.0.0",
-    info: {
-      title: "Express Application",
-      description: "Generated docs from an Express api",
-      version: "1.0.0"
-    },
-    paths: {}
-  },
-  { htmlui: "swagger-ui" }
-);
+export { oapi };
 
 oapi.component("schemas", "User", {
   type: "object",
   description: "User model",
-  required: ["name", "email"],
+  required: ["first_name", "last_name", "email"],
   properties: {
-    name: { type: "string" },
-    email: { type: "string", uniqueItems: true }
+    first_name: { type: "string" },
+    last_name: { type: "string" },
+    email: { type: "string", uniqueItems: true },
+    id: { type: "string", uniqueItems: true, format: "uuid" }
+  }
+});
+
+oapi.component("schemas", "Listing", {
+  type: "object",
+  description: "Shorts listing",
+  required: [],
+  properties: {
+    id: { type: "string", uniqueItems: true, format: "uuid" },
+    title: { type: "string" },
+    description: { type: "string" },
+    address: { type: "string" },
+    location: { type: "string" }
   }
 });
 
@@ -31,3 +35,13 @@ oapi.component("schemas", "Greet", {
     hello: { type: "string", example: "Hello world" }
   }
 });
+
+oapi.component("securitySchemes", "BearerAuth", {
+  description: "JWT authentication",
+  type: "http",
+  scheme: "bearer"
+});
+
+//
+oapi.component("schemas", "RegisterDto", RegisterDocSchema);
+oapi.component("schemas", "LoginDto", LoginDocSchema);
