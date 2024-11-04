@@ -7,6 +7,28 @@ export const ErrorResponse = (res: Response, msg?: string, error?: string) => {
   });
 };
 
+export const BadRequestResponse = (
+  res: Response,
+  msg?: string,
+  error?: string
+) => {
+  res.status(400).json({
+    message: msg ?? "Bad Request",
+    error: error ?? "BadRequest"
+  });
+};
+
+export const ValidationResponse = (
+  res: Response,
+  msg?: string,
+  error?: string
+) => {
+  res.status(400).json({
+    message: msg ?? "Bad Request",
+    error: error ?? "ValidationError"
+  });
+};
+
 export const NotFoundResponse = (
   res: Response,
   msg?: string,
