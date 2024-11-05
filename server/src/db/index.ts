@@ -1,3 +1,5 @@
 import Database from "better-sqlite3";
 
-export const db = new Database(process.env.DATABASE_URL);
+const dbPath = process.env.DATABASE_URL.replace("sqlite3:", "");
+console.log(dbPath);
+export const db = new Database(dbPath);
