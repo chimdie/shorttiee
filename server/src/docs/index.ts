@@ -1,19 +1,6 @@
 import { oapi } from "./openapi.docs";
-import { RegisterDocSchema, LoginDocSchema } from "./auth.docs";
-
-export { oapi };
-
-oapi.component("schemas", "User", {
-  type: "object",
-  description: "User model",
-  required: ["first_name", "last_name", "email"],
-  properties: {
-    first_name: { type: "string" },
-    last_name: { type: "string" },
-    email: { type: "string", uniqueItems: true },
-    id: { type: "string", uniqueItems: true, format: "uuid" }
-  }
-});
+import "./auth.docs";
+import "./users.docs";
 
 oapi.component("schemas", "Listing", {
   type: "object",
@@ -41,7 +28,3 @@ oapi.component("securitySchemes", "BearerAuth", {
   type: "http",
   scheme: "bearer"
 });
-
-//
-oapi.component("schemas", "RegisterDto", RegisterDocSchema);
-oapi.component("schemas", "LoginDto", LoginDocSchema);
