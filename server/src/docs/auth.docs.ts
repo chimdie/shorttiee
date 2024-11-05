@@ -1,5 +1,6 @@
 import { FromSchema } from "json-schema-to-ts";
 import { OpenAPIV3 } from "openapi-types";
+import { oapi } from "./openapi.docs";
 
 export const RegisterDocSchema = {
   type: "object",
@@ -13,6 +14,55 @@ export const RegisterDocSchema = {
   additionalProperties: false
 } satisfies OpenAPIV3.SchemaObject;
 export type RegisterDto = FromSchema<typeof RegisterDocSchema>;
+oapi.component("schemas", "RegisterDto", RegisterDocSchema);
+export const registerDoc = oapi.validPath({
+  tags: ["Authentication"],
+  requestBody: {
+    content: {
+      "application/x-www-form-urlencoded": {
+        schema: {
+          $ref: "#/components/schemas/RegisterDto"
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: "Account registered",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            required: ["message", "data"],
+            properties: {
+              message: { type: "string", example: "Success" },
+              data: {
+                allOf: [
+                  {
+                    $ref: "#/components/schemas/User"
+                  },
+                  {
+                    type: "object",
+                    additionalProperties: false,
+                    required: ["token"],
+                    properties: {
+                      token: {
+                        type: "string",
+                        format: "jwt",
+                        pattern: "^[\\w-]+.[\\w-]+.[\\w-]+$"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+});
 
 export const LoginDocSchema = {
   type: "object",
@@ -23,3 +73,58 @@ export const LoginDocSchema = {
   }
 } satisfies OpenAPIV3.SchemaObject;
 export type LoginDto = FromSchema<typeof LoginDocSchema>;
+oapi.component("schemas", "LoginDto", LoginDocSchema);
+export const loginDoc = oapi.validPath({
+  tags: ["Authentication"],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          additionalProperties: false,
+          required: ["message", "data"],
+          properties: {
+            message: { type: "string" },
+            data: {
+              type: "object",
+              allOf: [
+                {
+                  $ref: "#/components/schemas/User"
+                },
+                {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["token"],
+                  properties: {
+                    token: {
+                      type: "string",
+                      format: "jwt",
+                      pattern: "^[\\w-]+.[\\w-]+.[\\w-]+$"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["message", "data"],
+            properties: {
+              message: { type: "string", example: "Success" },
+              data: { $ref: "#/components/schemas/LoginDto" }
+            }
+          }
+        }
+      }
+    }
+  }
+});

@@ -1,53 +1,17 @@
 import { Router } from "express";
-import { oapi } from "../docs";
+import { oapi } from "../docs/openapi.docs";
 import { SuccessResponse } from "../utils/response";
+import { loginDoc, registerDoc } from "../docs/auth.docs";
 
 export const authRouter = Router();
 
-authRouter.post(
-  "/register",
-  oapi.validPath({
-    tags: ["Authentication"],
-    requestBody: {
-      content: {
-        "application/x-www-form-urlencoded": {
-          schema: {
-            $ref: "#/components/schemas/RegisterDto"
-          }
-        }
-      }
-    },
-    responses: {
-      200: {
-        description: "Account registered",
-        content: {
-          "application/json": {}
-        }
-      }
-    }
-  }),
-  (_, res) => {
-    SuccessResponse(res, null, 201, "User created");
-  }
-);
+authRouter.post("/register", registerDoc, (_, res) => {
+  SuccessResponse(res, null, 201, "User created");
+});
 
-authRouter.post(
-  "/login",
-  oapi.validPath({
-    tags: ["Authentication"],
-    requestBody: {
-      content: {
-        "application/json": {
-          schema: { $ref: "#/components/schemas/LoginDto" }
-        }
-      }
-    },
-    responses: {}
-  }),
-  (_, res) => {
-    SuccessResponse(res, null, 201, "Login Success");
-  }
-);
+authRouter.post("/login", loginDoc, (_, res) => {
+  SuccessResponse(res, null, 201, "Login Success");
+});
 
 authRouter.post(
   "/forgot-password",

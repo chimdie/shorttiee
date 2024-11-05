@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { oapi } from "../docs";
+import { oapi } from "../docs/openapi.docs";
 
 export const docsRouter = Router();
 

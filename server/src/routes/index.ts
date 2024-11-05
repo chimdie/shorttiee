@@ -1,5 +1,6 @@
+import "../docs";
 import { Router } from "express";
-import { oapi } from "../docs";
+import { oapi } from "../docs/openapi.docs";
 import { SuccessResponse } from "../utils/response";
 import { docsRouter } from "./docs.routes";
 import { authRouter } from "./auth.routes";
