@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS tblUsers (
   updatedAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'))
 );
 
-CREATE TRIGGER IF NOT EXISTS trgUpdatedAt AFTER UPDATE ON tblUsers 
+CREATE TRIGGER IF NOT EXISTS trgUsersUpdatedAt AFTER UPDATE ON tblUsers 
 BEGIN 
   UPDATE tblUsers SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
 END;
 
 -- migrate:down
-DROP TRIGGER IF EXISTS trgUpdatedAt;
+DROP TRIGGER IF EXISTS trgUsersUpdatedAt;
 DROP TABLE IF EXISTS tblUsers;
