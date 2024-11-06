@@ -5,12 +5,12 @@ import { SuccessResponse } from "../utils/response";
 import { docsRouter } from "./docs.routes";
 import { authRouter } from "./auth.routes";
 
-export const router = Router();
+export const apiV1router = Router();
 
-router.use("/docs", docsRouter);
-router.use("/auth", authRouter);
+apiV1router.use("/docs", docsRouter);
+apiV1router.use("/auth", authRouter);
 
-router.get(
+apiV1router.get(
   "/",
   oapi.path({ responses: { 200: { description: "LGTM" } } }),
   (_req, res) => {
@@ -18,7 +18,7 @@ router.get(
   }
 );
 
-router.get(
+apiV1router.get(
   "/hi",
   oapi.validPath({
     parameters: [

@@ -2,16 +2,20 @@ import { Router } from "express";
 import { oapi } from "../docs/openapi.docs";
 import { SuccessResponse } from "../utils/response";
 import { loginDoc, registerDoc } from "../docs/auth.docs";
+import { loginCtl, registerCtl } from "../controllers/auth.ctl";
+import { validator } from "../middlewares/validator.middleware";
+import { LoginDto, RegisterDto } from "../dto/auth.dto";
 
 export const authRouter = Router();
 
-authRouter.post("/register", registerDoc, (_, res) => {
-  SuccessResponse(res, null, 201, "User created");
-});
+authRouter.post(
+  "/register",
+  validator({ body: RegisterDto }),
+  registerDoc,
+  registerCtl
+);
 
-authRouter.post("/login", loginDoc, (_, res) => {
-  SuccessResponse(res, null, 201, "Login Success");
-});
+authRouter.post("/login", validator({ body: LoginDto }), loginDoc, loginCtl);
 
 authRouter.post(
   "/forgot-password",
