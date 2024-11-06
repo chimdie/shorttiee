@@ -1,25 +1,43 @@
 import { FromSchema } from "json-schema-to-ts";
 import { OpenAPIV3 } from "openapi-types";
 import { oapi } from "./openapi.docs";
+import { typeAssert } from "../utils/asserts";
+import { LoginDto, RegisterDto } from "../dto/auth.dto";
+import { Equals } from "../types/utils";
 
+// => Register
 export const RegisterDocSchema = {
   type: "object",
-  required: ["firstName", "lastName", "email", "password"] as const,
+  required: [
+    "firstName",
+    "lastName",
+    "email",
+    "password",
+    "mobileNumber"
+  ] as const,
   properties: {
     firstName: { type: "string" },
     lastName: { type: "string" },
     email: { type: "string", format: "email" },
-    password: { type: "string", format: "password" }
+    password: { type: "string", format: "password" },
+    mobileNumber: { type: "string" },
+    businessName: { type: "string" },
+    referrerCode: { type: "string" },
+    address: { type: "string" }
   },
   additionalProperties: false
 } satisfies OpenAPIV3.SchemaObject;
-export type RegisterDto = FromSchema<typeof RegisterDocSchema>;
 oapi.component("schemas", "RegisterDto", RegisterDocSchema);
+typeAssert<Equals<FromSchema<typeof RegisterDocSchema>, RegisterDto>>();
+
+/**
+ * @description register route documentation
+ */
 export const registerDoc = oapi.validPath({
   tags: ["Authentication"],
   requestBody: {
     content: {
-      "application/x-www-form-urlencoded": {
+      "application/json": {
         schema: {
           $ref: "#/components/schemas/RegisterDto"
         }
@@ -64,48 +82,29 @@ export const registerDoc = oapi.validPath({
   }
 });
 
+// => Login
 export const LoginDocSchema = {
   type: "object",
-  required: ["email", "password"],
+  additionalProperties: false,
+  required: ["email", "password"] as const,
   properties: {
     email: { type: "string", format: "email" },
     password: { type: "string", format: "password" }
   }
 } satisfies OpenAPIV3.SchemaObject;
-export type LoginDto = FromSchema<typeof LoginDocSchema>;
 oapi.component("schemas", "LoginDto", LoginDocSchema);
+typeAssert<Equals<FromSchema<typeof LoginDocSchema>, LoginDto>>();
+
+/**
+ * @description login route documentation
+ */
 export const loginDoc = oapi.validPath({
   tags: ["Authentication"],
   requestBody: {
     content: {
       "application/json": {
         schema: {
-          type: "object",
-          additionalProperties: false,
-          required: ["message", "data"],
-          properties: {
-            message: { type: "string" },
-            data: {
-              type: "object",
-              allOf: [
-                {
-                  $ref: "#/components/schemas/User"
-                },
-                {
-                  type: "object",
-                  additionalProperties: false,
-                  required: ["token"],
-                  properties: {
-                    token: {
-                      type: "string",
-                      format: "jwt",
-                      pattern: "^[\\w-]+.[\\w-]+.[\\w-]+$"
-                    }
-                  }
-                }
-              ]
-            }
-          }
+          $ref: "#/components/schemas/LoginDto"
         }
       }
     }
@@ -117,10 +116,30 @@ export const loginDoc = oapi.validPath({
         "application/json": {
           schema: {
             type: "object",
+            additionalProperties: false,
             required: ["message", "data"],
             properties: {
-              message: { type: "string", example: "Success" },
-              data: { $ref: "#/components/schemas/LoginDto" }
+              message: { type: "string" },
+              data: {
+                type: "object",
+                allOf: [
+                  {
+                    $ref: "#/components/schemas/User"
+                  },
+                  {
+                    type: "object",
+                    additionalProperties: false,
+                    required: ["token"],
+                    properties: {
+                      token: {
+                        type: "string",
+                        format: "jwt",
+                        pattern: "^[\\w-]+.[\\w-]+.[\\w-]+$"
+                      }
+                    }
+                  }
+                ]
+              }
             }
           }
         }

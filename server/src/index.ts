@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import express, { NextFunction } from "express";
 import cors from "cors";
-import { router } from "./routes";
+import { apiV1router } from "./routes";
 import debug from "debug";
 import { ErrorResponse, NotFoundResponse } from "./utils/response";
 import type { Request, Response } from "express";
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(oapi);
 
-app.use("/api/v1", router);
+app.use("/api/v1", apiV1router);
 
 app.use("*", (_, res) => {
   return NotFoundResponse(res);
