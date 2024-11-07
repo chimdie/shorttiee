@@ -1,5 +1,5 @@
-import { Database } from "better-sqlite3";
 import { WithDBTimestamps } from "../types/utils";
+import { db } from "./config.db";
 
 export type User = {
   id: string;
@@ -12,13 +12,13 @@ export type User = {
   address?: string;
 };
 
-export function createUser(db: Database) {
+export function createUser() {
   return db.prepare<Array<User>>(
     "INSERT INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address)"
   );
 }
 
-export function findUserById(db: Database, id: string) {
+export function findUserById(id: string) {
   return db
     .prepare<
       string[],
@@ -27,7 +27,7 @@ export function findUserById(db: Database, id: string) {
     .get(id);
 }
 
-export function findUserByEmail(db: Database, email: string) {
+export function findUserByEmail(email: string) {
   return db
     .prepare<
       string[],

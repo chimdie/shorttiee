@@ -1,5 +1,5 @@
-import type { Database } from "better-sqlite3";
 import { WithDBTimestamps } from "../types/utils";
+import { db } from "./config.db";
 
 export type Auth = {
   id: string;
@@ -7,13 +7,13 @@ export type Auth = {
   userId: string;
 };
 
-export function createAuth(db: Database) {
+export function createAuth() {
   return db.prepare<Array<Auth>>(
     "INSERT INTO tblAuthentications(id, hash, userId) VALUES(@id, @hash, @userId)"
   );
 }
 
-export function findAuthByUserId(db: Database, userId: string) {
+export function findAuthByUserId(userId: string) {
   return db
     .prepare<
       string[],

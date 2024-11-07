@@ -6,7 +6,6 @@ import {
   ErrorResponse,
   SuccessResponse
 } from "../utils/response";
-import { db } from "../db";
 import {
   createUser,
   findUserByEmail,
@@ -17,10 +16,11 @@ import { LoginDto, RegisterDto } from "../dto/auth.dto";
 import { createAuth, findAuthByUserId } from "../db/auth.db";
 import { WithDBTimestamps } from "../types/utils";
 import { signAuthToken } from "../utils/auth-token";
+import { db } from "../db/config.db";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
-    const result = findUserByEmail(db, req.body.email);
+    const result = findUserByEmail(req.body.email);
     console.log(result);
 
     if (result) {
@@ -32,7 +32,7 @@ export const registerCtl = ctlWrapper(
 
     const trx = db.transaction(() => {
       const id = crypto.randomUUID();
-      createUser(db).run({
+      createUser().run({
         id,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -43,13 +43,13 @@ export const registerCtl = ctlWrapper(
         businessName: req.body.businessName
       });
 
-      const _user = findUserById(db, id);
+      const _user = findUserById(id);
       if (!_user) {
         const err = new Error("An error occured while creating user");
         throw err;
       }
 
-      createAuth(db).run({
+      createAuth().run({
         id: crypto.randomUUID(),
         hash,
         userId: _user.id
@@ -80,13 +80,13 @@ export const registerCtl = ctlWrapper(
 
 export const loginCtl = ctlWrapper(
   async (req: Request<unknown, unknown, LoginDto>, res) => {
-    const user = findUserByEmail(db, req.body.email);
+    const user = findUserByEmail(req.body.email);
 
     if (!user) {
       return BadRequestResponse(res, "Invalid credentials");
     }
 
-    const auth = findAuthByUserId(db, user.id);
+    const auth = findAuthByUserId(user.id);
 
     if (!auth) {
       return BadRequestResponse(res, "Account does not exist");
