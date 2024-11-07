@@ -17,12 +17,17 @@ import { createAuth, findAuthByUserId } from "../db/auth.db";
 import { WithDBTimestamps } from "../types/utils";
 import { signAuthToken } from "../utils/auth-token";
 import { db } from "../db/config.db";
+import { domainValidator } from "../utils/domain-validator";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
-    const result = findUserByEmail(req.body.email);
-    console.log(result);
+    const emailDomain = req.body.email.split("@");
+    const [dnsResolverError] = await domainValidator(emailDomain[1]);
+    if (dnsResolverError) {
+      return BadRequestResponse(res, "Invalid email domain");
+    }
 
+    const result = findUserByEmail(req.body.email);
     if (result) {
       return BadRequestResponse(res, "Account already exist");
     }
