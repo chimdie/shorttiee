@@ -1,9 +1,25 @@
+const { nextui } = require("@nextui-org/react");
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: ["class"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+  ],
 
   theme: {
     extend: {
+      keyframes: {
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
+        },
+      },
+      animation: {
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
+      },
       colors: {
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -13,9 +29,13 @@ export default {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
-        purple: "#3F1F3A",
-        yellow_dark: "#B1AD4E",
-        yellow_light: "#EAE68B",
+        shorttiee_primary: "#1F253F",
+        shorttiee_secondary: "#1D3D3A",
+        shorttiee_purple: "#3F1F3A",
+        shorttiee_yellow: {
+          dark: "#B1AD4E",
+          light: "#EAE68B",
+        },
         grey_100: "#F7F6F2",
         grey_200: "#EBEBEB",
         grey_300: "#A1A3B0",
@@ -62,5 +82,5 @@ export default {
     },
   },
   darkMode: ["class", "class"],
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), nextui()],
 };
