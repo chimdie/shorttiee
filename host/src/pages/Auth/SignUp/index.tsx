@@ -6,8 +6,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AuthRoutes } from "@/types/routes";
-import { gender } from "./data";
 import { SignUpSchema } from "@/schema/auth.schema";
+
+const gender = [
+  { key: "male", label: "Male" },
+  { key: "female", label: "Female" },
+];
 
 export default function SignUp(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -163,12 +167,18 @@ export default function SignUp(): JSX.Element {
             htmlFor="terms"
             className="text-sm text-grey_300 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
-            I agree to the <span className="text-shorttiee_primary underline">Terms of Service</span> and{" "}
+            I agree to the{" "}
+            <span className="text-shorttiee_primary underline">Terms of Service</span> and{" "}
             <span className="text-shorttiee_primary underline">Privacy Policy</span>
           </label>
         </div>
 
-        <Button className="bg-shorttiee_primary text-white font-semibold" size="lg" radius="sm" type="submit">
+        <Button
+          className="bg-shorttiee_primary text-white font-semibold"
+          size="lg"
+          radius="sm"
+          type="submit"
+        >
           Create Account
         </Button>
       </form>
