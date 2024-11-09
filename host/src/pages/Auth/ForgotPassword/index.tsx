@@ -2,18 +2,18 @@ import { Button, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
-import { ForgotPassWordSchema, ForgotPasswordSchema } from "./forgotPassword.schema";
+import { ForgotPassWordSchema } from "@/schema/auth.schema";
 
 export default function ForgotPassword(): JSX.Element {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ForgotPasswordSchema>({
+  } = useForm<ForgotPassWordSchema>({
     resolver: zodResolver(ForgotPassWordSchema),
   });
 
-  const onSubmit = (data: ForgotPasswordSchema) => {
+  const onSubmit = (data: ForgotPassWordSchema) => {
     console.log(data);
   };
   return (

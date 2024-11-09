@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { OtpSchema } from "./otp.schema";
+import { OtpSchema } from "@/schema/auth.schema";
 
 export default function Otp(): JSX.Element {
   const [timer, setTimer] = useState<number>(60);

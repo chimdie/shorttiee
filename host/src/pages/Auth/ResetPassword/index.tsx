@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { ResetPasswordSchema } from "./resetPassword.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock } from "lucide-react";
+import { ResetPasswordSchema } from "@/schema/auth.schema";
 
 export default function ResetPassword(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);

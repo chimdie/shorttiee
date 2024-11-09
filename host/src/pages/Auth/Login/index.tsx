@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import { AuthRoutes } from "@/types/routes";
-import { LoginSchema } from "./login.schema";
+import { LoginSchema } from "@/schema/auth.schema";
 
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);

@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { Building2, Eye, EyeOff, Lock, Mail, MapPin, Phone, UserRound, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SignUpSchema } from "./signUp.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AuthRoutes } from "@/types/routes";
 import { gender } from "./data";
+import { SignUpSchema } from "@/schema/auth.schema";
 
 export default function SignUp(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
