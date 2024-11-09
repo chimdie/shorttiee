@@ -30,7 +30,7 @@ export default function ResetPassword(): JSX.Element {
         </p>
       </div>
 
-      <form className="flex flex-col space-y-8" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col space-y-8">
         <Input
           size="lg"
           radius="sm"
@@ -106,10 +106,10 @@ export default function ResetPassword(): JSX.Element {
           errorMessage={errors?.confirmPassword?.message}
           isInvalid={!!errors?.confirmPassword?.message}
         />
-        <Button className="bg-shorttiee_primary text-white font-semibold" size="lg" radius="sm" type="submit">
+        <Button className="bg-shorttiee_primary text-white font-semibold" size="lg" radius="sm" type="submit" onClick={handleSubmit(onSubmit)}>
           Reset
         </Button>
-      </form>
+      </div>
     </div>
   );
 }

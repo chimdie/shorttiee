@@ -40,7 +40,7 @@ export default function SignUp(): JSX.Element {
         </p>
       </div>
 
-      <form className="flex flex-col space-y-7" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col space-y-7">
         <div className="flex items-center space-x-4">
           <Input
             size="lg"
@@ -178,10 +178,11 @@ export default function SignUp(): JSX.Element {
           size="lg"
           radius="sm"
           type="submit"
+          onClick={handleSubmit(onSubmit)}
         >
           Create Account
         </Button>
-      </form>
+      </div>
 
       <div>
         <p className="text-center text-grey_300">

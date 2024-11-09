@@ -32,7 +32,7 @@ export default function Login(): JSX.Element {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-8">
+      <div className="flex flex-col space-y-8">
         <Input
           size="lg"
           radius="sm"
@@ -78,10 +78,16 @@ export default function Login(): JSX.Element {
           Forgot Password?
         </Link>
 
-        <Button className="bg-shorttiee_primary text-white font-semibold" size="lg" radius="sm" type="submit">
+        <Button
+          className="bg-shorttiee_primary text-white font-semibold"
+          size="lg"
+          radius="sm"
+          type="submit"
+          onClick={handleSubmit(onSubmit)}
+        >
           Login
         </Button>
-      </form>
+      </div>
 
       <div>
         <p className="text-center text-grey_300">
