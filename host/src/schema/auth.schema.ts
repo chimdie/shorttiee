@@ -4,57 +4,58 @@ const passwordValidation = new RegExp(
   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
 );
 
-export const ForgotPassWordSchema = z.object({
-  email: z.string().email({ message: "Email is required" }),
-});
+export const genderData = [
+  { key: "male", label: "Male" },
+  { key: "female", label: "Female" },
+];
 
-export type ForgotPassWordSchema = z.infer<typeof ForgotPassWordSchema>;
+export const ForgotPassWordSchema = z.object({
+  email: z.string({ message: "Email is required" }).email({ message: "Incorrect email format" }),
+});
 
 export const LoginSchema = z.object({
-  email: z.string().email({ message: "Email is required" }),
-  password: z.string().min(1, { message: "Password is required" }),
+  email: z.string({ message: "Email is required" }).email({ message: "Incorrect email format" }),
+  password: z.string({ message: "Password is required" }),
 });
-
-export type LoginSchema = z.infer<typeof LoginSchema>;
 
 export const OtpSchema = z.object({
-  pin: z.string().min(6, { message: "Your one-time password must be 6 characters." }),
+  pin: z.string({ message: "OTP is required" }).min(6, { message: "OTP must be 6 characters." }),
 });
-
-export type OtpSchema = z.infer<typeof OtpSchema>;
 
 export const ResetPasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, { message: "Current Password is required" }),
+    currentPassword: z.string({ message: "Current Password is required" }),
     newPassword: z
-      .string()
-      .min(1, { message: "New Password is required" })
+      .string({ message: "New Password is required" })
       .regex(passwordValidation, { message: "Password must Contain at least 8 unique characters" }),
-    confirmPassword: z.string().min(1, { message: "Confirm Password is required" }),
+    confirmPassword: z.string({ message: "Confirm Password is required" }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords must match",
     path: ["confirmPassword"],
   });
 
-export type ResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
-
 export const SignUpSchema = z.object({
-  firstName: z.string().min(1, { message: "First Name is required" }),
-  lastName: z.string().min(1, { message: "Last Name is required" }),
-  gender: z.string().min(1, { message: "Gender is required" }),
-  phone: z
-    .string()
-    .min(1, { message: "Phone Number is required" })
-    .max(11, { message: "Phone number must not exceed 11 numbers" }),
-  email: z.string().email({ message: "Email is required" }),
-  home: z.string().min(1, { message: "Home Address is required" }),
+  firstName: z
+    .string({ message: "First Name is required" })
+    .min(2, { message: "First Name is required" }),
+  lastName: z
+    .string({ message: "Last Name is required" })
+    .min(2, { message: "Last Name is required" }),
+  gender: z.enum(["male", "female"], { message: "Select your gender" }),
+  phone: z.string({ message: "Phone Number is required" }),
+  email: z.string({ message: "Email is required" }).email({ message: "Incorrect email format" }),
+  home: z.string({ message: "Home Address is required" }),
   bussinessName: z.string().optional(),
   password: z
-    .string()
-    .min(1, { message: "Password is required" })
-    .regex(passwordValidation, { message: "Password must Contain at least z unique characters" }),
-  terms: z.boolean(),
+    .string({ message: "Password is required" })
+    .min(6, { message: "Password must not be less than 6 characters" }),
+  // .regex(passwordValidation, { message: "Password must Contain at least unique characters" }),
+  terms: z.boolean({ message: "You have to agree to the the terms and conditions" }),
 });
 
+export type ForgotPassWordSchema = z.infer<typeof ForgotPassWordSchema>;
+export type LoginSchema = z.infer<typeof LoginSchema>;
+export type OtpSchema = z.infer<typeof OtpSchema>;
+export type ResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
 export type SignUpSchema = z.infer<typeof SignUpSchema>;

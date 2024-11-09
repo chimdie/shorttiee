@@ -6,17 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import { AuthRoutes } from "@/types/routes";
 import { LoginSchema } from "@/schema/auth.schema";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginSchema>({
+  const form = useForm<LoginSchema>({
     resolver: zodResolver(LoginSchema),
   });
 
@@ -25,69 +22,83 @@ export default function Login(): JSX.Element {
   };
   return (
     <div className="space-y-12">
-      <div className="flex flex-col space-y-3">
-        <h3 className="text-2xl md:text-4xl font-bold text-shorttiee_primary text-center">Login</h3>
+      <div>
+        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Login</h3>
         <p className="text-base font-normal text-grey_300">
           Log in to access your account and continue where you left off.
         </p>
       </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-8">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    {...field}
+                    radius="sm"
+                    variant="bordered"
+                    placeholder="Email"
+                    type="email"
+                    startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    {...field}
+                    radius="sm"
+                    variant="bordered"
+                    placeholder="Password"
+                    type={isVisible ? "text" : "password"}
+                    startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
+                    endContent={
+                      <button
+                        className="focus:outline-none"
+                        type="button"
+                        onClick={toggleVisibility}
+                        aria-label="toggle password visibility"
+                      >
+                        {isVisible ? (
+                          <EyeOff size={16} className="text-grey_400 pointer-events-none" />
+                        ) : (
+                          <Eye size={16} className="text-grey_400 pointer-events-none" />
+                        )}
+                      </button>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <div className="flex flex-col space-y-8">
-        <Input
-          size="lg"
-          radius="sm"
-          variant="bordered"
-          placeholder="Email"
-          type="email"
-          startContent={<Mail className="pointer-events-none flex-shrink-0 text-grey_400 mr-2" />}
-          {...register("email")}
-          errorMessage={errors?.email?.message}
-          isInvalid={!!errors?.email?.message}
-        />
+          <Link
+            to={AuthRoutes.forgotPassword}
+            className="text-sm text-shorttiee_secondary font-medium underline"
+          >
+            Forgot Password?
+          </Link>
 
-        <Input
-          size="lg"
-          radius="sm"
-          variant="bordered"
-          placeholder="Password"
-          type={isVisible ? "text" : "password"}
-          startContent={<Lock className="pointer-events-none flex-shrink-0 text-grey_400 mr-2" />}
-          endContent={
-            <button
-              className="focus:outline-none"
-              type="button"
-              onClick={toggleVisibility}
-              aria-label="toggle password visibility"
-            >
-              {isVisible ? (
-                <EyeOff className="text-grey_400 pointer-events-none" />
-              ) : (
-                <Eye className="text-grey_400 pointer-events-none" />
-              )}
-            </button>
-          }
-          {...register("password")}
-          errorMessage={errors?.password?.message}
-          isInvalid={!!errors?.password?.message}
-        />
-
-        <Link
-          to={AuthRoutes.forgotPassword}
-          className="text-sm text-shorttiee_secondary font-medium underline"
-        >
-          Forgot Password?
-        </Link>
-
-        <Button
-          className="bg-shorttiee_primary text-white font-semibold"
-          size="lg"
-          radius="sm"
-          type="submit"
-          onClick={handleSubmit(onSubmit)}
-        >
-          Login
-        </Button>
-      </div>
+          <Button
+            className="bg-shorttiee_primary text-white font-semibold"
+            radius="sm"
+            type="submit"
+          >
+            Login
+          </Button>
+        </form>
+      </Form>
 
       <div>
         <p className="text-center text-grey_300">
