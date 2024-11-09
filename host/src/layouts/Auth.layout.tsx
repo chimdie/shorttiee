@@ -9,7 +9,7 @@ export default function AuthLayout(): JSX.Element {
         <div className="w-fit flex items-center justify-center p-6">
           <Link to={AuthRoutes.login} aria-label="shorttie-logo" className="cursor-pointer flex items-center  gap-1">
           <HomeHashtag size="32" color="#1F253F"/>
-            <h3 className="text-2xl text-primary font-medium">Shorttie</h3>
+            <h3 className="text-2xl text-shorttiee_primary font-medium">Shorttie</h3>
           </Link>
         </div>
         <main className="flex items-center justify-center w-full md:h-full p-0 m-0 inset-0">

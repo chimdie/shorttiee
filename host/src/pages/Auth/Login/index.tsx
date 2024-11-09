@@ -26,7 +26,7 @@ export default function Login(): JSX.Element {
   return (
     <div className="space-y-12">
       <div className="flex flex-col space-y-3">
-        <h3 className="text-2xl md:text-4xl font-bold text-primary text-center">Login</h3>
+        <h3 className="text-2xl md:text-4xl font-bold text-shorttiee_primary text-center">Login</h3>
         <p className="text-base font-normal text-grey_300">
           Log in to access your account and continue where you left off.
         </p>
@@ -73,12 +73,12 @@ export default function Login(): JSX.Element {
 
         <Link
           to={AuthRoutes.forgotPassword}
-          className="text-sm text-secondary font-medium underline"
+          className="text-sm text-shorttiee_secondary font-medium underline"
         >
           Forgot Password?
         </Link>
 
-        <Button className="bg-primary text-white font-semibold" size="lg" radius="sm" type="submit">
+        <Button className="bg-shorttiee_primary text-white font-semibold" size="lg" radius="sm" type="submit">
           Login
         </Button>
       </form>
@@ -86,7 +86,7 @@ export default function Login(): JSX.Element {
       <div>
         <p className="text-center text-grey_300">
           Don't have an account?{" "}
-          <Link to={AuthRoutes.createAccount} className="font-medium text-secondary">
+          <Link to={AuthRoutes.createAccount} className="font-medium text-shorttiee_secondary">
             Sign Up
           </Link>
         </p>

@@ -28,7 +28,7 @@ export default function SignUp(): JSX.Element {
   return (
     <div className="space-y-8">
       <div className="flex flex-col space-y-3">
-        <h3 className="text-2xl md:text-4xl font-bold text-primary text-center">
+        <h3 className="text-2xl md:text-4xl font-bold text-shorttiee_primary text-center">
           Create Host Account
         </h3>
         <p className="text-base font-normal text-grey_300 text-center">
@@ -163,12 +163,12 @@ export default function SignUp(): JSX.Element {
             htmlFor="terms"
             className="text-sm text-grey_300 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
-            I agree to the <span className="text-primary underline">Terms of Service</span> and{" "}
-            <span className="text-primary underline">Privacy Policy</span>
+            I agree to the <span className="text-shorttiee_primary underline">Terms of Service</span> and{" "}
+            <span className="text-shorttiee_primary underline">Privacy Policy</span>
           </label>
         </div>
 
-        <Button className="bg-primary text-white font-semibold" size="lg" radius="sm" type="submit">
+        <Button className="bg-shorttiee_primary text-white font-semibold" size="lg" radius="sm" type="submit">
           Create Account
         </Button>
       </form>
@@ -176,7 +176,7 @@ export default function SignUp(): JSX.Element {
       <div>
         <p className="text-center text-grey_300">
           Already have an account?{" "}
-          <Link to={AuthRoutes.login} className="font-medium text-secondary">
+          <Link to={AuthRoutes.login} className="font-medium text-shorttiee_secondary">
             Login
           </Link>
         </p>

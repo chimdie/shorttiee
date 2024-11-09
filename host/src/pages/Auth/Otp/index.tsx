@@ -40,10 +40,10 @@ export default function Otp(): JSX.Element {
   return (
     <div className="space-y-12">
       <div className="flex flex-col space-y-3">
-        <h3 className="text-2xl md:text-4xl font-bold text-primary text-center">Verify Account</h3>
+        <h3 className="text-2xl md:text-4xl font-bold text-shorttiee_primary text-center">Verify Account</h3>
         <p className="text-base font-normal text-grey_300">
           Verify your account with the otp we sent to{" "}
-          <span className="text-primary font-bold">name@example.com</span>
+          <span className="text-shorttiee_primary font-bold">name@example.com</span>
         </p>
       </div>
       <div className="flex flex-col items-center justify-center space-y-6">
@@ -72,7 +72,7 @@ export default function Otp(): JSX.Element {
             />
             <div className="mt-8">
               <Button
-                className="bg-primary text-white font-semibold w-full"
+                className="bg-shorttiee_primary text-white font-semibold w-full"
                 size="lg"
                 radius="sm"
                 type="submit"
@@ -88,7 +88,7 @@ export default function Otp(): JSX.Element {
         <p className="text-grey_300 text-base font-medium">
           Didn't receive OTP?{" "}
           {timer > 0 ? (
-            <span className="text-primary cursor-pointer font-semibold">Resend</span>
+            <span className="text-shorttiee_primary cursor-pointer font-semibold">Resend</span>
           ) : null}
         </p>
 

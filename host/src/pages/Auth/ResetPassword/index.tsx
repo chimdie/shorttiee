@@ -24,7 +24,7 @@ export default function ResetPassword(): JSX.Element {
   return (
     <div className="space-y-12">
       <div className="flex flex-col space-y-3">
-        <h3 className="text-2xl md:text-4xl font-bold text-primary text-center">Reset Password</h3>
+        <h3 className="text-2xl md:text-4xl font-bold text-shorttiee_primary text-center">Reset Password</h3>
         <p className="text-base font-normal text-grey_300">
           Securing your account is crucial. Create a strong password to protect your information.{" "}
         </p>
@@ -106,7 +106,7 @@ export default function ResetPassword(): JSX.Element {
           errorMessage={errors?.confirmPassword?.message}
           isInvalid={!!errors?.confirmPassword?.message}
         />
-        <Button className="bg-primary text-white font-semibold" size="lg" radius="sm" type="submit">
+        <Button className="bg-shorttiee_primary text-white font-semibold" size="lg" radius="sm" type="submit">
           Reset
         </Button>
       </form>
