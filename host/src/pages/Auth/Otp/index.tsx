@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
@@ -10,7 +9,7 @@ import { OtpSchema } from "@/schema/auth.schema";
 
 export default function Otp(): JSX.Element {
   const [timer, setTimer] = useState<number>(60);
-  const [_, setShowResend] = useState<boolean>(false);
+  const [, setShowResend] = useState<boolean>(false);
 
   const form = useForm<OtpSchema>({
     resolver: zodResolver(OtpSchema),
