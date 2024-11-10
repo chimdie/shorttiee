@@ -18,14 +18,14 @@ export const SignupSchema = z.object({
   gender: z.enum(['male', 'female']),
   referralCode: z.string().optional(),
   businessName: z.string().optional(),
-  termsAndConditions: z.boolean(),
+  termsAndConditions: z.boolean().refine(value => value === true),
   email: z
     .string()
     .email()
     .trim()
     .transform(val => val.toLowerCase()),
   phone: z
-    .string()
+    .string({message: 'Phone number is incorrect'})
     .trim()
     .transform(val => {
       const countryCode = '+234';
