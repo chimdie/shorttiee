@@ -34,7 +34,7 @@ export default function Login() {
 
   const onSubmit = (data: LoginSchema) => {
     console.log(data);
-    router.replace('/(auth)/otp');
+    router.navigate(`/(auth)/otp?email=${data.email}`);
   };
 
   return (
@@ -48,8 +48,8 @@ export default function Login() {
         style={[{minHeight: Math.round(windowHeight)}]}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View
-            className="flex-1 items-center justify-center- gap-8"
-            style={{marginTop: Constants.statusBarHeight}}>
+            className="flex-1 items-center gap-8"
+            style={{marginVertical: Constants.statusBarHeight}}>
             <View className="w-full px-6 gap-8">
               <ControlledTextInput
                 placeholder="Email"
@@ -94,7 +94,9 @@ export default function Login() {
               />
               <ShorttieeButton title="Login" onPress={handleSubmit(onSubmit)} />
               <View className="flex-row items-center justify-between">
-                <Link href="/" className="text-shorttiee-primary">
+                <Link
+                  href="/(auth)/forgot-password"
+                  className="text-shorttiee-primary">
                   <Text className="font-semibold">Forgot Password</Text>
                 </Link>
                 <View className="flex-row">
