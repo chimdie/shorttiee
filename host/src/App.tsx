@@ -11,10 +11,12 @@ import ForgotPassword from "@/pages/Auth/ForgotPassword";
 import Otp from "@/pages/Auth/Otp";
 import ResetPassword from "@/pages/Auth/ResetPassword";
 
+import NotFound from "./components/NotFound";
+
 export const rootRouter = createBrowserRouter([
   {
-    // errorElement
     element: <AuthLayout />,
+    errorElement: <NotFound />,
     children: [
       { path: AuthRoutes.login, element: <Login /> },
       { path: AuthRoutes.createAccount, element: <SignUp /> },

@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
+import HelmetHeader from "@/components/HelmetHeader";
 import { HomeHashtag } from "iconsax-react";
 import { AuthRoutes } from "@/types/routes";
-import HelmetHeader from "@/components/HelmetHeader";
 
 type AuthRoutesPath = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 
