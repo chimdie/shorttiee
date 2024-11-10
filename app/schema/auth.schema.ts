@@ -18,7 +18,6 @@ export const SignupSchema = z.object({
   gender: z.enum(['male', 'female']),
   referralCode: z.string().optional(),
   businessName: z.string().optional(),
-  termsAndConditions: z.boolean().refine(value => value === true),
   email: z
     .string()
     .email()
@@ -42,5 +41,12 @@ export const SignupSchema = z.object({
     .refine(data => validator.isMobilePhone(data, 'en-NG')),
 });
 
+export const ForgotPasswordSchema = z.object({
+  email: z
+    .string({message: 'Email is required'})
+    .email({message: 'Incorrect email format'}),
+});
+
 export type LoginSchema = z.infer<typeof LoginSchema>;
 export type SignupSchema = z.infer<typeof SignupSchema>;
+export type ForgotPasswordSchema = z.infer<typeof ForgotPasswordSchema>;
