@@ -1,24 +1,20 @@
 import React from 'react';
-import {
-  TextInput as DefaultTextInput,
-  TextInputProps,
-  Text,
-  View,
-  Platform,
-} from 'react-native';
+import {Text, TextInput, TextInputProps, View, Platform} from 'react-native';
 import {Control, FieldPath, FieldValues, useController} from 'react-hook-form';
 import {getColor} from '@/config/theme';
+import tw from 'twrnc';
+// import {Feather} from '@expo/vector-icons';
 
 type TextInputT = {
   placeholder?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
-  label?: string;
   hasError?: boolean;
   erroMessage?: string;
   hasErrorClearButton?: boolean;
   value?: string;
   clearTextInput?: () => void;
+  containerClassName?: string;
 } & TextInputProps;
 
 export function ControlledTextInput<T extends FieldValues>({
@@ -49,16 +45,15 @@ export function ControlledTextInput<T extends FieldValues>({
 
 export function UnControlledTextInput(props: TextInputT) {
   return (
-    <View className="gap-1">
-      <Text className="text-sm font-medium text-gray-500">{props.label}</Text>
+    <View className={`space-y-1 ${props.containerClassName}`}>
       <View
-        className={`px-4 flex-row rounded-xl bg-gray-100 border ${
-          props.hasError ? 'border-red-200 shadow-sm' : 'border-gray-100'
-        } items-center justify-center`}>
-        {props.startContent}
-        <DefaultTextInput
+        style={tw`px-4 flex flex-row rounded-xl bg-gray-100 items-center justify-center border border-gray-300 ${
+          props.hasError ? 'border-red-200 shadow-sm' : ''
+        }`}>
+        <View>{props.startContent}</View>
+        <TextInput
           {...props}
-          className={`flex-1 font-medium bg-gray-100 text-sm ${props.startContent && 'pl-4'} ${props.className} ${Platform.select(
+          style={tw`flex-1 font-medium bg-gray-100 text-sm ${props.startContent ? 'pl-2' : ''} ${Platform.select(
             {
               android: 'py-2',
               ios: 'py-4',
@@ -70,8 +65,20 @@ export function UnControlledTextInput(props: TextInputT) {
           placeholder={props.placeholder}
           cursorColor={getColor('shorttiee-primary')}
         />
-        {props.endContent}
+        <View>{props.endContent}</View>
       </View>
+      {props.hasError && (
+        <Text style={tw`text-xs text-red-400 font-normal`}>
+          {props.erroMessage}
+        </Text>
+      )}
     </View>
   );
 }
+
+// const Content = (props: {
+//   name?: React.ComponentProps<typeof Feather>['name'];
+//   color?: string;
+// }) => {
+//   return <Feather size={24} {...props} />;
+// };
