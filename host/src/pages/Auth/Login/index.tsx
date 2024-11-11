@@ -104,7 +104,7 @@ export default function Login(): JSX.Element {
         <p className="text-center text-grey_300">
           Don't have an account?{" "}
           <Link to={AuthRoutes.createAccount} className="font-medium text-shorttiee_secondary">
-            Sign Up
+            Create Account
           </Link>
         </p>
       </div>
