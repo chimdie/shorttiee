@@ -4,20 +4,29 @@ import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
   BadRequestResponse,
   ErrorResponse,
+  ForbiddenResponse,
   SuccessResponse
 } from "../utils/response";
+import { createUser, findUserByEmail } from "../db/users.db";
 import {
-  createUser,
-  findUserByEmail,
-  findUserById,
-  User
-} from "../db/users.db";
-import { LoginDto, RegisterDto } from "../dto/auth.dto";
-import { createAuth, findAuthByUserId } from "../db/auth.db";
-import { WithDBTimestamps } from "../types/utils";
+  ChangePasswordDto,
+  ForgotPasswordDto,
+  LoginDto,
+  RegisterDto,
+  ResetPasswordDto
+} from "../dto/auth.dto";
+import {
+  createAuth,
+  findAuthByUserId,
+  updateAuthHashByUserId,
+  updateAuthOtpAndHashByUserId,
+  updateAuthOtpByUserId
+} from "../db/auth.db";
 import { signAuthToken } from "../utils/auth-token";
 import { db } from "../db/config.db";
 import { domainValidator } from "../utils/domain-validator";
+import { OTP } from "../utils/otp";
+import assert from "assert";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
@@ -33,12 +42,10 @@ export const registerCtl = ctlWrapper(
     }
 
     const hash = await bcrypt.hash(req.body.password, 10);
-    let newUser: WithDBTimestamps<User> | undefined;
 
     const trx = db.transaction(() => {
-      const id = crypto.randomUUID();
       createUser().run({
-        id,
+        id: crypto.randomUUID(),
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -48,7 +55,7 @@ export const registerCtl = ctlWrapper(
         businessName: req.body.businessName
       });
 
-      const _user = findUserById(id);
+      const _user = findUserByEmail(req.body.email);
       if (!_user) {
         const err = new Error("An error occured while creating user");
         throw err;
@@ -60,10 +67,10 @@ export const registerCtl = ctlWrapper(
         userId: _user.id
       });
 
-      newUser = _user;
+      return _user;
     });
 
-    trx(); // run transaction
+    const newUser = trx(); // run transaction
 
     if (!newUser) {
       return ErrorResponse(res, "An error occured while creating user");
@@ -74,12 +81,8 @@ export const registerCtl = ctlWrapper(
       return ErrorResponse(res, "An error occured while siging token");
     }
 
-    return SuccessResponse(
-      res,
-      Object.assign(newUser, { token }),
-      201,
-      "Account created"
-    );
+    const mergeUserAndToken = Object.assign(newUser, { token });
+    return SuccessResponse(res, mergeUserAndToken, 201, "Account created");
   }
 );
 
@@ -108,11 +111,79 @@ export const loginCtl = ctlWrapper(
       return ErrorResponse(res, "An error occured while siging token");
     }
 
-    return SuccessResponse(
-      res,
-      Object.assign(user, { token }),
-      201,
-      "Login successful"
-    );
+    const data = Object.assign(user, { token });
+    return SuccessResponse(res, data, 201, "Login successful");
+  }
+);
+
+export const forgetPasswordCtl = ctlWrapper(
+  async (req: Request<unknown, unknown, ForgotPasswordDto>, res) => {
+    const user = findUserByEmail(req.body.email);
+    if (!user) {
+      return BadRequestResponse(res, "Invalid credentials");
+    }
+
+    const auth = findAuthByUserId(user.id);
+    if (!auth) {
+      return BadRequestResponse(res, "Account does not exist");
+    }
+
+    const [otp, hash] = OTP.generateOtp();
+    console.log({ otp });
+
+    // send otp in email
+
+    // save otp
+    updateAuthOtpByUserId().run({ userId: user.id, otp: hash });
+
+    const msg = "An OTP has been sent to your email";
+    return SuccessResponse(res, null, 201, msg);
+  }
+);
+
+export const resetPasswordCtl = ctlWrapper(
+  async (req: Request<unknown, unknown, ResetPasswordDto>, res) => {
+    const user = findUserByEmail(req.body.email);
+    if (!user) {
+      return BadRequestResponse(res, "Invalid credentials");
+    }
+
+    const auth = findAuthByUserId(user.id);
+    if (!auth) {
+      return BadRequestResponse(res, "Account does not exist");
+    }
+
+    if (!auth.otp) {
+      return ForbiddenResponse(res, "Invalid Operation");
+    }
+
+    if (OTP.verifyOtp(req.body.otp, auth.otp)) {
+      return BadRequestResponse(res, "Invalid OTP");
+    }
+
+    const hash = await bcrypt.hash(req.body.password, 10);
+    updateAuthOtpAndHashByUserId().run({ userId: user.id, hash, otp: null });
+
+    return SuccessResponse(res, null, 201, "Password reset was successful");
+  }
+);
+
+export const changePasswordCtl = ctlWrapper(
+  async (req: Request<unknown, unknown, ChangePasswordDto>, res) => {
+    assert(typeof req.user !== "undefined", "User cannot be undefined");
+
+    const auth = findAuthByUserId(req.user.id);
+    if (!auth) {
+      return BadRequestResponse(res, "Account does not exist");
+    }
+
+    if (await bcrypt.compare(auth.hash, req.body.oldPassword)) {
+      return BadRequestResponse(res, "Invalid password credential");
+    }
+
+    const hash = await bcrypt.hash(req.body.newPassword, 10);
+    updateAuthHashByUserId().run({ userId: req.user.id, hash });
+
+    return SuccessResponse(res, null, 201, "Password change was successful");
   }
 );

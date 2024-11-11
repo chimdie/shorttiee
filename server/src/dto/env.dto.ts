@@ -7,6 +7,10 @@ export const EnvDto = z.object({
   PORT: z.coerce.number(),
   JWT_SECRET: z.string(),
   DATABASE_URL: z.string()
+
+  // EMAIL_USER: z.string().email(),
+  // EMAIL_PASS: z.string(),
+  // EMAIL_HOST: z.string()
 });
 
 export type EnvDto = z.infer<typeof EnvDto>;
