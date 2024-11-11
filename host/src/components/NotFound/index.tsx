@@ -40,7 +40,7 @@ export default function NotFound(): JSX.Element {
           className="bg-shorttiee_primary text-white font-medium w-full"
           onClick={handleRedirect}
         >
-          Button
+          Return Home
         </Button>
       </div>
     </div>

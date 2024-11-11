@@ -3,9 +3,8 @@ import HelmetHeader from "@/components/HelmetHeader";
 import { HomeHashtag } from "iconsax-react";
 import { AuthRoutes } from "@/types/routes";
 
-type AuthRoutesPath = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 
-const routeHelmetTitle: Record<AuthRoutesPath, { title: string; description: string }> = {
+const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string }> = {
   [AuthRoutes.login]: {
     title: "Login",
     description: "Welcome back! Please log in to your account.",
@@ -30,7 +29,7 @@ const routeHelmetTitle: Record<AuthRoutesPath, { title: string; description: str
 
 export default function AuthLayout(): JSX.Element {
   const location = useLocation();
-  const currentPath = location.pathname as AuthRoutesPath;
+  const currentPath = location.pathname as AuthRoutes;
 
   const { title, description } = routeHelmetTitle[currentPath] || {
     title: "Shorttie",
