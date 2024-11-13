@@ -1,5 +1,5 @@
 import "dotenv/config";
-
+import { appEnv } from "./utils/config-env";
 import express, { NextFunction } from "express";
 import cors from "cors";
 import { apiV1router } from "./routes";
@@ -7,7 +7,6 @@ import debug from "debug";
 import { ErrorResponse, NotFoundResponse } from "./utils/response";
 import type { Request, Response } from "express";
 import { oapi } from "./docs/openapi.docs";
-import { EnvDto } from "./dto/env.dto";
 
 const app = express();
 
@@ -38,13 +37,8 @@ app.use((err: Error, _: Request, res: Response, _next: NextFunction) => {
     });
     return;
   }
+  console.error(err);
   return ErrorResponse(res, err.message);
 });
 
-// zod verify env
-if (EnvDto.safeParse(process.env).error) {
-  console.error("Invalid environment variables");
-  process.exit(1);
-}
-
-app.listen(process.env.PORT ?? 3000);
+app.listen(appEnv.PORT ?? 4000);
