@@ -6,6 +6,8 @@ export type Auth = {
   hash: string;
   userId: string;
   otp?: string | null;
+  /** datetime */
+  otpTTL?: string | null;
 };
 
 export function createAuth() {
@@ -15,8 +17,8 @@ export function createAuth() {
 }
 
 export function updateAuthOtpByUserId() {
-  return db.prepare<Array<Pick<Auth, "otp" | "userId">>>(
-    "UPDATE tblAuthentications SET otp=@otp WHERE userId=@userId"
+  return db.prepare<Array<Pick<Auth, "otp" | "userId" | "otpTTL">>>(
+    "UPDATE tblAuthentications SET otp=@otp, otpTTL=@otpTTL WHERE userId=@userId"
   );
 }
 
@@ -27,8 +29,8 @@ export function updateAuthHashByUserId() {
 }
 
 export function updateAuthOtpAndHashByUserId() {
-  return db.prepare<Array<Pick<Auth, "otp" | "userId" | "hash">>>(
-    "UPDATE tblAuthentications SET otp=@otp hash=@hash WHERE userId=@userId"
+  return db.prepare<Array<Pick<Auth, "otp" | "userId" | "otpTTL" | "hash">>>(
+    "UPDATE tblAuthentications SET otp=@otp, otpTTL=@otpTTL, hash=@hash WHERE userId=@userId"
   );
 }
 
