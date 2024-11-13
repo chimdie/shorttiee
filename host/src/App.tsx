@@ -1,15 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
-import { AuthRoutes } from "@/types/routes";
+import { AuthRoutes, DashboardRoutes } from "@/types/routes";
 
 // layouts
 import AuthLayout from "@/layouts/Auth.layout";
+import DashboardLayout from "./layouts/Dashboard.layout";
 
-// pages
+// Auth pages
 import Login from "@/pages/Auth/Login";
 import SignUp from "@/pages/Auth/SignUp";
 import ForgotPassword from "@/pages/Auth/ForgotPassword";
 import Otp from "@/pages/Auth/Otp";
 import ResetPassword from "@/pages/Auth/ResetPassword";
+
+// Dashboard pages
+import Home from "@/pages/Dashboard/Home";
 
 import NotFound from "./components/NotFound";
 
@@ -24,5 +28,9 @@ export const rootRouter = createBrowserRouter([
       { path: AuthRoutes.verifyOtp, element: <Otp /> },
       { path: AuthRoutes.resetPassword, element: <ResetPassword /> },
     ],
+  },
+  {
+    element: <DashboardLayout />,
+    children: [{ path: DashboardRoutes.home, element: <Home /> }],
   },
 ]);

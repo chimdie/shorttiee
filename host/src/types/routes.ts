@@ -6,4 +6,10 @@ export const AuthRoutes = {
   resetPassword: "/reset-password",
 } as const;
 
+export const DashboardRoutes = {
+  home: "/dashboard/home",
+};
+
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
+
+export type DashboardRoutes = (typeof DashboardRoutes)[keyof typeof DashboardRoutes];
