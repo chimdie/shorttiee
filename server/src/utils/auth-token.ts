@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
+import { appEnv } from "./config-env";
 
 export function signAuthToken<T>(payload: T) {
   try {
-    const token = jwt.sign({ payload }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ payload }, appEnv.JWT_SECRET, {
       expiresIn: "30d"
     });
 
@@ -14,7 +15,7 @@ export function signAuthToken<T>(payload: T) {
 
 export function verifyAuthToken(payload: string) {
   try {
-    const result = jwt.verify(payload, process.env.JWT_SECRET);
+    const result = jwt.verify(payload, appEnv.JWT_SECRET);
 
     return [null, result] as const;
   } catch (error) {
