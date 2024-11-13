@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS tblAuthentications (
   id VARCHAR(36) PRIMARY KEY NOT NULL, -- use uuid
   hash VARCHAR(255) NOT NULL,
   otp VARCHAR(40),
+  otpTTL DATETIME,
   userId VARCHAR(36) UNIQUE NOT NULL,
 
   createdAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
