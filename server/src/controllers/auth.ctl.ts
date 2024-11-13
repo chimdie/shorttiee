@@ -27,6 +27,7 @@ import { db } from "../db/config.db";
 import { domainValidator } from "../utils/domain-validator";
 import { OTP } from "../utils/otp";
 import assert from "assert";
+import { appEnv } from "../utils/config-env";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
