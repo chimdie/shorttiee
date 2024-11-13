@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS tblUsers (
   businessName VARCHAR(255),
   referrerCode VARCHAR(8),
   address VARCHAR(255),
+  gender TEXT CHECK(gender IN ('M','F')),
 
   createdAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
   updatedAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'))
