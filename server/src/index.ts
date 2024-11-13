@@ -37,7 +37,7 @@ app.use((err: Error, _: Request, res: Response, _next: NextFunction) => {
     });
     return;
   }
-  console.error(err);
+
   return ErrorResponse(res, err.message);
 });
 
