@@ -10,11 +10,12 @@ export type User = {
   businessName?: string;
   referrerCode?: string;
   address?: string;
+  gender?: "M" | "F" | null;
 };
 
 export function createUser() {
   return db.prepare<Array<User>>(
-    "INSERT INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address)"
+    "INSERT INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address, gender) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address, @gender)"
   );
 }
 

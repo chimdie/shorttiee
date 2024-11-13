@@ -53,7 +53,8 @@ export const registerCtl = ctlWrapper(
         mobileNumber: req.body.mobileNumber,
         address: req.body.address,
         referrerCode: req.body.referrerCode,
-        businessName: req.body.businessName
+        businessName: req.body.businessName,
+        gender: req.body.gender
       });
 
       const _user = findUserByEmail(req.body.email);
@@ -121,7 +122,7 @@ export const forgetPasswordCtl = ctlWrapper(
   async (req: Request<unknown, unknown, ForgotPasswordDto>, res) => {
     const user = findUserByEmail(req.body.email);
     if (!user) {
-      return BadRequestResponse(res, "Invalid credentials");
+      return BadRequestResponse(res, "Account does not exist");
     }
 
     const auth = findAuthByUserId(user.id);
@@ -134,8 +135,15 @@ export const forgetPasswordCtl = ctlWrapper(
 
     // send otp in email
 
+    const ttl = new Date();
+    ttl.setSeconds(ttl.getSeconds() + appEnv.OTP_TTL);
+
     // save otp
-    updateAuthOtpByUserId().run({ userId: user.id, otp: hash });
+    updateAuthOtpByUserId().run({
+      userId: user.id,
+      otp: hash,
+      otpTTL: ttl.toISOString()
+    });
 
     const msg = "An OTP has been sent to your email";
     return SuccessResponse(res, null, 201, msg);
@@ -154,16 +162,26 @@ export const resetPasswordCtl = ctlWrapper(
       return BadRequestResponse(res, "Account does not exist");
     }
 
-    if (!auth.otp) {
+    if (!auth.otp || !auth.otpTTL) {
       return ForbiddenResponse(res, "Invalid Operation");
     }
 
-    if (OTP.verifyOtp(req.body.otp, auth.otp)) {
-      return BadRequestResponse(res, "Invalid OTP");
+    const isValid = !OTP.verifyOtp(
+      req.body.otp,
+      auth.otp,
+      new Date(auth.otpTTL)
+    );
+    if (!isValid) {
+      return BadRequestResponse(res, "Invalid or expired OTP");
     }
 
     const hash = await bcrypt.hash(req.body.password, 10);
-    updateAuthOtpAndHashByUserId().run({ userId: user.id, hash, otp: null });
+    updateAuthOtpAndHashByUserId().run({
+      userId: user.id,
+      hash,
+      otp: null,
+      otpTTL: null
+    });
 
     return SuccessResponse(res, null, 201, "Password reset was successful");
   }

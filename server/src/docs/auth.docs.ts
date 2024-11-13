@@ -29,11 +29,19 @@ export const RegisterDocSchema = {
     mobileNumber: { type: "string" },
     businessName: { type: "string" },
     referrerCode: { type: "string" },
-    address: { type: "string" }
+    address: { type: "string" },
+    gender: {
+      type: "string",
+      enum: ["M", "F"] as const,
+      nullable: true
+      // default: null
+    }
   },
   additionalProperties: false
 } satisfies OpenAPIV3.SchemaObject;
 oapi.component("schemas", "RegisterDto", RegisterDocSchema);
+typeAssert<Equals<FromSchema<typeof RegisterDocSchema>, RegisterDto>>();
+
 oapi.component("schemas", "RegisterResponse", {
   type: "object",
   additionalProperties: false,
@@ -61,12 +69,11 @@ oapi.component("schemas", "RegisterResponse", {
     }
   }
 });
-typeAssert<Equals<FromSchema<typeof RegisterDocSchema>, RegisterDto>>();
 
 /**
  * @description register route documentation
  */
-export const registerDoc = oapi.validPath({
+export const registerDoc = oapi.path({
   tags: ["Authentication"],
   requestBody: {
     content: {
@@ -135,7 +142,7 @@ typeAssert<Equals<FromSchema<typeof LoginDocSchema>, LoginDto>>();
 /**
  * @description login route documentation
  */
-export const loginDoc = oapi.validPath({
+export const loginDoc = oapi.path({
   tags: ["Authentication"],
   requestBody: {
     content: {
@@ -242,7 +249,7 @@ typeAssert<
   Equals<FromSchema<typeof ResetPasswordDtoSchema>, ResetPasswordDto>
 >();
 
-export const resetPasswordDocs = oapi.validPath({
+export const resetPasswordDocs = oapi.path({
   tags: ["Authentication"],
   requestBody: {
     content: {
@@ -294,7 +301,7 @@ oapi.component("schemas", "ChangePasswordResponse", {
 typeAssert<
   Equals<FromSchema<typeof ChangePasswordDtoSchema>, ChangePasswordDto>
 >();
-export const changePasswordDocs = oapi.validPath({
+export const changePasswordDocs = oapi.path({
   tags: ["Authentication"],
   security: [{ BearerAuth: [] }],
   description: "Change user password. This is used only by authenticated users",

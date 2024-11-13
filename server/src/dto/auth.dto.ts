@@ -14,6 +14,15 @@ export const RegisterDto = z.object({
     .string()
     .min(2, { message: "Last-name must contain at least 8 character(s)" }),
   email,
+  gender: z
+    .union([z.literal("M"), z.literal("F")], {
+      errorMap: () => {
+        return {
+          message: "Gender must be a valid option"
+        };
+      }
+    })
+    .nullish(),
   password,
   mobileNumber: z.string(),
   businessName: z.string().optional(),
