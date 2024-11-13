@@ -8,7 +8,6 @@ function setEnv(env: EnvDto) {
 }
 
 function getEnv() {
-  // console.log("here", configEnv);
   return configEnv as EnvDto;
 }
 

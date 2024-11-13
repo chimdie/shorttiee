@@ -24,6 +24,8 @@ export const validator = (opts?: {
     }
 
     debug("app:validator")("list errors", err);
+    debug("app:validator")("list errors pretty", "\n● " + err.join("\n● "));
+
     if (err.length) {
       return ValidationResponse(res, err.at(0));
     }
