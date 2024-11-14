@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS tblAuthentications (
   otp VARCHAR(40),
   otpTTL DATETIME,
   userId VARCHAR(36) UNIQUE NOT NULL,
+  nonce VARCHAR(40) NOT NULL,
 
   createdAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
   updatedAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),

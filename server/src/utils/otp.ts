@@ -6,7 +6,7 @@ function generateOtp(size: number = Number(appEnv.OTP_SIZE)) {
     .map((_) => nodeCrypto.randomInt(10))
     .join("");
 
-  const hash = nodeCrypto.createHash("sha1").update(otp).digest("hex");
+  const hash = hashOtp(otp);
   return [otp, hash] as const;
 }
 
@@ -19,7 +19,12 @@ function verifyOtp(otp: string, hash: string, otpTTL: Date) {
   return otpHash === hash;
 }
 
+function hashOtp(payload: string) {
+  return nodeCrypto.createHash("sha1").update(payload).digest("hex");
+}
+
 export const OTP = {
   generateOtp,
-  verifyOtp
+  verifyOtp,
+  hashOtp
 };

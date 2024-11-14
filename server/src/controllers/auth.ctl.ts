@@ -66,7 +66,8 @@ export const registerCtl = ctlWrapper(
       createAuth().run({
         id: crypto.randomUUID(),
         hash,
-        userId: _user.id
+        userId: _user.id,
+        nonce: OTP.hashOtp(hash)
       });
 
       return _user;
@@ -179,6 +180,7 @@ export const resetPasswordCtl = ctlWrapper(
     updateAuthOtpAndHashByUserId().run({
       userId: user.id,
       hash,
+      nonce: OTP.hashOtp(hash),
       otp: null,
       otpTTL: null
     });
@@ -201,7 +203,11 @@ export const changePasswordCtl = ctlWrapper(
     }
 
     const hash = await bcrypt.hash(req.body.newPassword, 10);
-    updateAuthHashByUserId().run({ userId: req.user.id, hash });
+    updateAuthHashByUserId().run({
+      userId: req.user.id,
+      hash,
+      nonce: OTP.hashOtp(hash)
+    });
 
     return SuccessResponse(res, null, 201, "Password change was successful");
   }
