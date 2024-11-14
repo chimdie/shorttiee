@@ -7,7 +7,11 @@ import {
   ForbiddenResponse,
   SuccessResponse
 } from "../utils/response";
-import { createUser, findUserByEmail } from "../db/users.db";
+import {
+  createUser,
+  findUserByEmail,
+  findUserByIdWithAuth
+} from "../db/users.db";
 import {
   ChangePasswordDto,
   ForgotPasswordDto,
@@ -45,8 +49,9 @@ export const registerCtl = ctlWrapper(
     const hash = await bcrypt.hash(req.body.password, 10);
 
     const trx = db.transaction(() => {
+      const userId = crypto.randomUUID();
       createUser().run({
-        id: crypto.randomUUID(),
+        id: userId,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -57,20 +62,20 @@ export const registerCtl = ctlWrapper(
         gender: req.body.gender
       });
 
-      const _user = findUserByEmail(req.body.email);
-      if (!_user) {
+      createAuth().get({
+        id: crypto.randomUUID(),
+        hash,
+        userId: userId,
+        nonce: OTP.hashOtp(hash)
+      });
+
+      const userWithAuth = findUserByIdWithAuth(userId);
+      if (!userWithAuth) {
         const err = new Error("An error occured while creating user");
         throw err;
       }
 
-      createAuth().run({
-        id: crypto.randomUUID(),
-        hash,
-        userId: _user.id,
-        nonce: OTP.hashOtp(hash)
-      });
-
-      return _user;
+      return userWithAuth;
     });
 
     const newUser = trx(); // run transaction
@@ -79,7 +84,10 @@ export const registerCtl = ctlWrapper(
       return ErrorResponse(res, "An error occured while creating user");
     }
 
-    const [signAuthTokenErr, token] = signAuthToken(newUser.id);
+    const [signAuthTokenErr, token] = signAuthToken({
+      id: newUser.id,
+      nonce: newUser.nonce
+    });
     if (signAuthTokenErr) {
       return ErrorResponse(res, "An error occured while siging token");
     }
@@ -109,7 +117,10 @@ export const loginCtl = ctlWrapper(
       return BadRequestResponse(res, "Invalid credentials");
     }
 
-    const [signAuthTokenErr, token] = signAuthToken(user.id);
+    const [signAuthTokenErr, token] = signAuthToken({
+      id: user.id,
+      nonce: auth.nonce
+    });
     if (signAuthTokenErr) {
       return ErrorResponse(res, "An error occured while siging token");
     }
@@ -198,7 +209,8 @@ export const changePasswordCtl = ctlWrapper(
       return BadRequestResponse(res, "Account does not exist");
     }
 
-    if (await bcrypt.compare(auth.hash, req.body.oldPassword)) {
+    const isValid = await bcrypt.compare(req.body.oldPassword, auth.hash);
+    if (!isValid) {
       return BadRequestResponse(res, "Invalid password credential");
     }
 

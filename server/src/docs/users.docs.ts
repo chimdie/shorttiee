@@ -1,9 +1,9 @@
 import { FromSchema } from "json-schema-to-ts";
 import { OpenAPIV3 } from "openapi-types";
-import { User } from "../db/users.db";
 import { typeAssert } from "../utils/asserts";
 import { oapi } from "../config/docs.config";
 import { Equals, WithDBTimestamps } from "../types/utils";
+import { User } from "../dto/types.dto";
 
 const UserDoc = {
   type: "object",

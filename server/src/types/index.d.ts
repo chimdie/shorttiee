@@ -1,4 +1,4 @@
-import { User } from "../db/users.db";
+import { User } from "../dto/types.dto";
 import type { EnvDto } from "../dto/env.dto";
 import { WithDBTimestamps } from "./utils";
 
