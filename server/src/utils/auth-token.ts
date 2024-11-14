@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { appEnv } from "./config-env";
+import { appEnv } from "../config/env.config";
 
 export function signAuthToken<T>(payload: T) {
   try {

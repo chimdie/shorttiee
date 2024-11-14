@@ -1,5 +1,5 @@
 import nodeCrypto from "crypto";
-import { appEnv } from "./config-env";
+import { appEnv } from "../config/env.config";
 
 function generateOtp(size: number = Number(appEnv.OTP_SIZE)) {
   const otp = Array.from({ length: size })

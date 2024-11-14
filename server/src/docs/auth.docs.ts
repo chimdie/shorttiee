@@ -1,6 +1,5 @@
 import { FromSchema } from "json-schema-to-ts";
 import { OpenAPIV3 } from "openapi-types";
-import { oapi } from "./openapi.docs";
 import { typeAssert } from "../utils/asserts";
 import {
   ChangePasswordDto,
@@ -10,6 +9,7 @@ import {
   ResetPasswordDto
 } from "../dto/auth.dto";
 import { Equals } from "../types/utils";
+import { oapi } from "../config/docs.config";
 
 // => Register
 export const RegisterDocSchema = {

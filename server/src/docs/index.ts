@@ -1,30 +1,3 @@
-import { oapi } from "./openapi.docs";
 import "./auth.docs";
 import "./users.docs";
-
-oapi.component("schemas", "Listing", {
-  type: "object",
-  description: "Shorts listing",
-  required: [],
-  properties: {
-    id: { type: "string", uniqueItems: true, format: "uuid" },
-    title: { type: "string" },
-    description: { type: "string" },
-    address: { type: "string" },
-    location: { type: "string" }
-  }
-});
-
-oapi.component("schemas", "Greet", {
-  type: "object",
-  required: ["hello"],
-  properties: {
-    hello: { type: "string", example: "Hello world" }
-  }
-});
-
-oapi.component("securitySchemes", "BearerAuth", {
-  description: "JWT authentication",
-  type: "http",
-  scheme: "bearer"
-});
+import "./extra.docs";

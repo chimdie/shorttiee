@@ -1,12 +1,12 @@
 import "dotenv/config";
-import { appEnv } from "./utils/config-env";
+import { appEnv } from "./config/env.config";
 import express, { NextFunction } from "express";
 import cors from "cors";
 import { apiV1router } from "./routes";
 import debug from "debug";
 import { ErrorResponse, NotFoundResponse } from "./utils/response";
 import type { Request, Response } from "express";
-import { oapi } from "./docs/openapi.docs";
+import { oapi } from "./config/docs.config";
 
 const app = express();
 
