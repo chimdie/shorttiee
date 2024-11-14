@@ -13,6 +13,7 @@ import Constants from 'expo-constants';
 import {PropsWithChildren} from 'react';
 import {Feather} from '@expo/vector-icons';
 import {router} from 'expo-router';
+import tw from 'twrnc';
 
 type AuthScreenLayoutT = {
   headerProps?: HeaderProps;
@@ -25,8 +26,12 @@ export function AuthScreenLayout(props: AuthScreenLayoutT) {
   return (
     <View className="flex-1 bg-white">
       <Header
-        backgroundColor="white"
         {...props.headerProps}
+        backgroundColor="white"
+        containerStyle={{
+          borderBottomColor: 'transparent',
+          borderWidth: 0,
+        }}
         centerComponent={
           <Text className="font-semibold text-2xl">{props.title}</Text>
         }
@@ -45,10 +50,10 @@ export function AuthScreenLayout(props: AuthScreenLayoutT) {
         style={[{minHeight: Math.round(windowHeight)}]}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <ScrollView className="flex-1">
-            <View
-              className="flex-1 items-center gap-8 px-6"
-              style={{marginVertical: Constants.statusBarHeight}}>
-              {props.children}
+            <View style={{marginVertical: Constants.statusBarHeight}}>
+              <View style={tw`flex-1 items-center gap-8 px-4`}>
+                {props.children}
+              </View>
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>

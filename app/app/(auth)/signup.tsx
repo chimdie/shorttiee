@@ -145,9 +145,14 @@ export default function Signup() {
                             handleSelect(gender);
                           }}
                           style={tw`py-3 w-full items-center`}>
-                          <Text style={tw`text-black text-base`}>
-                            {gender.label}
-                          </Text>
+                          <View className="flex-row items-center gap-1">
+                            <Text style={tw`text-black text-base flex-1`}>
+                              {gender.label}
+                            </Text>
+                            {gender.key === selectedGender?.key && (
+                              <Feather name="check" size={18} />
+                            )}
+                          </View>
                         </Pressable>
                       ))}
                     </View>
