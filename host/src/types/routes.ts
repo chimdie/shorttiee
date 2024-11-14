@@ -7,8 +7,8 @@ export const AuthRoutes = {
 } as const;
 
 export const DashboardRoutes = {
-  home: "/dashboard/home",
-  listShortLet: "/dashboard/list-shortlet",
+  home: "/dashboard",
+  // listShortLet: "/dashboard/list-shortlet",
   shortlets: "/dashboard/shortlet",
   settings: "/dashboard/settings",
   payment: "/dashboard/payments",

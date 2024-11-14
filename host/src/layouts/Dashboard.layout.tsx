@@ -16,10 +16,6 @@ const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description
     title: "Home",
     description: "Welcome to Shorttiee",
   },
-  [DashboardRoutes.listShortLet]: {
-    title: "List Shortlet",
-    description: "List out your shortlet for lease",
-  },
   [DashboardRoutes.shortlets]: {
     title: "Shortlets",
     description: "Discover and monitor your shortlets",
