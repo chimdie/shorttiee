@@ -1,17 +1,6 @@
 import { db } from "../config/db.config";
+import type { User, Auth } from "../dto/types.dto";
 import { WithDBTimestamps } from "../types/utils";
-
-export type User = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNumber: string;
-  businessName?: string;
-  referrerCode?: string;
-  address?: string;
-  gender?: "M" | "F" | null;
-};
 
 export function createUser() {
   return db.prepare<Array<User>>(
@@ -35,4 +24,13 @@ export function findUserByEmail(email: string) {
       WithDBTimestamps<User>
     >("SELECT * FROM tblUsers WHERE email = ?")
     .get(email);
+}
+
+export function findUserByIdWithAuth(id: string) {
+  return db
+    .prepare<
+      string[],
+      WithDBTimestamps<User & Auth>
+    >("SELECT u.*, a.hash, a.id AS authId, a.nonce , a.otp, a.otpTTL FROM tblAuthentications AS a JOIN  tblUsers AS u ON a.userId=u.id WHERE u.id = ?")
+    .get(id);
 }
