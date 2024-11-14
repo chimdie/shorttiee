@@ -38,10 +38,10 @@ export default function RootLayout() {
 
   if (!isAppReady) {
     return (
-      <View className="flex-1 justify-center items-center bg-shorttiee-primary">
+      <View className="flex-1 justify-center items-center bg-orange-500">
         <View className="items-center gap-2">
           <View className="aspect-square items-center justify-center">
-            <HomeHashtag size="80" variant="Bulk" color="white" />
+            <HomeHashtag size={80} variant="Bulk" color="white" />
           </View>
           <Text className="text-center font-extrabold text-2xl text-white">
             Shorttiee
@@ -70,6 +70,12 @@ export default function RootLayout() {
             animation: 'slide_from_left',
             animationDuration: 0,
             animationTypeForReplace: 'push',
+          }}
+        />
+        <Stack.Screen
+          name="(app)"
+          options={{
+            headerShown: false,
           }}
         />
         <Stack.Screen name="+not-found" />
