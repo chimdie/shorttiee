@@ -21,6 +21,7 @@ import {
   RegisterDto,
   ResetPasswordDto
 } from "../dto/auth.dto";
+import { authenticate } from "../middlewares/auth.middleware";
 
 export const authRouter = Router();
 
@@ -49,6 +50,7 @@ authRouter.post(
 
 authRouter.post(
   "/change-password",
+  authenticate,
   validator({ body: ChangePasswordDto }),
   changePasswordDocs,
   changePasswordCtl
