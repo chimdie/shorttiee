@@ -23,11 +23,11 @@ import {
   updateAuthOtpByUserId
 } from "../db/auth.db";
 import { signAuthToken } from "../utils/auth-token";
-import { db } from "../db/config.db";
 import { domainValidator } from "../utils/domain-validator";
 import { OTP } from "../utils/otp";
 import assert from "assert";
-import { appEnv } from "../utils/config-env";
+import { db } from "../config/db.config";
+import { appEnv } from "../config/env.config";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {

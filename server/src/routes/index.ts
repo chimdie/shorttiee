@@ -1,9 +1,9 @@
 import "../docs";
 import { Router } from "express";
-import { oapi } from "../docs/openapi.docs";
 import { SuccessResponse } from "../utils/response";
 import { docsRouter } from "./docs.routes";
 import { authRouter } from "./auth.routes";
+import { oapi } from "../config/docs.config";
 
 export const apiV1router = Router();
 
@@ -20,7 +20,7 @@ apiV1router.get(
 
 apiV1router.get(
   "/hi",
-  oapi.validPath({
+  oapi.path({
     parameters: [
       { in: "query", name: "find", required: true, schema: { type: "string" } }
     ],

@@ -1,5 +1,5 @@
+import { db } from "../config/db.config";
 import { WithDBTimestamps } from "../types/utils";
-import { db } from "./config.db";
 
 export type Auth = {
   id: string;

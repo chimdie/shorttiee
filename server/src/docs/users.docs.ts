@@ -1,9 +1,9 @@
 import { FromSchema } from "json-schema-to-ts";
 import { OpenAPIV3 } from "openapi-types";
-import { Equals } from "../types/assert";
 import { User } from "../db/users.db";
 import { typeAssert } from "../utils/asserts";
-import { oapi } from "./openapi.docs";
+import { oapi } from "../config/docs.config";
+import { Equals, WithDBTimestamps } from "../types/utils";
 
 const UserDoc = {
   type: "object",
@@ -27,9 +27,15 @@ const UserDoc = {
     businessName: { type: "string" },
     referrerCode: { type: "string" },
     address: { type: "string" },
+    gender: {
+      type: "string",
+      enum: ["M", "F"] as const,
+      nullable: true
+      // default: null
+    },
     createdAt: { type: "string", format: "date-time" },
     updatedAt: { type: "string", format: "date-time" }
   }
 } satisfies OpenAPIV3.SchemaObject;
-typeAssert<Equals<FromSchema<typeof UserDoc>, User>>();
+typeAssert<Equals<FromSchema<typeof UserDoc>, WithDBTimestamps<User>>>();
 oapi.component("schemas", "User", UserDoc);
