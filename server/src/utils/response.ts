@@ -45,7 +45,7 @@ export const UnauthorizedResponse = (
   msg?: string,
   error?: string
 ) => {
-  res.status(403).json({
+  res.status(401).json({
     message: msg ?? "Unauthorized",
     error: error ?? "Unauthorized"
   });
@@ -56,7 +56,7 @@ export const ForbiddenResponse = (
   msg?: string,
   error?: string
 ) => {
-  res.status(401).json({
+  res.status(403).json({
     message: msg ?? "Access denied",
     error: error ?? "Forbidden"
   });
