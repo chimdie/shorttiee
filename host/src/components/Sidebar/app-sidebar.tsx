@@ -1,5 +1,4 @@
 import * as React from "react";
-import { CreditCard, Hotel, House, HousePlus, Settings2 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -10,45 +9,8 @@ import {
 import { NavMain } from "./nav-main";
 import { NavHeader } from "./nav-header";
 import { NavUser } from "./nav-user";
+import { data } from "./data";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-
-  navMain: [
-    {
-      title: "Home",
-      url: "#",
-      icon: House,
-      isActive: true,
-    },
-    {
-      title: "List Shortlet",
-      url: "#",
-      icon: HousePlus,
-    },
-    {
-      title: "Shortlets",
-      url: "#",
-      icon: Hotel,
-    },
-    {
-        title: "Payments",
-        url: "#",
-        icon: CreditCard,
-      },
-
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-    },
-  ],
-};
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -56,7 +18,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavHeader />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

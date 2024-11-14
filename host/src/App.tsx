@@ -14,6 +14,10 @@ import ResetPassword from "@/pages/Auth/ResetPassword";
 
 // Dashboard pages
 import Home from "@/pages/Dashboard/Home";
+import ListShortlet from "@/pages/Dashboard/ListShortlet";
+import Shortlet from "@/pages/Dashboard/Shortlet";
+import Payments from "@/pages/Dashboard/Payments";
+import Settings from "@/pages/Dashboard/Settings/index";
 
 import NotFound from "./components/NotFound";
 
@@ -31,6 +35,12 @@ export const rootRouter = createBrowserRouter([
   },
   {
     element: <DashboardLayout />,
-    children: [{ path: DashboardRoutes.home, element: <Home /> }],
+    children: [
+      { path: DashboardRoutes.home, element: <Home /> },
+      { path: DashboardRoutes.listShortLet, element: <ListShortlet /> },
+      { path: DashboardRoutes.shortlets, element: <Shortlet /> },
+      { path: DashboardRoutes.payment, element: <Payments /> },
+      { path: DashboardRoutes.settings, element: <Settings /> },
+    ],
   },
 ]);

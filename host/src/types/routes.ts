@@ -11,6 +11,7 @@ export const DashboardRoutes = {
   listShortLet: "/dashboard/list-shortlet",
   shortlets: "/dashboard/shortlet",
   settings: "/dashboard/settings",
+  payment: "/dashboard/payments",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
