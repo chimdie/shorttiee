@@ -13,6 +13,7 @@ import {FlashList} from '@shopify/flash-list';
 import {ApartmentCard} from '@/components/Cards/ApartmentCard';
 import tw from 'twrnc';
 import {ShortletCard} from '@/components/Cards/ShortletCard';
+import {Link} from 'expo-router';
 
 const statesDATA = [
   {
@@ -70,13 +71,15 @@ export default function HomeScreen() {
           <TouchableOpacity className="items-center justify-center aspect-square">
             <Notification size={28} color={getColor('shorttiee-primary')} />
           </TouchableOpacity>
-          <TouchableOpacity className="items-center justify-center aspect-square">
-            <Heart
-              size={28}
-              color={getColor('shorttiee-primary')}
-              variant="Bold"
-            />
-          </TouchableOpacity>
+          <Link href="/(app)/favourites" asChild>
+            <TouchableOpacity className="items-center justify-center aspect-square">
+              <Heart
+                size={28}
+                color={getColor('shorttiee-primary')}
+                variant="Bold"
+              />
+            </TouchableOpacity>
+          </Link>
         </View>
       </View>
       <SafeAreaView className="bg-pax-white flex-1">
@@ -115,7 +118,6 @@ export default function HomeScreen() {
               />
             </View>
             <View style={[tw`flex-1`]}>
-              <ShortletCard isVertical />
               <FlashList
                 data={shortlets}
                 renderItem={() => <ShortletCard />}
