@@ -37,10 +37,3 @@ export function getSidebarList(pathname: string): Menu[] {
     },
   ];
 }
-export const data = {
-  user: {
-    name: "Host Chimdi",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-};

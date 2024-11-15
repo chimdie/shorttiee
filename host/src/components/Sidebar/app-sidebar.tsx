@@ -11,9 +11,17 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
-import { data, getSidebarList } from "./sidebarMenuItem";
+import { getSidebarList } from "./sidebarMenuItem";
 import { Link, useLocation } from "react-router-dom";
 import { HomeHashtag } from "iconsax-react";
+
+const data = {
+  user: {
+    name: "Host Chimdi",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation().pathname;
@@ -42,7 +50,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {items.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton tooltip={item.title} asChild className="py-6 px-4">
+                <SidebarMenuButton tooltip={item.title} asChild className="py-6 px-4 ">
                   <Link
                     to={item.url}
                     className={`font-medium ${item.isActive ? "bg-shorttiee_primary text-white" : ""}`}
