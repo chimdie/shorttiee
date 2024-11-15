@@ -32,13 +32,9 @@ export default function RootLayout() {
     return () => clearTimeout(timeoutId);
   }, []);
 
-  if (!loaded) {
-    return null;
-  }
-
-  if (!isAppReady) {
+  if (!loaded || !isAppReady) {
     return (
-      <View className="flex-1 justify-center items-center bg-orange-500">
+      <View className="flex-1 justify-center items-center bg-shorttiee-primary">
         <View className="items-center gap-2">
           <View className="aspect-square items-center justify-center">
             <HomeHashtag size={80} variant="Bulk" color="white" />
