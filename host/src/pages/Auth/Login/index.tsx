@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input, Button } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, EyeOff, Eye } from "lucide-react";
-import { AuthRoutes } from "@/types/routes";
+import { AuthRoutes, DashboardRoutes } from "@/types/routes";
 import { LoginSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -19,6 +20,7 @@ export default function Login(): JSX.Element {
 
   const onSubmit = (data: LoginSchema) => {
     console.log(data);
+    navigate(DashboardRoutes.home);
   };
   return (
     <div className="space-y-12">

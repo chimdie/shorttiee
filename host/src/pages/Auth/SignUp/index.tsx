@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, Checkbox, Input, Select, SelectItem } from "@nextui-org/react";
 import { Building2, Eye, EyeOff, Lock, Mail, MapPin, Phone, UserRound, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthRoutes } from "@/types/routes";
+import { AuthRoutes, DashboardRoutes } from "@/types/routes";
 import { genderData, SignUpSchema } from "@/schema/auth.schema";
 import {
   Form,
@@ -17,6 +17,7 @@ import {
 
 export default function SignUp(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -26,6 +27,7 @@ export default function SignUp(): JSX.Element {
 
   const onSubmit = (data: SignUpSchema) => {
     console.log(data);
+    navigate(DashboardRoutes.home);
   };
 
   return (
