@@ -1,6 +1,6 @@
 export default {
   'shorttiee-primary': '#1F253F',
-  'shorttiee-primary-100': '#B0BFF9',
+  'shorttiee-primary-100': '#1f253f1a', // shorttiee-primary/10
   'shorttiee-secondary': '#1D3D3A',
   'shorttiee-purple': '#3F1F3A',
   'shorttiee-yellow-100': '#EAE68B',
