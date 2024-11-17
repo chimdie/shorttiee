@@ -46,6 +46,7 @@ export type ResetPasswordDto = z.infer<typeof ResetPasswordDto>;
 
 export const ChangePasswordDto = z.object({
   newPassword: password,
-  oldPassword: password
+  oldPassword: password,
+  reauth: z.boolean().optional()
 });
 export type ChangePasswordDto = z.infer<typeof ChangePasswordDto>;
