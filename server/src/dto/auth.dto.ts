@@ -1,3 +1,4 @@
+import validator from "validator";
 import { z } from "zod";
 
 const MIN_PASSWORD = 8;
@@ -24,7 +25,9 @@ export const RegisterDto = z.object({
     })
     .nullish(),
   password,
-  mobileNumber: z.string(),
+  mobileNumber: z.custom((data) => validator.isMobilePhone(data, ["en-NG"]), {
+    message: "Invalid mobile number"
+  }),
   businessName: z.string().optional(),
   referrerCode: z.string().optional(),
   address: z.string().optional()
