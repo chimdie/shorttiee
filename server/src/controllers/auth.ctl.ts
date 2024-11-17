@@ -62,7 +62,7 @@ export const registerCtl = ctlWrapper(
         gender: req.body.gender
       });
 
-      createAuth().get({
+      createAuth().run({
         id: crypto.randomUUID(),
         hash,
         userId: userId,
