@@ -281,7 +281,8 @@ const ChangePasswordDtoSchema = {
   required: ["oldPassword", "newPassword"] as const,
   properties: {
     oldPassword: { type: "string", minLength: 8 },
-    newPassword: { type: "string", minLength: 8 }
+    newPassword: { type: "string", minLength: 8 },
+    reauth: { type: "boolean" }
   }
 } satisfies OpenAPIV3.SchemaObject;
 
@@ -304,7 +305,11 @@ typeAssert<
 export const changePasswordDocs = oapi.path({
   tags: ["Authentication"],
   security: [{ BearerAuth: [] }],
-  description: "Change user password. This is used only by authenticated users",
+  description: `Change user password. This is used only by authenticated users
+
+By default, changing password will invalidate all previously issued tokens. 
+To prevent this behaviour when changing a user password, set \`reauth\` to \`false\`
+  `,
   requestBody: {
     content: {
       "application/json": {

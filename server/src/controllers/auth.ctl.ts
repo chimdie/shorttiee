@@ -215,10 +215,12 @@ export const changePasswordCtl = ctlWrapper(
     }
 
     const hash = await bcrypt.hash(req.body.newPassword, 10);
+    const nonce = req.body.reauth ? OTP.hashOtp(hash) : auth.nonce;
+
     updateAuthHashByUserId().run({
       userId: req.user.id,
       hash,
-      nonce: OTP.hashOtp(hash)
+      nonce
     });
 
     return SuccessResponse(res, null, 201, "Password change was successful");
