@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 import supertest from "supertest";
 import { app } from "../app";
-import { LoginDto, RegisterDto } from "../dto/auth.dto";
+import { ChangePasswordDto, LoginDto, RegisterDto } from "../dto/auth.dto";
 import { faker } from "@faker-js/faker";
 
 const userInfo: RegisterDto = {
@@ -15,6 +15,7 @@ const userInfo: RegisterDto = {
   businessName: faker.company.name(),
   password: faker.internet.password()
 };
+let token: string;
 
 describe("POST /api/v1/auth/register", () => {
   it("Should create a user account", async () => {
@@ -40,10 +41,59 @@ describe("POST /api/v1/auth/login", () => {
       .post("/api/v1/auth/login")
       .set("Accept", "application/json")
       .send(payload)
-      .expect(201);
+      .expect(200);
 
     assert.ok("data" in res.body);
     assert.ok(res.body.data.email === payload.email);
     assert.equal("string", typeof res.body.data.token);
+
+    token = res.body.data.token;
+  });
+});
+
+// forgot
+//
+// reset
+
+describe("POST /api/v1/auth/change-password", () => {
+  it("Should change user password", async () => {
+    const payload: ChangePasswordDto = {
+      oldPassword: userInfo.password,
+      newPassword: faker.internet.password()
+    };
+
+    const res = await supertest(app)
+      .post("/api/v1/auth/change-password")
+      .set("Accept", "application/json")
+      .auth(token, { type: "bearer" })
+      .send(payload)
+      .expect(200);
+    assert.ok("data" in res.body);
+    assert.equal(null, res.body.data);
+
+    const wrongLoginPayload: LoginDto = {
+      password: userInfo.password,
+      email: userInfo.email
+    };
+
+    const wrongLoginRes = await supertest(app)
+      .post("/api/v1/auth/login")
+      .set("Accept", "application/json")
+      .send(wrongLoginPayload)
+      .expect(400);
+    assert.equal(false, "data" in wrongLoginRes.body);
+
+    const loginPayload: LoginDto = {
+      password: payload.newPassword,
+      email: userInfo.email
+    };
+    const loginRes = await supertest(app)
+      .post("/api/v1/auth/login")
+      .set("Accept", "application/json")
+      .send(loginPayload)
+      .expect(200);
+
+    assert.ok("data" in loginRes.body);
+    assert.equal("string", typeof loginRes.body.data.token);
   });
 });

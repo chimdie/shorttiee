@@ -126,7 +126,7 @@ export const loginCtl = ctlWrapper(
     }
 
     const data = Object.assign(user, { token });
-    return SuccessResponse(res, data, 201, "Login successful");
+    return SuccessResponse(res, data, 200, "Login successful");
   }
 );
 
@@ -158,7 +158,7 @@ export const forgetPasswordCtl = ctlWrapper(
     });
 
     const msg = "An OTP has been sent to your email";
-    return SuccessResponse(res, null, 201, msg);
+    return SuccessResponse(res, null, 200, msg);
   }
 );
 
@@ -196,7 +196,7 @@ export const resetPasswordCtl = ctlWrapper(
       otpTTL: null
     });
 
-    return SuccessResponse(res, null, 201, "Password reset was successful");
+    return SuccessResponse(res, null, 200, "Password reset was successful");
   }
 );
 
@@ -223,6 +223,6 @@ export const changePasswordCtl = ctlWrapper(
       nonce
     });
 
-    return SuccessResponse(res, null, 201, "Password change was successful");
+    return SuccessResponse(res, null, 200, "Password change was successful");
   }
 );
