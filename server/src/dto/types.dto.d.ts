@@ -21,8 +21,8 @@ export type User = {
   lastName: string;
   email: string;
   mobileNumber: string;
-  businessName?: string;
-  referrerCode?: string;
-  address?: string;
+  businessName?: string | null;
+  referrerCode?: string | null;
+  address?: string | null;
   gender?: "M" | "F" | null;
 };
