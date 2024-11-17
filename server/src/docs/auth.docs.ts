@@ -183,7 +183,7 @@ oapi.component("schemas", "ForgotPasswordResponse", {
   additionalProperties: false,
   required: ["data", "message"],
   properties: {
-    messsage: {
+    message: {
       type: "string",
       example: "An OTP has been sent to your email"
     },
@@ -237,7 +237,7 @@ oapi.component("schemas", "ResetPasswordResponse", {
   additionalProperties: false,
   required: ["data", "message"],
   properties: {
-    messsage: {
+    message: {
       type: "string",
       example: "Password reset successful"
     },
@@ -292,7 +292,7 @@ oapi.component("schemas", "ChangePasswordResponse", {
   additionalProperties: false,
   required: ["data", "message"],
   properties: {
-    messsage: {
+    message: {
       type: "string",
       example: "Password changed successful"
     },
