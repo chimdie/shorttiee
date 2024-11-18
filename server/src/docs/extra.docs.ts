@@ -3,7 +3,7 @@ import { oapi } from "../config/docs.config";
 oapi.component("schemas", "Listing", {
   type: "object",
   description: "Shorts listing",
-  required: [],
+  required: ["id"],
   properties: {
     id: { type: "string", uniqueItems: true, format: "uuid" },
     title: { type: "string" },
