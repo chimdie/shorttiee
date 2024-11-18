@@ -9,6 +9,7 @@ export const AuthRoutes = {
 export const DashboardRoutes = {
   home: "/dashboard",
   shortlets: "/shortlet",
+  shortletDetail: "/shortlet/:id",
   settings: "/settings",
   payment: "/payments",
 };

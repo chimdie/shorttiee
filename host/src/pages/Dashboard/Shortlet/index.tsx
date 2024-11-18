@@ -24,7 +24,7 @@ export default function Shortlet(): JSX.Element {
             </div>
           </div>
           <div>
-            <Button className="bg-shorttiee_primary font-medium w-full">Add Shortlet</Button>
+            <Button className="bg-shorttiee_primary font-medium w-full">Add a Shortlet</Button>
           </div>
         </div>
       ) : (
