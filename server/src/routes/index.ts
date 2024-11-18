@@ -12,7 +12,10 @@ apiV1router.use("/auth", authRouter);
 
 apiV1router.get(
   "/",
-  oapi.path({ responses: { 200: { description: "LGTM" } } }),
+  oapi.path({
+    summary: "/",
+    responses: { 200: { description: "LGTM" } }
+  }),
   (_req, res) => {
     return res.json({ message: "Success" });
   }
@@ -21,6 +24,7 @@ apiV1router.get(
 apiV1router.get(
   "/hi",
   oapi.path({
+    summary: "Hi",
     parameters: [
       { in: "query", name: "find", required: true, schema: { type: "string" } }
     ],
