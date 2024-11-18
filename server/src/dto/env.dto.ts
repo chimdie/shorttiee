@@ -6,6 +6,10 @@ import { z } from "zod";
 export const EnvDto = z.object({
   PORT: z.coerce.number(),
   JWT_SECRET: z.string(),
+
+  /**
+   * @example "sqlite3:db/db.sqlite3"
+   */
   DATABASE_URL: z.string(),
   OTP_SIZE: z.coerce.number(),
   /** duration in seconds */
