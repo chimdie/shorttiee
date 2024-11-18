@@ -26,6 +26,7 @@ describe("POST /api/v1/auth/register", () => {
       .expect(201);
 
     assert.ok("data" in res.body);
+    assert.notEqual("authId" in res.body.data, true);
     assert.equal("string", typeof res.body.data.token);
   });
 });

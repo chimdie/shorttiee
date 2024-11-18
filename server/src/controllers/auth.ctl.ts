@@ -32,6 +32,7 @@ import { OTP } from "../utils/otp";
 import assert from "assert";
 import { db } from "../config/db.config";
 import { appEnv } from "../config/env.config";
+import { User } from "../dto/types.dto";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
@@ -74,8 +75,19 @@ export const registerCtl = ctlWrapper(
         const err = new Error("An error occured while creating user");
         throw err;
       }
+      const user: User = {
+        id: userWithAuth.id,
+        email: userWithAuth.email,
+        gender: userWithAuth.gender,
+        lastName: userWithAuth.lastName,
+        address: userWithAuth.address,
+        firstName: userWithAuth.firstName,
+        mobileNumber: userWithAuth.mobileNumber,
+        businessName: userWithAuth.businessName,
+        referrerCode: userWithAuth.referrerCode
+      };
 
-      return userWithAuth;
+      return user;
     });
 
     const newUser = trx(); // run transaction
