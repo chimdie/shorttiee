@@ -47,7 +47,6 @@ export default function AddShortletModal({
           </Button>
         </ModalFooter>
       </ModalContent>
-      jejej
     </Modal>
   );
 }

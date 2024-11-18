@@ -1,10 +1,13 @@
+import AddShortletModal from "@/components/Shortlet/add-shortlet-modal";
 import ShortletTable from "@/components/Shortlet/shortlet-table";
 import { Button } from "@/components/ui/button";
+import { useDisclosure } from "@nextui-org/react";
 import { Hotel } from "lucide-react";
 import { useState } from "react";
 
 export default function Shortlet(): JSX.Element {
   const [isShortlet] = useState<boolean>(false);
+  const addFirstShortlet = useDisclosure();
   return (
     <>
       {isShortlet ? (
@@ -24,7 +27,12 @@ export default function Shortlet(): JSX.Element {
             </div>
           </div>
           <div>
-            <Button className="bg-shorttiee_primary font-medium w-full">Add a Shortlet</Button>
+            <Button
+              className="bg-shorttiee_primary font-medium w-full"
+              onClick={addFirstShortlet.onOpen}
+            >
+              Add a Shortlet
+            </Button>
           </div>
         </div>
       ) : (
@@ -32,6 +40,12 @@ export default function Shortlet(): JSX.Element {
           <ShortletTable />
         </>
       )}
+
+      <AddShortletModal
+        isOpen={addFirstShortlet.isOpen}
+        onOpenChange={addFirstShortlet.onOpenChange}
+        onClose={addFirstShortlet.onClose}
+      />
     </>
   );
 }
