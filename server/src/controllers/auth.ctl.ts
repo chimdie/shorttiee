@@ -32,7 +32,7 @@ import { OTP } from "../utils/otp";
 import assert from "assert";
 import { db } from "../config/db.config";
 import { appEnv } from "../config/env.config";
-import { User } from "../dto/types.dto";
+import { Auth, User } from "../dto/types.dto";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
@@ -87,10 +87,19 @@ export const registerCtl = ctlWrapper(
         referrerCode: userWithAuth.referrerCode
       };
 
-      return user;
+      const auth: Auth = {
+        id: userWithAuth.authId,
+        hash: userWithAuth.hash,
+        otp: userWithAuth.otp,
+        userId: userWithAuth.userId,
+        nonce: userWithAuth.nonce,
+        otpTTL: userWithAuth.otpTTL
+      };
+
+      return [user, auth] as const;
     });
 
-    const newUser = trx(); // run transaction
+    const [newUser, auth] = trx(); // run transaction
 
     if (!newUser) {
       return ErrorResponse(res, "An error occured while creating user");
@@ -98,7 +107,7 @@ export const registerCtl = ctlWrapper(
 
     const [signAuthTokenErr, token] = signAuthToken({
       id: newUser.id,
-      nonce: newUser.nonce
+      nonce: auth.nonce
     });
     if (signAuthTokenErr) {
       return ErrorResponse(res, "An error occured while siging token");
