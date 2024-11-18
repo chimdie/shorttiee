@@ -1,17 +1,17 @@
-import { DashboardRoutes } from "@/types/routes";
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/react";
 import { Link } from "react-router-dom";
+import { DashboardRoutes } from "@/types/routes";
 
-export default function ShortletDetails() {
+export default function EditShortlet(): JSX.Element {
   return (
     <div className="py-6 space-y-6">
       <Breadcrumbs>
         <BreadcrumbItem>
           <Link to={DashboardRoutes.shortlets}>Shortlets</Link>
         </BreadcrumbItem>
-        <BreadcrumbItem>Shortlet name</BreadcrumbItem>
+        <BreadcrumbItem>Shortlet to edit name</BreadcrumbItem>
       </Breadcrumbs>
-      <div>shortletDetails</div>
+      <div>editShortlet</div>
     </div>
   );
 }

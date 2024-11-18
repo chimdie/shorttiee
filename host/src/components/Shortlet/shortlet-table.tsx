@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import TablePagination from "../TablePagination/index";
 import { shortletData } from "@/dummyData/shortlet";
 import { DashboardRoutes } from "@/types/routes";
+import ActionPopover from "./action-popover";
 
 const statusTheme = {
   active: "text-shorttiee_green-dark bg-shorttiee_green-light",
@@ -25,7 +26,7 @@ const statusTheme = {
 
 export default function ShortletTable(): JSX.Element {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const filteredShortlets = shortletData.filter(
     (item) =>
@@ -42,7 +43,7 @@ export default function ShortletTable(): JSX.Element {
   return (
     <div className="py-6 space-y-6">
       <div className="flex  justify-between items-center gap-6">
-        <div className="w-3/4">
+        <div className="w-full md:w-1/4">
           <Input
             radius="sm"
             variant="bordered"
@@ -73,12 +74,9 @@ export default function ShortletTable(): JSX.Element {
             <TableColumn>Status</TableColumn>
             <TableColumn>Actions</TableColumn>
           </TableHeader>
-          <TableBody>
+          <TableBody emptyContent={"No shortlet to display."}>
             {filteredShortlets.map((item) => (
-              <TableRow
-                className="bg-white border-y-5 border-grey_100"
-                key={item._id}
-              >
+              <TableRow className="bg-white border-y-5 border-grey_100 " key={item._id}>
                 <TableCell onClick={() => navigate(`${DashboardRoutes.shortlets}/${item._id}`)}>
                   <span className="line-clamp-2 max-w-full overflow-hidden text-ellipsis whitespace-normal text-xs md:text-sm text-black font-normal cursor-pointer">
                     {item.name}
@@ -98,7 +96,11 @@ export default function ShortletTable(): JSX.Element {
                     <span className="text-xs font-normal capitalize">{item.status}</span>
                   </Chip>
                 </TableCell>
-                <TableCell>action</TableCell>
+                <TableCell>
+                  <div>
+                    <ActionPopover id={item._id} />
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
