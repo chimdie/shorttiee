@@ -75,6 +75,8 @@ oapi.component("schemas", "RegisterResponse", {
  */
 export const registerDoc = oapi.path({
   tags: ["Authentication"],
+  description: "Create an account",
+  summary: "Create an account",
   requestBody: {
     content: {
       "application/json": {
@@ -144,6 +146,7 @@ typeAssert<Equals<FromSchema<typeof LoginDocSchema>, LoginDto>>();
  */
 export const loginDoc = oapi.path({
   tags: ["Authentication"],
+  summary: "Login",
   requestBody: {
     content: {
       "application/json": {
@@ -196,6 +199,7 @@ typeAssert<
 
 export const forgotPasswordDocs = oapi.path({
   tags: ["Authentication"],
+  summary: "Forgot password",
   requestBody: {
     content: {
       "application/json": {
@@ -251,6 +255,7 @@ typeAssert<
 
 export const resetPasswordDocs = oapi.path({
   tags: ["Authentication"],
+  summary: "Reset password",
   requestBody: {
     content: {
       "application/json": {
@@ -310,6 +315,7 @@ export const changePasswordDocs = oapi.path({
 By default, changing password will invalidate all previously issued tokens. 
 To prevent this behaviour when changing a user password, set \`reauth\` to \`false\`
   `,
+  summary: "Change password",
   requestBody: {
     content: {
       "application/json": {
