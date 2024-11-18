@@ -10,6 +10,7 @@ export const DashboardRoutes = {
   home: "/dashboard",
   shortlets: "/shortlet",
   shortletDetail: "/shortlet/:id",
+  editShortlet: "/shortlet/edit/:id",
   settings: "/settings",
   payment: "/payments",
 };
