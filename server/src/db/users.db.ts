@@ -30,7 +30,7 @@ export function findUserByIdWithAuth(id: string) {
   return db
     .prepare<
       string[],
-      WithDBTimestamps<User & Auth>
+      WithDBTimestamps<User & Auth & { authId: string }>
     >("SELECT u.*, a.hash, a.id AS authId, a.nonce , a.otp, a.otpTTL FROM tblAuthentications AS a JOIN  tblUsers AS u ON a.userId=u.id WHERE u.id = ?")
     .get(id);
 }
