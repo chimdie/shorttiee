@@ -1,4 +1,6 @@
+import { useState } from "react";
 import {
+  Chip,
   Input,
   Table,
   TableBody,
@@ -10,8 +12,30 @@ import {
 import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import TablePagination from "../TablePagination/index";
+import { shortletData } from "@/dummyData/shortlet";
+
+const statusTheme = {
+  active: "text-shorttiee_green-dark bg-shorttiee_green-light",
+  pending: "text-shorttiee_yellow-dark bg-shorttiee_yellow-light",
+  rejected: "text-shorttiee_red-dark bg-shorttiee_red-light",
+  terminated: "text-grey_300 bg-grey_200",
+};
 
 export default function ShortletTable(): JSX.Element {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const filteredShortlets = shortletData.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.location.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  const getStatusClass = (status: string) => {
+    return Object.keys(statusTheme).find((key) => status.includes(key))
+      ? statusTheme[status as keyof typeof statusTheme]
+      : statusTheme.terminated;
+  };
   return (
     <div className="py-6">
       <div className="flex  justify-between items-center gap-6">
@@ -21,6 +45,8 @@ export default function ShortletTable(): JSX.Element {
             variant="bordered"
             startContent={<Search size={16} className="pointer-events-none text-grey_400" />}
             placeholder="Search shortlets by name,type or location"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <Button className="bg-shorttiee_primary font-medium ">Add Shorlet</Button>
@@ -45,14 +71,33 @@ export default function ShortletTable(): JSX.Element {
             <TableColumn>Actions</TableColumn>
           </TableHeader>
           <TableBody>
-            <TableRow className="bg-white border-y-5 border-grey_100 cursor-pointer">
-              <TableCell>jejeje</TableCell>
-              <TableCell>jejeje</TableCell>
-              <TableCell>jejeje</TableCell>
-              <TableCell>jejeje</TableCell>
-              <TableCell>jejeje</TableCell>
-              <TableCell>jejeje</TableCell>
-            </TableRow>
+            {filteredShortlets.map((item) => (
+              <TableRow
+                className="bg-white border-y-5 border-grey_100 cursor-pointer"
+                key={item._id}
+              >
+                <TableCell>
+                  <span className="line-clamp-2 max-w-full overflow-hidden text-ellipsis whitespace-normal text-xs md:text-sm text-black font-normal">
+                    {item.name}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs md:text-sm font-normal text-black">{item.type}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs md:text-sm font-normal text-black">{item.location}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs md:text-sm font-normal text-black">{item.price}</span>
+                </TableCell>
+                <TableCell>
+                  <Chip radius="sm" className={getStatusClass(item.status)}>
+                    <span className="text-xs font-normal capitalize">{item.status}</span>
+                  </Chip>
+                </TableCell>
+                <TableCell>action</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>
