@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
 import {Feather} from '@expo/vector-icons';
 import tw from 'twrnc';
@@ -11,6 +11,8 @@ export type ShortletCardT = {
 };
 
 export const ShortletCard = ({isVertical}: ShortletCardT) => {
+  const [isFavourite, setIsFavourite] = useState<boolean>(false);
+
   return (
     <Link
       asChild
@@ -63,9 +65,13 @@ export const ShortletCard = ({isVertical}: ShortletCardT) => {
               <Text style={tw`text-gray-500 text-xs`}>/night</Text>
             </View>
             <TouchableOpacity
-              style={tw`bg-white rounded-full p-2 shadow-md`}
-              activeOpacity={0.7}>
-              <Heart size={20} color={getColor('shorttiee-primary')} />
+              onPress={() => setIsFavourite(!isFavourite)}
+              style={tw`bg-white rounded-full p-2 shadow-md`}>
+              <Heart
+                size={20}
+                color={getColor('shorttiee-primary')}
+                variant={isFavourite ? 'Bold' : 'Outline'}
+              />
             </TouchableOpacity>
           </View>
         </View>
