@@ -53,7 +53,7 @@ export function UnControlledTextInput(props: TextInputT) {
         <View>{props.startContent}</View>
         <TextInput
           {...props}
-          style={tw`flex-1 font-medium bg-gray-100 text-sm ${props.startContent ? 'pl-2' : ''} ${Platform.select(
+          style={tw`flex-1 font-medium bg-gray-100 text-sm pl-1 ${Platform.select(
             {
               android: 'py-2',
               ios: 'py-4',

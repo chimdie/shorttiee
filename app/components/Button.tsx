@@ -15,6 +15,10 @@ const variants = {
     text: getColor('shorttiee-grey-400'),
     box: 'transparent',
   },
+  danger: {
+    text: '#dc2626',
+    box: getColor('shorttiee-primary-100'),
+  },
 };
 
 type Variant = keyof typeof variants;
