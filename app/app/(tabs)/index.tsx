@@ -8,12 +8,14 @@ import {
   Text,
   SafeAreaView,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {ApartmentCard} from '@/components/Cards/ApartmentCard';
 import tw from 'twrnc';
 import {ShortletCard} from '@/components/Cards/ShortletCard';
 import {Link} from 'expo-router';
+import Constants from 'expo-constants';
 
 const statesDATA = [
   {
@@ -55,35 +57,45 @@ export default function HomeScreen() {
           borderWidth: 0,
         }}
       />
-      <View style={tw`flex-row items-center justify-between w-full px-4 mb-4`}>
-        <View className="flex-row items-center gap-2">
-          <HomeHashtag
-            size={44}
-            variant="Bulk"
-            color={getColor('shorttiee-primary')}
-          />
-          <View className="flex-row items-center gap-1">
-            <Text className="text-black text-lg">Hello Username</Text>
-            <HelloWave />
-          </View>
-        </View>
-        <View className="flex-row items-center gap-2">
-          <TouchableOpacity className="items-center justify-center aspect-square">
-            <Notification size={28} color={getColor('shorttiee-primary')} />
-          </TouchableOpacity>
-          <Link href="/(app)/favourites" asChild>
-            <TouchableOpacity className="items-center justify-center aspect-square">
-              <Heart
-                size={28}
-                color={getColor('shorttiee-primary')}
-                variant="Bold"
-              />
-            </TouchableOpacity>
-          </Link>
-        </View>
-      </View>
       <SafeAreaView className="bg-pax-white flex-1">
         <ScrollView className="flex-1">
+          <View
+            style={[
+              tw`flex-row items-center justify-between w-full px-4 mb-4`,
+              {
+                marginTop: Platform.select({
+                  android: Constants.statusBarHeight - 30,
+                  ios: Constants.statusBarHeight - 38,
+                  default: Constants.statusBarHeight - 36,
+                }),
+              },
+            ]}>
+            <View className="flex-row items-center gap-2">
+              <HomeHashtag
+                size={44}
+                variant="Bulk"
+                color={getColor('shorttiee-primary')}
+              />
+              <View className="flex-row items-center gap-1">
+                <Text className="text-black text-lg">Hello Username</Text>
+                <HelloWave />
+              </View>
+            </View>
+            <View className="flex-row items-center gap-2">
+              <TouchableOpacity className="items-center justify-center aspect-square">
+                <Notification size={28} color={getColor('shorttiee-primary')} />
+              </TouchableOpacity>
+              <Link href="/(app)/favourites" asChild>
+                <TouchableOpacity className="items-center justify-center aspect-square">
+                  <Heart
+                    size={28}
+                    color={getColor('shorttiee-primary')}
+                    variant="Bold"
+                  />
+                </TouchableOpacity>
+              </Link>
+            </View>
+          </View>
           <View style={tw`flex-1 gap-8 px-4`}>
             <View className="gap-4">
               <Text className="text-2xl font-semibold">
