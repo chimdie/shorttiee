@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "shorttiee",
+    "name": "Shorttiee",
     "slug": "shorttiee",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -27,7 +27,14 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
