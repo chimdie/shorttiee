@@ -24,9 +24,9 @@ const UserDoc = {
     lastName: { type: "string" },
     email: { type: "string", uniqueItems: true },
     mobileNumber: { type: "string" },
-    businessName: { type: "string" },
-    referrerCode: { type: "string" },
-    address: { type: "string" },
+    businessName: { type: "string", nullable: true },
+    referrerCode: { type: "string", nullable: true },
+    address: { type: "string", nullable: true },
     gender: {
       type: "string",
       enum: ["M", "F"] as const,
