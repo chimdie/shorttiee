@@ -1,4 +1,5 @@
 import { db } from "../config/db.config";
+import { CategoryDto, ListingsDto } from "../dto/listings.dto";
 import { Auth, User } from "../dto/types.dto";
 import { faker } from "@faker-js/faker";
 
@@ -28,7 +29,7 @@ function seedUser() {
         gender: faker.helpers.arrayElement(["M", "F"]),
         address: faker.location.streetAddress(),
         mobileNumber: faker.helpers.fromRegExp("+2347[0-9]{9}"), //.phone.number({ style: "international" })
-        businessName: faker.company.name(),
+        businessName: faker.helpers.arrayElement([faker.company.name(), null]),
         id: crypto.randomUUID(),
         referrerCode: null
       };
@@ -47,18 +48,113 @@ function seedUser() {
       userStatement.run(user);
     }
   });
-
   trx();
+
+  const users = db.prepare<[], User>("SELECT * FROM tblUsers").all();
+  return users;
 }
 
-function skipForeignKeyConstraints(fn: (...args: any[]) => void) {
+function seedCategories() {
+  const statements = Array.from({ length: 8 }).map(() => {
+    const categoryStatement = db.prepare<CategoryDto[]>(`
+      INSERT INTO tblListings (id, name, address)
+      VALUES(@id, @name, @address)
+    `);
+
+    return categoryStatement;
+  });
+
+  const trx = db.transaction(() => {
+    // const
+    for (const statement of statements) {
+      const listings: CategoryDto = {
+        id: faker.string.uuid(),
+        name: faker.helpers.arrayElement(["Beach house", "Villa", "Duplex"]),
+        comment: null
+      };
+
+      statement.run(listings);
+    }
+  });
+
+  trx();
+
+  const categories = db
+    .prepare<[], CategoryDto>("SELECT * FROM tblCategories")
+    .all();
+  return categories;
+}
+
+function seedListings(userIds: string[], categoryIds: string[]) {
+  const statements = Array.from({ length: 30 }).map(() => {
+    const listingStatement = db.prepare<ListingsDto[]>(`
+      INSERT INTO tblListings (id, name, address, type, status, details, description, price, rate, facilities, restrictions, userId, categoryId)
+      VALUES(@id, @name, @address, @type, @status, @details, @description, @price, @rate, @facilities, @restrictions, @userId, @categoryId)
+    `);
+
+    return listingStatement;
+  });
+
+  const trx = db.transaction(() => {
+    for (const statement of statements) {
+      const listings: ListingsDto = {
+        id: faker.string.uuid(),
+        name: faker.commerce.productName(),
+        address: faker.location.streetAddress(),
+        type: faker.helpers.arrayElement(["RENTAL", "SALE", "SHORTLET"]),
+        status: faker.helpers.arrayElement([
+          "APPROVED",
+          "REJECTED",
+          "AWAITING_REVIEW"
+        ]),
+        details: faker.commerce.productDescription(),
+        description: faker.commerce.productDescription(),
+        facilities: null,
+        restrictions: null,
+        rate: +faker.commerce.price(),
+        price: +faker.commerce.price(),
+        images: Array.from({ length: faker.number.int({ max: 5 }) }).map(
+          (_) => {
+            return faker.image.avatar();
+          }
+        ),
+
+        userId: faker.helpers.arrayElement(userIds),
+        categoryId: faker.helpers.arrayElement(categoryIds)
+      };
+
+      statement.run(listings);
+    }
+  });
+
+  trx();
+
+  const listings = db
+    .prepare<[], ListingsDto>("SELECT * FROM tblListings")
+    .all();
+  return listings;
+}
+
+function skipForeignKeyConstraints<T = void>(fn: (...args: any[]) => T): T {
   db.exec("PRAGMA foreign_keys=OFF;");
-  fn();
+  const result = fn();
   db.exec("PRAGMA foreign_keys=ON;");
+
+  return result;
 }
 
 async function main() {
-  skipForeignKeyConstraints(seedUser);
+  const users = skipForeignKeyConstraints(seedUser);
+  const categories = skipForeignKeyConstraints(seedCategories);
+
+  const listings = skipForeignKeyConstraints(() => {
+    return seedListings(
+      users.map((u) => u.id),
+      categories.map((c) => c.id)
+    );
+  });
+
+  return { users, categories, listings };
 }
 
 main();
