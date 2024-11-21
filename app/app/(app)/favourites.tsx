@@ -13,19 +13,16 @@ export default function Favourites() {
     <View className="flex-1 bg-white">
       <Header
         backgroundColor="white"
-        containerStyle={{
-          borderBottomColor: 'transparent',
-          borderWidth: 0,
-        }}
-        leftComponent={
-          <Pressable
-            style={tw`flex-row items-center gap-1`}
-            onPress={() => router.back()}>
+        containerStyle={{borderBottomColor: 'transparent', borderWidth: 0}}
+        placement="left">
+        <View className="flex-row items-center">
+          <Pressable onPress={() => router.back()}>
             <Feather name="chevron-left" size={32} color="black" />
-            <Text className="text-xl">Favourites</Text>
           </Pressable>
-        }
-      />
+          <Text className="text-xl">Favourites</Text>
+        </View>
+      </Header>
+
       <SafeAreaView className="flex-1">
         <View style={[tw`flex-1 px-4`]}>
           <FlashList
