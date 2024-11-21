@@ -28,3 +28,8 @@ interface _WithId<T extends Record<string, any>> extends T {
 }
 
 export type WithId<T extends Record<string, any>> = Expand<_WithId<T>>;
+
+type _Id<T extends string> = T extends `${infer U}Id` ? U : T;
+export type PopulatedEntity<T extends Record<string, any>> = {
+  [k in _Id<keyof T>]: k extends keyof T ? T[k] : T[`${k}Id`];
+};
