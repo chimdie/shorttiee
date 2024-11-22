@@ -20,7 +20,7 @@ import Settings from "@/pages/Dashboard/Settings/index";
 import ShortletDetails from "@/pages/Dashboard/Shortlet/shortletDetails";
 import EditShortlet from "@/pages/Dashboard/Shortlet/editShortlet";
 
-import NotFound from "./components/NotFound";
+import NotFound from "@/components/NotFound";
 
 export const rootRouter = createBrowserRouter([
   {
