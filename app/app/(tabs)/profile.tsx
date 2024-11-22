@@ -118,7 +118,17 @@ export default function Profile() {
                   <Text className="text-center text-gray-500">{version}</Text>
                 }
               />
-              <ProfileQuickButton label="Logout" icon="log-out" isLogout />
+              <ProfileQuickButton
+                label="Logout"
+                icon="log-out"
+                isLogout
+                onPress={() => {
+                  Alert.alert('Logout', 'Are you sure you want to logout', [
+                    {text: 'No', isPreferred: true, style: 'cancel'},
+                    {text: 'Yes', style: 'destructive'},
+                  ]);
+                }}
+              />
             </View>
             <View className="mb-8">
               <ShorttieeButton
