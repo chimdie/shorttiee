@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Share,
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import tw from 'twrnc';
@@ -24,7 +25,7 @@ export default function ApartmentDetailScreen() {
           borderWidth: 0,
         }}
       />
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1 justify-between">
         <ScrollView className="flex-1 bg-white gap-8">
           <View className="relative">
             <Image
@@ -44,7 +45,11 @@ export default function ApartmentDetailScreen() {
                 <TouchableOpacity className="bg-white p-2 rounded-full">
                   <Heart size={20} color={getColor('shorttiee-primary')} />
                 </TouchableOpacity>
-                <TouchableOpacity className="bg-white p-2 rounded-full">
+                <TouchableOpacity
+                  className="bg-white p-2 rounded-full"
+                  onPress={() =>
+                    Share.share({title: 'Share', message: 'sharing is caring'})
+                  }>
                   <Ionicons
                     name="share-social-outline"
                     size={20}
