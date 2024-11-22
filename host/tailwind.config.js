@@ -53,7 +53,6 @@ export default {
         grey_300: "#A1A3B0",
         grey_400: "#6B7280",
         white: "#FFFFFF",
-        black: "#000000",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
