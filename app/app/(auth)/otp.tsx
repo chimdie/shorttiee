@@ -10,17 +10,17 @@ import {AuthScreenLayout} from '@/layouts/authLayout';
 // TODO there should be a modal after verifying OTP
 export default function OtpScreen() {
   const [otpCode, setOtpCode] = useState<string>('');
-  const [_isPinReady, setIsPinReady] = useState<boolean>(false); // ? Commented out
   const router = useRouter();
   const {email} = useLocalSearchParams();
   const numberOfDigits = 4;
 
   const handleSubmitOtp = useCallback((otpCode?: string) => {
-    // if (isPinReady) {
+    if (otpCode && !/\d{4}/.exec(otpCode)?.input) {
+      return;
+    }
     Keyboard.dismiss();
     console.log(otpCode);
     router.navigate('/(tabs)/');
-    // }
   }, []);
 
   return (
@@ -35,12 +35,17 @@ export default function OtpScreen() {
             textContentType: 'oneTimeCode',
             autoComplete: 'sms-otp',
             autoFocus: true,
+            onSubmitEditing() {
+              handleSubmitOtp(otpCode);
+            },
           }}
           numberOfDigits={numberOfDigits}
+          onTextChange={t => {
+            setOtpCode(t);
+          }}
           onFilled={text => {
-            setIsPinReady(true);
             setOtpCode(text);
-            Keyboard.dismiss();
+            handleSubmitOtp(text);
           }}
           theme={{
             focusStickStyle: tw`h-5`,
