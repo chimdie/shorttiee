@@ -101,25 +101,27 @@ export default function HomeScreen() {
               <Text className="text-2xl font-semibold">
                 Find the best shotlets
               </Text>
-              <View style={tw`flex-1 h-28 min-h-24`}>
-                <FlashList
-                  data={statesDATA}
-                  estimatedItemSize={36}
-                  keyExtractor={item => item.title}
-                  horizontal
-                  contentContainerStyle={{paddingBottom: 20}}
-                  renderItem={({item: {icon: Icon, title}}) => (
-                    <TouchableOpacity className="mx-2">
-                      <View className="items-center gap-1">
-                        <Icon variant="Bulk" size={64} />
-                        <Text>{title}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                />
-              </View>
+
+              <FlashList
+                data={statesDATA}
+                estimatedItemSize={36}
+                keyExtractor={item => item.title}
+                horizontal
+                renderItem={({item: {icon: Icon, title}}) => (
+                  <TouchableOpacity className="mx-2">
+                    <View className="items-center gap-1 border- border-red-500">
+                      <Icon
+                        variant="Bulk"
+                        size={40}
+                        color={getColor('shorttiee-primary')}
+                      />
+                      <Text>{title}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+              />
             </View>
-            <View style={tw`flex-1 min-h-96 h-[400px]`}>
+            <View className="flex-1">
               <FlashList
                 horizontal
                 data={topApartments}
