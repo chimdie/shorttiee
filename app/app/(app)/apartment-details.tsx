@@ -109,7 +109,7 @@ export default function ApartmentDetailScreen() {
             </View>
           </View>
         </ScrollView>
-        <View className="flex-row justify-between items-center p-4 pb-10 bg-white border-t border-gray-100 bottom-0 absolute w-full gap-6">
+        <View className="flex-row justify-between items-center p-4 bg-white border- w-full gap-x-6">
           <View className="flex-row items-center">
             <Text className="text-lg font-bold text-shorttiee-primary">
               ₦96K
