@@ -18,7 +18,7 @@ export default function DeleteShortletModal({
     <Modal size="md" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         <ModalBody>
-          <div className="flex flex-col py-8 space-y-8">
+          <div className="flex flex-col p-4 space-y-8">
             <div className="rounded-full bg-gray-100 w-14 h-14 flex justify-center items-center mx-auto">
               <div className="rounded-full bg-white w-10 h-10 flex justify-center items-center">
                 <Trash2 className="text-2xl text-shorttiee_red-dark" />
@@ -36,7 +36,7 @@ export default function DeleteShortletModal({
           </div>
         </ModalBody>
         <ModalFooter>
-          <div className="flex gap-3 pt-8">
+          <div className="flex gap-3">
             <Button
               onClick={onClose}
               size="lg"
