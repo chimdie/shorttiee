@@ -1,12 +1,27 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button, Chip, Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from "@nextui-org/react";
-import { Hotel, Search } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Button,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  useDisclosure,
+} from "@nextui-org/react";
+import { EllipsisVertical, Hotel, Search } from "lucide-react";
 import AddShortletModal from "@/components/Shortlet/add-shortlet-modal";
-import { shortletData } from "@/dummyData/shortlet";
 import TablePagination from "@/components/TablePagination";
-import ActionPopover from "@/components/Shortlet/action-popover";
+import DeleteShortletModal from "@/components/Shortlet/delete-shortlet-modal";
 import { DashboardRoutes } from "@/types/routes";
+import { shortletData } from "@/dummyData/shortlet";
 
 const statusTheme = {
   active: "text-shorttiee_green-dark bg-shorttiee_green-light",
@@ -18,9 +33,10 @@ const statusTheme = {
 export default function Shortlet(): JSX.Element {
   const [isShortlet] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [shortletId, setShortletId] = useState<string | null>(null);
 
-  const addFirstShortlet = useDisclosure();
   const addShortletModal = useDisclosure();
+  const deleteShortletModal = useDisclosure();
 
   const navigate = useNavigate();
 
@@ -57,7 +73,7 @@ export default function Shortlet(): JSX.Element {
           <div>
             <Button
               className="bg-shorttiee_primary text-white font-medium w-full"
-              onClick={addFirstShortlet.onOpen}
+              onClick={addShortletModal.onOpen}
             >
               Add a Shortlet
             </Button>
@@ -77,7 +93,10 @@ export default function Shortlet(): JSX.Element {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Button className="bg-shorttiee_primary text-white font-medium" onClick={addShortletModal.onOpen}>
+                <Button
+                  className="bg-shorttiee_primary text-white font-medium"
+                  onClick={addShortletModal.onOpen}
+                >
                   Add a Shortlet
                 </Button>
               </div>
@@ -102,31 +121,55 @@ export default function Shortlet(): JSX.Element {
                   </TableHeader>
                   <TableBody emptyContent={"No shortlet to display."}>
                     {filteredShortlets.map((item) => (
-                      <TableRow className="bg-white border-y-5 border-grey_100 " key={item._id}>
-                        <TableCell onClick={() => navigate(`${DashboardRoutes.shortlets}/${item._id}`)}>
-                          <span className="line-clamp-2 max-w-full overflow-hidden text-ellipsis whitespace-normal text-xs md:text-sm text-black font-normal cursor-pointer">
-                            {item.name}
-                          </span>
+                      <TableRow
+                        className="bg-white border-y-5 border-grey_100  cursor-pointer"
+                        key={item._id}
+                        onClick={() => navigate(`${DashboardRoutes.shortlets}/${item._id}`)}
+                      >
+                        <TableCell>
+                          {item.name}
                         </TableCell>
                         <TableCell>
-                          <span className="text-xs md:text-sm font-normal text-black">{item.type}</span>
+                          {item.type}
                         </TableCell>
                         <TableCell>
-                          <span className="text-xs md:text-sm font-normal text-black">
-                            {item.location}
-                          </span>
+                          {item.location}
                         </TableCell>
                         <TableCell>
-                          <span className="text-xs md:text-sm font-normal text-black">{item.price}</span>
+                          {item.price}
                         </TableCell>
                         <TableCell>
-                          <Chip radius="sm" className={getStatusClass(item.status)}>
-                            <span className="text-xs font-normal capitalize">{item.status}</span>
+                          <Chip radius="sm" className={`${getStatusClass(item.status)} text-xs font-normal capitalize`}>
+                            {item.status}
                           </Chip>
                         </TableCell>
                         <TableCell>
                           <div>
-                            <ActionPopover id={item._id} />
+                            <Dropdown>
+                              <DropdownTrigger>
+                                <EllipsisVertical className="text-xs cursor-pointer" />
+                              </DropdownTrigger>
+                              <DropdownMenu aria-label="Shortlet Table Actions">
+                                <DropdownItem key="edit">
+                                  <Link to={`${DashboardRoutes.shortlets}/edit/${item._id}`}>
+                                    Edit Shortlet
+                                  </Link>
+                                </DropdownItem>
+                                <DropdownItem
+                                  key="delete"
+                                  className="text-danger"
+                                  color="danger"
+                                  onClick={() => {
+                                    if (item._id) {
+                                      setShortletId(item._id);
+                                      deleteShortletModal.onOpen();
+                                    }
+                                  }}
+                                >
+                                  Delete Shortlet
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </Dropdown>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -144,11 +187,14 @@ export default function Shortlet(): JSX.Element {
         </>
       )}
 
-      <AddShortletModal
-        isOpen={addFirstShortlet.isOpen}
-        onOpenChange={addFirstShortlet.onOpenChange}
-        onClose={addFirstShortlet.onClose}
-      />
+      {shortletId ? (
+        <DeleteShortletModal
+          isOpen={deleteShortletModal.isOpen}
+          onClose={deleteShortletModal.onClose}
+          onOpenChange={deleteShortletModal.onOpenChange}
+          id={shortletId}
+        />
+      ) : null}
     </>
   );
 }
