@@ -87,7 +87,7 @@ export const registerDoc = oapi.path({
     }
   },
   responses: {
-    200: {
+    201: {
       description: "Account registered",
       content: {
         "application/json": {

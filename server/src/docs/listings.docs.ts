@@ -28,7 +28,6 @@ export const ListingsDocSchema = {
       enum: ["AWAITING_REVIEW", "REJECTED", "APPROVED"] as const
     },
 
-    details: { type: "string", nullable: true },
     description: { type: "string", nullable: true },
     price: { type: "number", nullable: true },
     rate: { type: "number", nullable: true },
@@ -53,7 +52,6 @@ export const CreateListingsDocSchema = {
     address: { type: "string", format: "email" },
     type: { type: "string", enum: ["SHORTLET", "RENTAL", "SALE"] as const },
 
-    details: { type: "string", nullable: true },
     description: { type: "string", nullable: true },
     price: { type: "number", nullable: true },
     rate: { type: "number", nullable: true },

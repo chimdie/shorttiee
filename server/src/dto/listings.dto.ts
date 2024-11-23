@@ -21,7 +21,6 @@ export const ListingsDto = z.object({
     z.literal("REJECTED"),
     z.literal("APPROVED")
   ]),
-  details: z.string().nullish(),
   description: z.string().nullish(),
   price: z.number().nullish(),
   rate: z.number().nullish(),
