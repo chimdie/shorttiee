@@ -1,16 +1,6 @@
 import { z } from "zod";
 import { PopulatedEntity } from "../types/utils";
 
-export const CategoryDto = z.object({
-  id: z.string().uuid(),
-  name: z
-    .string()
-    .trim()
-    .min(3, { message: "Category name cannot be less that 3" }),
-  comment: z.string().trim().nullish()
-});
-export type CategoryDto = z.infer<typeof CategoryDto>;
-
 export const ListingsDto = z.object({
   id: z.string().uuid(),
   name: z
