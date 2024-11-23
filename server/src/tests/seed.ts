@@ -1,5 +1,6 @@
 import { db } from "../config/db.config";
-import { CategoryDto, ListingsDto } from "../dto/listings.dto";
+import { CategoryDto } from "../dto/category.dto";
+import { ListingsDto } from "../dto/listings.dto";
 import { Auth, User } from "../dto/types.dto";
 import { faker } from "@faker-js/faker";
 
@@ -55,10 +56,11 @@ function seedUser() {
 }
 
 function seedCategories() {
-  const statements = Array.from({ length: 8 }).map(() => {
+  const vals = ["Beach house", "Villa", "Duplex"];
+  const statements = Array.from({ length: vals.length }).map(() => {
     const categoryStatement = db.prepare<CategoryDto[]>(`
-      INSERT INTO tblListings (id, name, address)
-      VALUES(@id, @name, @address)
+      INSERT INTO tblCategories (id, name, comment)
+      VALUES(@id, @name, @comment)
     `);
 
     return categoryStatement;
@@ -66,14 +68,14 @@ function seedCategories() {
 
   const trx = db.transaction(() => {
     // const
-    for (const statement of statements) {
+    for (const statementIndex in statements) {
       const listings: CategoryDto = {
         id: faker.string.uuid(),
-        name: faker.helpers.arrayElement(["Beach house", "Villa", "Duplex"]),
+        name: vals[statementIndex],
         comment: null
       };
 
-      statement.run(listings);
+      statements[statementIndex].run(listings);
     }
   });
 
@@ -88,8 +90,8 @@ function seedCategories() {
 function seedListings(userIds: string[], categoryIds: string[]) {
   const statements = Array.from({ length: 30 }).map(() => {
     const listingStatement = db.prepare<ListingsDto[]>(`
-      INSERT INTO tblListings (id, name, address, type, status, details, description, price, rate, facilities, restrictions, userId, categoryId)
-      VALUES(@id, @name, @address, @type, @status, @details, @description, @price, @rate, @facilities, @restrictions, @userId, @categoryId)
+      INSERT INTO tblListings (id, name, address, type, status, description, price, rate, facilities, restrictions, userId, categoryId)
+      VALUES(@id, @name, @address, @type, @status, @description, @price, @rate, @facilities, @restrictions, @userId, @categoryId)
     `);
 
     return listingStatement;
@@ -107,7 +109,6 @@ function seedListings(userIds: string[], categoryIds: string[]) {
           "REJECTED",
           "AWAITING_REVIEW"
         ]),
-        details: faker.commerce.productDescription(),
         description: faker.commerce.productDescription(),
         facilities: null,
         restrictions: null,
