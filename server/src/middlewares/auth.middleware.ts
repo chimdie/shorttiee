@@ -11,30 +11,30 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   const token = header.replace("Bearer ", "");
 
   if (!token) {
-    return UnauthorizedResponse(res, "Unathorized");
+    return UnauthorizedResponse(res);
   }
 
   const [verifyError, _decoded] = verifyAuthToken(token);
 
   if (verifyError) {
-    return UnauthorizedResponse(res, "Unathorized");
+    return UnauthorizedResponse(res);
   }
 
   const decoded = _decoded as jwt.JwtPayload;
   const payload = decoded.payload;
 
   if (!("nonce" in payload && "id" in payload)) {
-    return UnauthorizedResponse(res, "Unathorized");
+    return UnauthorizedResponse(res);
   }
 
   const userWithAuth = findUserByIdWithAuth(payload.id);
 
   if (!userWithAuth) {
-    return UnauthorizedResponse(res, "Unathorized");
+    return UnauthorizedResponse(res);
   }
 
   if (userWithAuth.nonce !== payload.nonce) {
-    return UnauthorizedResponse(res, "Unathorized");
+    return UnauthorizedResponse(res);
   }
 
   const user: WithDBTimestamps<User> = {
