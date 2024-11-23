@@ -4,8 +4,8 @@
   "description": "shorttiee server",
   "main": "index.js",
   "scripts": {
-    "pretest": "dbmate --env-file \".env.test\" up",
-    "test": "NODE_ENV=test tsx --test src/tests/*",
+    "pretest": "dbmate --env-file \".env.test\" drop && dbmate --env-file \".env.test\" up && NODE_ENV=test tsx src/tests/seed.ts",
+    "test": "NODE_ENV=test tsx --test src/tests/*.test.ts",
     "posttest": "dbmate --env-file \".env.test\" drop",
     "dev": "tsx watch src/index.ts",
     "migrate:up": "dbmate up",
