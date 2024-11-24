@@ -14,7 +14,6 @@ categoryRouter
   .route("/")
   .post(
     createCategoryDoc,
-    authenticate,
     validator({ body: CreateCategoryDto }),
     createCategoryCtl
   )
