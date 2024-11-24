@@ -1,5 +1,5 @@
 -- migrate:up
-create table tblCategories (
+CREATE TABLE IF NOT EXISTS tblCategories (
   id VARCHAR(36) PRIMARY KEY NOT NULL, -- use uuid
   name varchar(50) NOT NULL UNIQUE,
   comment TEXT,
