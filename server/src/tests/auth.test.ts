@@ -1,9 +1,15 @@
-import { describe, it } from "node:test";
+import { before, describe, it } from "node:test";
 import assert from "node:assert";
 import supertest from "supertest";
 import { app } from "../app";
 import { ChangePasswordDto, LoginDto, RegisterDto } from "../dto/auth.dto";
 import { faker } from "@faker-js/faker";
+import { CreateApplicationService } from "../config/services.config";
+import { OTP } from "../utils/otp";
+
+before(() => {
+  new CreateApplicationService(app).addService("otp", OTP).build();
+});
 
 const userInfo: RegisterDto = {
   email: faker.internet.email(),

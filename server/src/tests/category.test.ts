@@ -6,6 +6,8 @@ import { db } from "../config/db.config";
 import { signAuthToken } from "../utils/auth-token";
 import assert from "node:assert";
 import { faker } from "@faker-js/faker";
+import { CreateApplicationService } from "../config/services.config";
+import { OTP } from "../utils/otp";
 
 let token = "";
 
@@ -30,6 +32,10 @@ before(() => {
   }
 
   token = payload;
+});
+
+before(() => {
+  new CreateApplicationService(app).addService("otp", OTP).build();
 });
 
 describe("POST /api/v1/categories", async () => {

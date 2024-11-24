@@ -1,7 +1,9 @@
 import { app } from "./app";
 import { appEnv } from "./config/env.config";
+import { CreateApplicationService } from "./config/services.config";
 import { OTP } from "./utils/otp";
 
-app.locals.otp = OTP;
-
-app.listen(appEnv.PORT ?? 4000);
+new CreateApplicationService(app)
+  .addService("otp", OTP)
+  .build()
+  .listen(appEnv.PORT ?? 4000);
