@@ -76,7 +76,7 @@ export default function HomeScreen() {
                   <SearchNormal1
                     size={28}
                     color={getColor('shorttiee-primary')}
-                    variant="Bold"
+                    // variant="Bold"
                   />
                 </TouchableOpacity>
               </Link>
@@ -93,6 +93,7 @@ export default function HomeScreen() {
                 estimatedItemSize={36}
                 keyExtractor={item => item.title}
                 horizontal
+                showsHorizontalScrollIndicator={false}
                 renderItem={({item: {icon: Icon, title}}) => (
                   <TouchableOpacity className="mx-2">
                     <View className="items-center gap-1">
@@ -119,6 +120,7 @@ export default function HomeScreen() {
                 estimatedItemSize={36}
                 keyExtractor={item => item}
                 horizontal
+                showsHorizontalScrollIndicator={false}
                 renderItem={({item}) => (
                   <TouchableOpacity className="items-center justify-center mx-2 px-6 h-12 rounded-full border border-shorttiee-primary/30">
                     <Text>{item}</Text>
