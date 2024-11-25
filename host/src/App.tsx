@@ -17,8 +17,10 @@ import Home from "@/pages/Dashboard/Home";
 import Shortlet from "@/pages/Dashboard/Shortlet";
 import Payments from "@/pages/Dashboard/Payments";
 import Settings from "@/pages/Dashboard/Settings/index";
+import ShortletDetails from "@/pages/Dashboard/Shortlet/shortletDetails";
+import EditShortlet from "@/pages/Dashboard/Shortlet/editShortlet";
 
-import NotFound from "./components/NotFound";
+import NotFound from "@/components/NotFound";
 
 export const rootRouter = createBrowserRouter([
   {
@@ -37,6 +39,8 @@ export const rootRouter = createBrowserRouter([
     children: [
       { path: DashboardRoutes.home, element: <Home /> },
       { path: DashboardRoutes.shortlets, element: <Shortlet /> },
+      { path: DashboardRoutes.shortletDetail, element: <ShortletDetails /> },
+      { path: DashboardRoutes.editShortlet, element: <EditShortlet /> },
       { path: DashboardRoutes.payment, element: <Payments /> },
       { path: DashboardRoutes.settings, element: <Settings /> },
     ],
