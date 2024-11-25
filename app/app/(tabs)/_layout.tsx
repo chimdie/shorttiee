@@ -1,41 +1,61 @@
 import {Tabs} from 'expo-router';
 import React from 'react';
+import {getColor} from '@/config/theme';
+import {Feather} from '@expo/vector-icons';
 
-import {TabBarIcon} from '@/components/navigation/TabBarIcon';
-import {Colors} from '@/constants/Colors';
-import {useColorScheme} from '@/hooks/useColorScheme';
+function TabBarIcon(props: {
+  name: React.ComponentProps<typeof Feather>['name'];
+  color: string;
+}) {
+  return <Feather size={24} style={{marginBottom: -3}} {...props} />;
+}
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: getColor('shorttiee-primary'),
         headerShown: false,
+        tabBarStyle: {
+          paddingBottom: 12,
+          height: 60,
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({color, focused}) => (
-            <TabBarIcon
-              name={focused ? 'home' : 'home-outline'}
-              color={color}
-            />
+          tabBarIcon: ({color}) => <TabBarIcon name="home" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="search"
+        options={{
+          title: 'Search',
+          tabBarIcon: ({color}) => <TabBarIcon name="search" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="payment"
+        options={{
+          title: 'Payment',
+          tabBarIcon: ({color}) => (
+            <TabBarIcon name="credit-card" color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="booking"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({color, focused}) => (
-            <TabBarIcon
-              name={focused ? 'code-slash' : 'code-slash-outline'}
-              color={color}
-            />
-          ),
+          title: 'Booking',
+          tabBarIcon: ({color}) => <TabBarIcon name="list" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({color}) => <TabBarIcon name="user" color={color} />,
         }}
       />
     </Tabs>

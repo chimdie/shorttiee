@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import {Link} from 'expo-router';
 export const ApartmentCard = () => {
   const screenWidth = Dimensions.get('window').width;
   const cardWidth = screenWidth * 0.8;
+  const [isFavourite, setIsFavourite] = useState<boolean>(false);
 
   return (
     <Link
@@ -37,8 +38,15 @@ export const ApartmentCard = () => {
                   ₦66K / night
                 </Text>
               </View>
-              <TouchableOpacity style={tw`bg-white p-1.5 rounded-full`}>
-                <Heart size={20} color={getColor('shorttiee-primary')} />
+
+              <TouchableOpacity
+                onPress={() => setIsFavourite(!isFavourite)}
+                style={tw`bg-white p-1.5 rounded-full`}>
+                <Heart
+                  size={20}
+                  color={getColor('shorttiee-primary')}
+                  variant={!isFavourite ? 'Bold' : 'Outline'}
+                />
               </TouchableOpacity>
             </View>
 
