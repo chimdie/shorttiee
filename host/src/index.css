@@ -80,3 +80,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.scroll {
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
