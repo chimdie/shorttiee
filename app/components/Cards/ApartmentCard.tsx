@@ -20,7 +20,7 @@ export const ApartmentCard = () => {
 
   return (
     <Link
-      href="/(app)/apartment-details"
+      href="/(tabs)/apartment-details"
       asChild
       style={[
         tw`bg-gray-800 rounded-xl mx-2 h-96 overflow-hidden`,

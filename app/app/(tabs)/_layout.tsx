@@ -29,10 +29,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="search"
+        name="favourites"
         options={{
-          title: 'Search',
-          tabBarIcon: ({color}) => <TabBarIcon name="search" color={color} />,
+          title: 'Favourites',
+          tabBarIcon: ({color}) => <TabBarIcon name="heart" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -55,6 +55,22 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
+          tabBarIcon: ({color}) => <TabBarIcon name="user" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="apartment-details"
+        options={{
+          href: null,
+          title: 'Apartment',
+          tabBarIcon: ({color}) => <TabBarIcon name="home" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="edit-profile"
+        options={{
+          href: null,
+          title: 'Edit Profile',
           tabBarIcon: ({color}) => <TabBarIcon name="user" color={color} />,
         }}
       />

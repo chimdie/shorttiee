@@ -16,7 +16,7 @@ export const ShortletCard = ({isVertical}: ShortletCardT) => {
   return (
     <Link
       asChild
-      href="/(app)/apartment-details"
+      href="/(tabs)/apartment-details"
       style={tw.style('bg-white rounded-lg gap-4 p-4 mb-4 shadow mx-[1px]')}>
       <Pressable
         style={tw.style(
