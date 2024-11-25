@@ -50,7 +50,7 @@ export const AddShortletSchema = z.object({
   bedroom: z.string({ message: "Number of bedroom is required" }),
   bathroom: z.string({ message: "Number of bathroom is required" }),
   location: z.string({ message: "Location is required" }),
-  image: z.string({ message: "Image is required" }),
+  image: z.array(z.any()),
   description: z.string({ message: "Description is required" }),
   price: z.string({ message: "Price is required" }),
   rate: z.string({ message: "Rate is required" }),
