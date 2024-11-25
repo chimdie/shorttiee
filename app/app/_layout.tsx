@@ -6,7 +6,7 @@ import 'react-native-reanimated';
 import {HomeHashtag} from 'iconsax-react-native';
 import '../global.css';
 
-import {ActivityIndicator, Text, View} from 'react-native';
+import {ActivityIndicator, Platform, Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -68,12 +68,36 @@ export default function RootLayout() {
             animationTypeForReplace: 'push',
           }}
         />
-        <Stack.Screen
-          name="search"
-          options={{
-            headerShown: false,
-          }}
-        />
+        {Platform.select({
+          android: (
+            <Stack.Screen
+              name="search"
+              options={{
+                headerShown: false,
+                animation: 'slide_from_bottom',
+              }}
+            />
+          ),
+          ios: (
+            <Stack.Screen
+              name="search"
+              options={{
+                headerShown: false,
+                presentation: 'modal',
+              }}
+            />
+          ),
+          default: (
+            <Stack.Screen
+              name="search"
+              options={{
+                headerShown: false,
+                animation: 'slide_from_bottom',
+              }}
+            />
+          ),
+        })}
+
         <Stack.Screen name="+not-found" />
       </Stack>
     </SafeAreaProvider>
