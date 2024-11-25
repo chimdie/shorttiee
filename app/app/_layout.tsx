@@ -69,7 +69,7 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="(app)"
+          name="search"
           options={{
             headerShown: false,
           }}

@@ -45,7 +45,7 @@ export default function Profile() {
           </Pressable>
         }
         rightComponent={
-          <Link href="/(app)/edit-profile" asChild>
+          <Link href="/(tabs)/edit-profile" asChild>
             <TouchableOpacity className="items-center justify-center aspect-square">
               <Feather
                 name="edit"
@@ -102,7 +102,7 @@ export default function Profile() {
                 status="Not Verified"
               />
               <ProfileQuickButton label="Payment History" icon="credit-card" />
-              <Link href="/(app)/favourites" asChild>
+              <Link href="/(tabs)/favourites" asChild>
                 <ProfileQuickButton label="Favourites" icon="heart" />
               </Link>
               <ProfileQuickButton
