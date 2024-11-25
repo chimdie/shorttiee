@@ -63,7 +63,7 @@ export default function TabLayout() {
         options={{
           href: null,
           title: 'Apartment',
-          tabBarIcon: ({color}) => <TabBarIcon name="home" color={color} />,
+          tabBarStyle: {display: 'none'},
         }}
       />
       <Tabs.Screen
@@ -71,7 +71,7 @@ export default function TabLayout() {
         options={{
           href: null,
           title: 'Edit Profile',
-          tabBarIcon: ({color}) => <TabBarIcon name="user" color={color} />,
+          tabBarStyle: {display: 'none'},
         }}
       />
     </Tabs>
