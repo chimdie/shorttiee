@@ -47,7 +47,9 @@
     "twrnc": "^4.6.0",
     "validator": "^13.12.0",
     "zod": "^3.23.8",
-    "@shopify/flash-list": "1.6.4"
+    "@shopify/flash-list": "1.6.4",
+    "expo-clipboard": "~6.0.3",
+    "expo-image-picker": "~15.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
