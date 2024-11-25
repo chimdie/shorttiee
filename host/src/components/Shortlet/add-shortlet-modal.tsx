@@ -1,5 +1,8 @@
+import { useRef, useState } from "react";
 import {
+  Badge,
   Button,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -13,9 +16,29 @@ import {
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { AddShortletSchema, shortletCategory, shortletFacilities, shortletRestrictions, shortletType } from "@/schema/shortlet.schema";
-import { Factory, House, MapPinHouse, MapPinned, OctagonMinus, Speech, Tickets, TriangleAlert, TypeOutline, Users, Wallet } from "lucide-react";
-import { Tag } from "iconsax-react";
+import {
+  AddShortletSchema,
+  shortletCategory,
+  shortletFacilities,
+  shortletRestrictions,
+  shortletType,
+} from "@/schema/shortlet.schema";
+import {
+  Tag,
+  Factory,
+  House,
+  Images,
+  MapPinHouse,
+  MapPinned,
+  OctagonMinus,
+  Speech,
+  Tickets,
+  TriangleAlert,
+  TypeOutline,
+  Users,
+  Wallet,
+  X,
+} from "lucide-react";
 
 type ShortletModalT = {
   isOpen: boolean;
@@ -27,22 +50,51 @@ export default function AddShortletModal({
   onOpenChange,
   onClose,
 }: ShortletModalT): JSX.Element {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+
   const form = useForm<AddShortletSchema>({
     resolver: zodResolver(AddShortletSchema),
   });
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+
+    if (files.length + images.length > 8) {
+      form.setError("image", {
+        type: "manual",
+        message: "You can only upload a maximum of 8 images.",
+      });
+      return;
+    }
+    form.clearErrors("image");
+
+    const updatedImageArr = [...images, ...files];
+    setImages(updatedImageArr);
+    form.setValue("image", updatedImageArr);
+  };
+
+  const handleRemoveImage = (imageUrl: File) => {
+    const updatedImages = images.filter((image) => image !== imageUrl);
+    setImages(updatedImages);
+    form.setValue("image", updatedImages);
+  };
+
   const onSubmit = (data: AddShortletSchema) => {
     console.log(data);
-    onClose()
+    onClose();
   };
   return (
     <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
       <form className="flex flex-col space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-      <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">Add a Shortlet
-            <span className="text-sm text-grey_400">Fill out the form to get your building listed on Shorttiee</span>
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            Add a Shortlet
+            <span className="text-sm text-grey_400">
+              Fill out the form to get your building listed on Shorttiee
+            </span>
           </ModalHeader>
-        <ModalBody>
+          <ModalBody>
             <Form {...form}>
               <FormField
                 control={form.control}
@@ -188,7 +240,7 @@ export default function AddShortletModal({
                       {...field}
                       radius="sm"
                       variant="bordered"
-                      placeholder="Shortlet Describtion"
+                      placeholder="Shortlet Description"
                       startContent={
                         <Speech size={16} className="pointer-events-none text-grey_400 mt-0.5" />
                       }
@@ -376,14 +428,90 @@ export default function AddShortletModal({
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <>
+                      {/* empty uploader */}
+                      {images.length === 0 && (
+                        <div
+                          className="border-2 border-grey_200 rounded-xl py-8 flex flex-col justify-center items-center cursor-pointer w-full"
+                          onClick={() => fileInputRef?.current?.click()}
+                        >
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                            ref={fileInputRef}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleImageUpload(e);
+                            }}
+                          />
+                          <Images size={24} className="pointer-events-none text-grey_400" />
+                          <p className="text-grey_400 text-sm py-1">Add shortlet image</p>
+                        </div>
+                      )}
+
+                      {/* image preview and upload */}
+                      {images.length > 0 && (
+                        <div className="flex  items-center gap-4 w-full space-y-2">
+                          <div
+                            className="border-2 border-grey_200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
+                            onClick={() => fileInputRef.current?.click()}
+                          >
+                            <input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              className="hidden"
+                              ref={fileInputRef}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                handleImageUpload(e);
+                              }}
+                            />
+                            <Images size={24} className="pointer-events-none text-grey_400" />
+                            <p className="text-grey_400 text-sm py-1">Add shortlet image</p>
+                          </div>
+                          {/* preview */}
+
+                          <div className="flex items-center overflow-x-auto gap-2 w-full scroll">
+                            {images.map((image, index) => (
+                              <div key={index}>
+                                <Badge
+                                  content={<X size={16} onClick={() => handleRemoveImage(image)} />}
+                                  color="default"
+                                  size="lg"
+                                  className="cursor-pointer p-1.5 bg-white"
+                                >
+                                  <Image
+                                    src={URL.createObjectURL(image)}
+                                    alt={`shortletImage ${index + 1}`}
+                                    className="rounded-xl w-20 h-20 object-cover"
+                                  />
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </Form>
-        </ModalBody>
-        <ModalFooter>
+          </ModalBody>
+          <ModalFooter>
             <Button color="primary" type="submit">
-            Action
-          </Button>
-        </ModalFooter>
-      </ModalContent>
+              Add Shortlet
+            </Button>
+          </ModalFooter>
+        </ModalContent>
       </form>
     </Modal>
   );
