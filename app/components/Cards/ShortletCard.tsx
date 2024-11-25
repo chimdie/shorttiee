@@ -36,22 +36,20 @@ export const ShortletCard = ({isVertical}: ShortletCardT) => {
             style={tw`text-lg font-semibold text-gray-800`}>
             3 Bedroom Shortlet Apar in Opebi
           </Text>
-          <View style={tw`flex-row items-center justify-between`}>
+          <View style={tw`flex-row items-center gap-1`}>
+            <Feather name="map-pin" size={16} color="gray" />
+            <Text style={tw`text-gray-500 text-sm`}>2.75 miles away</Text>
+          </View>
+          <View style={tw`flex-row items-center gap-1`}>
             <View style={tw`flex-row items-center gap-1`}>
-              <Feather name="map-pin" size={16} color="gray" />
-              <Text style={tw`text-gray-500 text-sm`}>2.75 miles away</Text>
+              <Feather
+                name="star"
+                size={16}
+                color={getColor('shorttiee-primary')}
+              />
+              <Text style={tw`text-sm`}>0.0</Text>
             </View>
-            <View style={tw`flex-row items-center gap-1`}>
-              <View style={tw`flex-row items-center`}>
-                <Feather
-                  name="star"
-                  size={16}
-                  color={getColor('shorttiee-primary')}
-                />
-                <Text style={tw`text-sm`}>0.0</Text>
-              </View>
-              <Text style={tw`text-gray-500 text-sm`}>(0 reviews)</Text>
-            </View>
+            <Text style={tw`text-gray-500 text-sm`}>(0 reviews)</Text>
           </View>
           <View style={tw`flex-row items-center justify-between`}>
             <View className="flex-row items-center">
