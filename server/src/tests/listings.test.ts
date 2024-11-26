@@ -47,13 +47,12 @@ before(() => {
   }
 
   categoryResult.forEach((e) => categories.push(e.id));
-  console.log(categories);
   payload = {
     type: faker.helpers.arrayElement(["SHORTLET", "RENTAL", "SALE"]),
     name: faker.commerce.productName(),
     rate: faker.helpers.arrayElement([100, 300, 5460]),
     price: null,
-    images: [],
+    images: Array.from<string>({ length: 3 }).fill(faker.image.url()),
     address: faker.location.streetAddress(),
     categoryId: faker.helpers.arrayElement(categories),
     facilities: null,
@@ -90,6 +89,18 @@ describe("POST /api/v1/listings", () => {
     assert.equal("error" in res.body, true);
   });
 
+  it("Should throw validation error if images array is empty", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/listings")
+      .auth(token, { type: "bearer" })
+      .set("Accept", "application/json")
+      .send({ ...payload, images: [] })
+      .expect(400);
+
+    assert.equal(res.body.data, undefined);
+    assert.equal("error" in res.body, true);
+  });
+
   it("Should create a listing", async () => {
     const res = await supertest(app)
       .post("/api/v1/listings")
@@ -106,5 +117,5 @@ describe("POST /api/v1/listings", () => {
 });
 
 describe("GET /api/v1/listings", () => {
-  it.todo("Should get all listings", async () => { });
+  it.todo("Should get all listings", async () => {});
 });

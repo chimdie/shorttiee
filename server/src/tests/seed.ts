@@ -1,6 +1,6 @@
 import { db } from "../config/db.config";
 import { CategoryDto } from "../dto/category.dto";
-import { ListingsDto } from "../dto/listings.dto";
+import { ListingDto } from "../dto/listings.dto";
 import { Auth, User } from "../dto/types.dto";
 import { faker } from "@faker-js/faker";
 
@@ -89,9 +89,9 @@ function seedCategories() {
 
 function seedListings(userIds: string[], categoryIds: string[]) {
   const statements = Array.from({ length: 30 }).map(() => {
-    const listingStatement = db.prepare<ListingsDto[]>(`
-      INSERT INTO tblListings (id, name, address, type, status, description, price, rate, facilities, restrictions, userId, categoryId)
-      VALUES(@id, @name, @address, @type, @status, @description, @price, @rate, @facilities, @restrictions, @userId, @categoryId)
+    const listingStatement = db.prepare<Omit<ListingDto, "images">[]>(`
+      INSERT INTO tblListings (id, name, address, type, status, description, price, rate, restrictions, userId, categoryId)
+      VALUES(@id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId)
     `);
 
     return listingStatement;
@@ -99,7 +99,7 @@ function seedListings(userIds: string[], categoryIds: string[]) {
 
   const trx = db.transaction(() => {
     for (const statement of statements) {
-      const listings: ListingsDto = {
+      const listings: Omit<ListingDto, "images"> = {
         id: faker.string.uuid(),
         name: faker.commerce.productName(),
         address: faker.location.streetAddress(),
@@ -114,11 +114,6 @@ function seedListings(userIds: string[], categoryIds: string[]) {
         restrictions: null,
         rate: +faker.commerce.price(),
         price: +faker.commerce.price(),
-        images: Array.from({ length: faker.number.int({ max: 5 }) }).map(
-          (_) => {
-            return faker.image.avatar();
-          }
-        ),
 
         userId: faker.helpers.arrayElement(userIds),
         categoryId: faker.helpers.arrayElement(categoryIds)
@@ -131,7 +126,7 @@ function seedListings(userIds: string[], categoryIds: string[]) {
   trx();
 
   const listings = db
-    .prepare<[], ListingsDto>("SELECT * FROM tblListings")
+    .prepare<[], ListingDto>("SELECT * FROM tblListings")
     .all();
   return listings;
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PopulatedEntity } from "../types/utils";
 
-export const ListingsDto = z.object({
+export const ListingDto = z.object({
   id: z.string().uuid(),
   name: z
     .string()
@@ -24,19 +24,22 @@ export const ListingsDto = z.object({
   description: z.string().nullish(),
   price: z.number().nullish(),
   rate: z.number().nullish(),
-  facilities: z.string().nullish(),
+  facilities: z.array(z.string()).nullish(),
   restrictions: z.string().nullish(),
-  images: z.array(z.string().url()),
+  images: z
+    .array(z.string().url())
+    .min(3, { message: "Minimum of 3 images" })
+    .max(6, { message: "Maximum of 6 images" }),
 
   // references
   userId: z.string().uuid(),
   categoryId: z.string().uuid()
 });
 
-export type ListingsDto = z.infer<typeof ListingsDto>;
-export type PopulatedListings = PopulatedEntity<ListingsDto>;
+export type ListingDto = z.infer<typeof ListingDto>;
+export type PopulatedListings = PopulatedEntity<ListingDto>;
 
-export const CreateListingsDto = ListingsDto.omit({
+export const CreateListingsDto = ListingDto.omit({
   userId: true,
   id: true,
   status: true

@@ -9,7 +9,6 @@ CREATE TABLE tblListings (
   description TEXT,
   price INT,
   rate INT,
-  facilities TEXT,
   restrictions TEXT,
 
   createdAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
