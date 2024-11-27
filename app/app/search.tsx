@@ -1,10 +1,12 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Pressable} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {UnControlledTextInput} from '@/components/TextInput';
 import {SearchNormal1, Setting4} from 'iconsax-react-native';
 import {getColor} from '@/config/theme';
 import {FlashList} from '@shopify/flash-list';
 import {ShortletCard} from '@/components/Cards/ShortletCard';
+import {Feather} from '@expo/vector-icons';
+import {router} from 'expo-router';
 
 const categories = [
   'Apartment',
@@ -21,6 +23,11 @@ export default function SearchScreen() {
   return (
     <SafeAreaView className="flex-1 px-4 py-6 bg-white">
       <View className="flex-1 gap-8">
+        <View>
+          <Pressable onPress={() => router.back()}>
+            <Feather name="chevron-left" size={32} color="black" />
+          </Pressable>
+        </View>
         <UnControlledTextInput
           placeholder="Enter Location"
           startContent={<SearchNormal1 color={getColor('shorttiee-primary')} />}

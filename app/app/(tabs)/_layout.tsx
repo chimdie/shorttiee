@@ -38,6 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="payment"
         options={{
+          href: null,
           title: 'Payment',
           tabBarIcon: ({color}) => (
             <TabBarIcon name="credit-card" color={color} />
