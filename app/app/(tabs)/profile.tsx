@@ -38,7 +38,7 @@ export default function Profile() {
           borderBottomColor: 'transparent',
           borderWidth: 0,
         }}
-        className="px-4 border-2 border-red-600"
+        className="px-4"
         leftComponent={<Text className="font-semibold text-2xl">Profile</Text>}
         rightComponent={
           <Link href="/(tabs)/edit-profile" asChild>
