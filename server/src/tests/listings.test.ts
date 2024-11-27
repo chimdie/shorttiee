@@ -2,37 +2,18 @@ import { describe, it, before } from "node:test";
 import { app } from "../app";
 import { db } from "../config/db.config";
 import { CreateApplicationService } from "../config/services.config";
-import { signAuthToken } from "../utils/auth-token";
 import { OTP } from "../utils/otp";
 import supertest from "supertest";
 import { CreateListingsDto } from "../dto/listings.dto";
 import { faker } from "@faker-js/faker";
 import assert from "node:assert";
+import { helper } from "./helper";
 
 let token = "";
 let payload: CreateListingsDto;
 
 before(() => {
-  // get auth token
-  const user = db
-    .prepare<[], { id: string; nonce: string }>(
-      `SELECT u.id, a.nonce 
-        FROM tblUsers AS u
-        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NOT NULL LIMIT 1`
-    )
-    .get();
-
-  if (!user) {
-    throw "Can't setup user";
-  }
-
-  const [err, payload] = signAuthToken(user);
-
-  if (err) {
-    throw "Can't setup token";
-  }
-
-  token = payload;
+  token = helper.getUserAuth().token;
 });
 
 const categories: string[] = [];
@@ -117,5 +98,5 @@ describe("POST /api/v1/listings", () => {
 });
 
 describe("GET /api/v1/listings", () => {
-  it.todo("Should get all listings", async () => {});
+  it.todo("Should get all listings", async () => { });
 });
