@@ -2,7 +2,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Pressable,
   SafeAreaView,
   ScrollView,
   TouchableOpacityProps,
@@ -13,7 +12,7 @@ import {Avatar, BottomSheet, Header} from '@rneui/themed';
 import {getColor} from '@/config/theme';
 import tw from 'twrnc';
 import {Feather} from '@expo/vector-icons';
-import {Link, router} from 'expo-router';
+import {Link} from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import {ShorttieeButton} from '@/components/Button';
 import {version} from '../../package.json';
@@ -39,13 +38,10 @@ export default function Profile() {
           borderBottomColor: 'transparent',
           borderWidth: 0,
         }}
-        leftComponent={
-          <Pressable onPress={() => router.back()}>
-            <Feather name="chevron-left" size={32} color="black" />
-          </Pressable>
-        }
+        className="px-4 border-2 border-red-600"
+        leftComponent={<Text className="font-semibold text-2xl">Profile</Text>}
         rightComponent={
-          <Link href="/(app)/edit-profile" asChild>
+          <Link href="/(tabs)/edit-profile" asChild>
             <TouchableOpacity className="items-center justify-center aspect-square">
               <Feather
                 name="edit"
@@ -54,9 +50,6 @@ export default function Profile() {
               />
             </TouchableOpacity>
           </Link>
-        }
-        centerComponent={
-          <Text className="font-semibold text-2xl">Profile</Text>
         }
       />
       <SafeAreaView className="bg-white flex-1">
@@ -102,7 +95,7 @@ export default function Profile() {
                 status="Not Verified"
               />
               <ProfileQuickButton label="Payment History" icon="credit-card" />
-              <Link href="/(app)/favourites" asChild>
+              <Link href="/(tabs)/favourites" asChild>
                 <ProfileQuickButton label="Favourites" icon="heart" />
               </Link>
               <ProfileQuickButton

@@ -1,6 +1,5 @@
 import {
   View,
-  useWindowDimensions,
   Keyboard,
   SafeAreaView,
   TouchableWithoutFeedback,
@@ -22,7 +21,6 @@ type AuthScreenLayoutT = {
 } & PropsWithChildren;
 
 export function AuthScreenLayout(props: AuthScreenLayoutT) {
-  const windowHeight = useWindowDimensions().height;
   return (
     <View className="flex-1 bg-white">
       <Header
@@ -45,18 +43,16 @@ export function AuthScreenLayout(props: AuthScreenLayoutT) {
           </>
         }
       />
-      <SafeAreaView
-        className="bg-pax-white flex-1"
-        style={[{minHeight: Math.round(windowHeight)}]}>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <ScrollView className="flex-1">
+      <SafeAreaView className="bg-pax-white flex-1">
+        <ScrollView className="flex-1">
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={{marginVertical: Constants.statusBarHeight}}>
               <View style={tw`flex-1 items-center gap-8 px-4`}>
                 {props.children}
               </View>
             </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );

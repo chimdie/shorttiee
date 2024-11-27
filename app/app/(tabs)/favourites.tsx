@@ -1,8 +1,6 @@
-import {View, Text, SafeAreaView, Pressable} from 'react-native';
+import {View, Text, SafeAreaView} from 'react-native';
 import {Header} from '@rneui/themed';
 import tw from 'twrnc';
-import {Feather} from '@expo/vector-icons';
-import {router} from 'expo-router';
 import {FlashList} from '@shopify/flash-list';
 import {ShortletCard} from '@/components/Cards/ShortletCard';
 
@@ -14,13 +12,9 @@ export default function Favourites() {
       <Header
         backgroundColor="white"
         containerStyle={{borderBottomColor: 'transparent', borderWidth: 0}}
+        className="px-4"
         placement="left">
-        <View className="flex-row items-center">
-          <Pressable onPress={() => router.back()}>
-            <Feather name="chevron-left" size={32} color="black" />
-          </Pressable>
-          <Text className="text-xl">Favourites</Text>
-        </View>
+        <Text className="font-semibold text-2xl">Favourites</Text>
       </Header>
 
       <SafeAreaView className="flex-1">

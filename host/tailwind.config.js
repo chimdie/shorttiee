@@ -40,6 +40,14 @@ export default {
           dark: "#B1AD4E",
           light: "#EAE68B",
         },
+        shorttiee_green: {
+          dark: "#1DBF73",
+          light: "#EAFFF5",
+        },
+        shorttiee_red: {
+          dark: "#F0171D",
+          light: "#FFEAEB",
+        },
         grey_100: "#F7F6F2",
         grey_200: "#EBEBEB",
         grey_300: "#A1A3B0",
