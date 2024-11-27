@@ -76,14 +76,13 @@ export default function HomeScreen() {
                   <SearchNormal1
                     size={28}
                     color={getColor('shorttiee-primary')}
-                    // variant="Bold"
                   />
                 </TouchableOpacity>
               </Link>
             </View>
           </View>
           <View style={tw`flex-1 gap-8 px-4`}>
-            <View style={tw`gap-6`}>
+            <View style={tw`gap-2`}>
               <Text className="text-2xl font-semibold">
                 Find the best shortlets in
               </Text>
@@ -122,7 +121,7 @@ export default function HomeScreen() {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({item}) => (
-                  <TouchableOpacity className="items-center justify-center mx-2 px-6 h-12 rounded-full border border-shorttiee-primary/30">
+                  <TouchableOpacity className="items-center justify-center mx-2 px-6 h-10 rounded-full border border-shorttiee-primary/30">
                     <Text>{item}</Text>
                   </TouchableOpacity>
                 )}
