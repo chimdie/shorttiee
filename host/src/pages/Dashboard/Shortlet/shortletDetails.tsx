@@ -7,7 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { BreadcrumbItem, Breadcrumbs, Chip } from "@nextui-org/react";
+import { BreadcrumbItem, Breadcrumbs, Chip, Image } from "@nextui-org/react";
 import { AirVent, Bath, BedDouble, CookingPot, House, type LucideIcon } from "lucide-react";
 import { DashboardRoutes } from "@/types/routes";
 
@@ -23,6 +23,7 @@ const detailsArr: DetailCard[] = [
   { icon: CookingPot, text: "2 Kitchen" },
   { icon: AirVent, text: "Airvents" },
 ];
+
 const DetailCard = ({ icon: Icon, text }: DetailCard) => {
   return (
     <div className="border border-grey_300 p-4 rounded-md shadow-sm flex flex-col items-center justify-center space-y-2 min-w-28 h-28">
@@ -69,10 +70,11 @@ export default function ShortletDetails() {
               {Array.from({ length: 5 }).map((_, index) => (
                 <CarouselItem key={index} className="md:basis-1/3">
                   <div className="p-1">
-                    <img
+                    <Image
                       className="w-full rounded-md"
                       alt="shortlet image"
                       src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                      fallbackSrc="https://via.placeholder.com/300x200"
                     />
                   </div>
                 </CarouselItem>
