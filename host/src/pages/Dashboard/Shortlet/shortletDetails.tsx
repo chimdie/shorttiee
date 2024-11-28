@@ -1,7 +1,14 @@
-import { DashboardRoutes } from "@/types/routes";
+import { Link } from "react-router-dom";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { BreadcrumbItem, Breadcrumbs, Chip } from "@nextui-org/react";
 import { AirVent, Bath, BedDouble, CookingPot, House, type LucideIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { DashboardRoutes } from "@/types/routes";
 
 type DetailCard = {
   icon: LucideIcon;
@@ -37,7 +44,10 @@ export default function ShortletDetails() {
         <div className="space-y-2">
           <h2 className="text-shorttiee_primary text-lg font-bold">Apartment Name</h2>
           <div className="flex gap-4">
-            <p>Duplex</p>
+            <p className="text-shorttiee_primary font-semibold">Duplex</p>
+            <p className="text-sm">
+              <span className="text-base text-shorttiee_green-dark font-semibold">$40k</span> /night
+            </p>
             <Chip
               radius="sm"
               size="sm"
@@ -47,7 +57,30 @@ export default function ShortletDetails() {
             </Chip>
           </div>
         </div>
-        <div>images here</div>
+        <div className="w-full  px-12">
+          <Carousel
+            opts={{
+              align: "start",
+            }}
+            className="w-full"
+          >
+            <CarouselContent>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <CarouselItem key={index} className="md:basis-1/3">
+                  <div className="p-1">
+                    <img
+                      className="w-full rounded-md"
+                      alt="shortlet image"
+                      src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
         <div className="space-y-3">
           <h3 className="text-shorttiee_primary text-md font-bold">Details</h3>
           <div className="flex gap-4">
@@ -59,29 +92,29 @@ export default function ShortletDetails() {
         <div className="space-y-3">
           <h3 className="text-shorttiee_primary text-md font-bold">Description</h3>
           <div className="w-3/4 space-y-2">
-            <p className="text-grey_400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Est assumenda voluptate
-              accusamus vitae! Labore aliquid quia consectetur asperiores esse iste fugit at natus
-              consequatur veniam nemo, quos ad! Soluta, obcaecati!
-            </p>
-            <p className="text-grey_400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Est assumenda voluptate
-              accusamus vitae! Labore aliquid quia consectetur asperiores esse iste fugit at natus
-              consequatur veniam nemo, quos ad! Soluta, obcaecati!
-            </p>
-            <p className="text-grey_400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Est assumenda voluptate
-              accusamus vitae! Labore aliquid quia consectetur asperiores esse iste fugit at natus
-              consequatur veniam nemo, quos ad! Soluta, obcaecati!
-            </p>
+            {Array(4)
+              .fill(null)
+              .map((_, index) => (
+                <p key={index} className="text-grey_400">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Est assumenda voluptate
+                  accusamus vitae! Labore aliquid quia consectetur asperiores esse iste fugit at
+                  natus consequatur veniam nemo, quos ad! Soluta, obcaecati!
+                </p>
+              ))}
           </div>
         </div>
-
         <div className="space-y-3">
           <h3 className="text-shorttiee_primary text-md font-bold">Facilities and Add Ons</h3>
-
+          <ul className="flex flex-wrap  p-0  list-disc list-inside w-2/6">
+            {Array(12)
+              .fill(null)
+              .map((_, index) => (
+                <li key={index} className="w-1/2 p-1 text-grey_400">
+                  Driver
+                </li>
+              ))}
+          </ul>
         </div>
-        shortletDetails
       </div>
     </div>
   );
