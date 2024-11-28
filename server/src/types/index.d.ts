@@ -15,6 +15,11 @@ declare global {
         hashOtp: (payload: string) => string;
       };
     }
+    namespace Multer {
+      interface File {
+        hash: string;
+      }
+    }
     interface Request {
       user?: WithDBTimestamps<User>;
     }
