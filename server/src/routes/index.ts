@@ -7,6 +7,7 @@ import { oapi } from "../config/docs.config";
 import { categoryRouter } from "./category.routes";
 import { listingsRouter } from "./listing.routes";
 import { authenticate } from "../middlewares/auth.middleware";
+import { filesRouter } from "./files.routes";
 
 export const apiV1router = Router();
 
@@ -16,6 +17,7 @@ apiV1router.use("/auth", authRouter);
 apiV1router.use(authenticate);
 
 apiV1router.use("/categories", categoryRouter);
+apiV1router.use("/files", filesRouter);
 apiV1router.use("/listings", listingsRouter);
 
 apiV1router.get(
