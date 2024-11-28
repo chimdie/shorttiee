@@ -34,13 +34,13 @@ export function AuthScreenLayout(props: AuthScreenLayoutT) {
           <Text className="font-semibold text-2xl">{props.title}</Text>
         }
         leftComponent={
-          <>
+          <View>
             {props.hasBackbutton ? (
               <Pressable onPress={() => router.back()}>
                 <Feather name="chevron-left" size={32} color="black" />
               </Pressable>
             ) : null}
-          </>
+          </View>
         }
       />
       <SafeAreaView className="bg-pax-white flex-1">
