@@ -1,4 +1,4 @@
-import { describe, it, before } from "node:test";
+import { describe, it, beforeAll } from "@jest/globals";
 import { app } from "../app";
 import { db } from "../config/db.config";
 import { CreateApplicationService } from "../config/services.config";
@@ -12,13 +12,13 @@ import { helper } from "./helper";
 let token = "";
 let payload: CreateListingsDto;
 
-before(() => {
+beforeAll(() => {
   token = helper.getUserAuth().token;
 });
 
 const categories: string[] = [];
 
-before(() => {
+beforeAll(() => {
   const categoryResult = db
     .prepare<[], { id: string }>("SELECT id FROM tblCategories")
     .all();
@@ -42,7 +42,7 @@ before(() => {
   };
 });
 
-before(() => {
+beforeAll(() => {
   new CreateApplicationService(app).addService("otp", OTP).build();
 });
 
@@ -98,5 +98,5 @@ describe("POST /api/v1/listings", () => {
 });
 
 describe("GET /api/v1/listings", () => {
-  it.todo("Should get all listings", async () => { });
+  it.todo("Should get all listings");
 });

@@ -1,4 +1,4 @@
-import { before, describe, it } from "node:test";
+import { beforeAll, describe, it } from "@jest/globals";
 import assert from "node:assert";
 import supertest from "supertest";
 import { app } from "../app";
@@ -7,7 +7,7 @@ import { faker } from "@faker-js/faker";
 import { CreateApplicationService } from "../config/services.config";
 import { OTP } from "../utils/otp";
 
-before(() => {
+beforeAll(() => {
   new CreateApplicationService(app).addService("otp", OTP).build();
 });
 

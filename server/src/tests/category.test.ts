@@ -1,4 +1,4 @@
-import { before, describe, it } from "node:test";
+import { beforeAll, describe, it } from "@jest/globals";
 import supertest from "supertest";
 import { app } from "../app";
 import { CreateCategoryDto } from "../dto/category.dto";
@@ -10,21 +10,21 @@ import { helper } from "./helper";
 
 let token = "";
 
-before(() => {
+beforeAll(() => {
   token = helper.getUserAuth().token;
 });
 
-before(() => {
+beforeAll(() => {
   new CreateApplicationService(app).addService("otp", OTP).build();
 });
 
-describe("POST /api/v1/categories", async () => {
+describe("POST /api/v1/categories", () => {
   const payload: CreateCategoryDto = {
     comment: faker.commerce.productDescription(),
     name: "Beach Mansion"
   };
 
-  await it("Should create a category", async () => {
+  it("Should create a category", async () => {
     const res = await supertest(app)
       .post("/api/v1/categories")
       .set("Accept", "application/json")
