@@ -6,18 +6,16 @@ import path from "path";
 import crypto from "node:crypto";
 import os from "node:os";
 import fs from "node:fs";
-import mime from "mime";
 import { MulterStorageHashing } from "../config/upload/hash-storage.upload";
 import { afterEach } from "node:test";
 
 // MulterStorageHashing.prototype._handleFile = ;
 type MulterFileHander = typeof MulterStorageHashing.prototype._handleFile;
 const _mockHandleFile: MulterFileHander = function(_req, file, callback) {
-  const filename = "image";
+  const filename = file.originalname;
   const destination = os.tmpdir();
 
-  const ext = "." + (mime.extension(file.mimetype) || "");
-  const finalPath = path.join(destination, filename + ext);
+  const finalPath = path.join(destination, filename);
   const outStream = fs.createWriteStream(finalPath);
 
   file.stream.pipe(outStream);
@@ -74,7 +72,7 @@ describe("POST /api/v1/files", () => {
   });
 
   it("Should upload file", async () => {
-    await supertest(app)
+    const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
       .attach("files", path.resolve(process.cwd(), "README.md"))
@@ -83,5 +81,23 @@ describe("POST /api/v1/files", () => {
       .expect(201);
 
     expect(mockFileHandler).toHaveBeenCalledTimes(2);
+    expect(res.body.data).toBeTruthy();
+    expect(Array.isArray(res.body.data)).toEqual(true);
+    expect(res.body.data.length).toEqual(2);
+  });
+
+  // handle duplicate upload
+
+  // handle file link
+});
+
+describe("GET /api/v1/files/:name", () => {
+  it("Should return file", async () => {
+    const _res = await supertest(app)
+      .get("/api/v1/files/package.json")
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    console.log(_res.type);
   });
 });

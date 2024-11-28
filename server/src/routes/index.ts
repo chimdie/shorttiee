@@ -14,10 +14,11 @@ export const apiV1router = Router();
 apiV1router.use("/docs", docsRouter);
 apiV1router.use("/auth", authRouter);
 
+apiV1router.use("/files", filesRouter);
+
 apiV1router.use(authenticate);
 
 apiV1router.use("/categories", categoryRouter);
-apiV1router.use("/files", filesRouter);
 apiV1router.use("/listings", listingsRouter);
 
 apiV1router.get(
