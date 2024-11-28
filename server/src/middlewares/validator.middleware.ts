@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AnyZodObject } from "zod";
+import { AnyZodObject, AnyZodTuple, ZodArray } from "zod";
 import { ValidationResponse } from "../utils/response";
 import debug from "debug";
 
@@ -7,14 +7,16 @@ export const validator = (opts?: {
   body?: AnyZodObject;
   params?: AnyZodObject;
   query?: AnyZodObject;
+  files?: ZodArray<any, any>;
 }) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const body = item_validator(opts?.body, req.body);
     const params = item_validator(opts?.params, req.params);
     const query = item_validator(opts?.query, req.query);
+    const files = item_validator(opts?.files, req.files);
 
     let err: string[] = [];
-    const results = [body, params, query];
+    const results = [body, params, query, files];
 
     for (let i = 0; i < results.length; i++) {
       const error = results[i][0];
@@ -37,12 +39,18 @@ export const validator = (opts?: {
   };
 };
 
-function item_validator<T = unknown>(schema?: AnyZodObject, data?: T) {
+function item_validator<T = unknown>(
+  schema?: AnyZodObject | ZodArray<any, any>,
+  data?: T
+) {
   if (!schema) {
     return [null, data] as const;
   }
 
-  const result = schema.strip().safeParse(data);
+  if ("strip" in schema) {
+    schema.strip();
+  }
+  const result = schema.safeParse(data);
 
   if (result.success) {
     data = result.data as T;
