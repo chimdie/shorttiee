@@ -1,4 +1,5 @@
 import { z } from "zod";
+import os from "node:os";
 
 /**
  *@description for validation `process.env`
@@ -13,7 +14,8 @@ export const EnvDto = z.object({
   DATABASE_URL: z.string(),
   OTP_SIZE: z.coerce.number(),
   /** duration in seconds */
-  OTP_TTL: z.coerce.number()
+  OTP_TTL: z.coerce.number(),
+  UPLOAD_PATH: z.string().default(os.tmpdir())
 
   // EMAIL_USER: z.string().email(),
   // EMAIL_PASS: z.string(),

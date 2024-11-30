@@ -72,27 +72,14 @@ export class MulterStorageHashing implements StorageEngine {
         });
         outStream.on("finish", () => {
           const hashVal = hash.digest("hex");
-          console.log(
-            "CHECK-SUM",
-            finalPath,
-            hashVal,
-            file
-            // req.files
-            // crypto
-            //   .createHash("md5")
-            //   .update(file.buffer.toString("utf8"))
-            //   .digest("hex")
-          );
-          const res = {
+
+          cb(null, {
             destination: destination,
             filename: filename,
             path: finalPath,
             size: outStream.bytesWritten,
             hash: hashVal
-          };
-          console.log("CB===", res);
-
-          cb(null, res);
+          });
         });
       });
     });

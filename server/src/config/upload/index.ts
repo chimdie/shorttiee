@@ -1,9 +1,9 @@
 import multer from "multer";
-import path from "path";
 import { MulterStorageHashing } from "./hash-storage.upload";
+import { appEnv } from "../env.config";
 
 export const upload = multer({
   storage: new MulterStorageHashing({
-    destination: path.resolve(process.cwd(), "uploads")
+    destination: appEnv.UPLOAD_PATH
   })
 });
