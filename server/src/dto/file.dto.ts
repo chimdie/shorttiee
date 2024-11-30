@@ -1,21 +1,13 @@
 import { z } from "zod";
 
-export const FileDto = z.discriminatedUnion("type", [
-  z.object({
-    path: z.string(),
-    filename: z.string(),
-    type: z.literal("FILE"),
-    contentType: z.string(),
-    checksum: z.string(),
-    size: z.number(),
-    ownerId: z.string()
-  }),
-  z.object({
-    path: z.string(),
-    type: z.literal("URL"),
-    ownerId: z.string()
-  })
-]);
+export const FileDto = z.object({
+  path: z.string(),
+  filename: z.string(),
+  contentType: z.string(),
+  checksum: z.string(),
+  size: z.number(),
+  ownerId: z.string()
+});
 
 export type FileDto = z.infer<typeof FileDto>;
 
@@ -35,3 +27,8 @@ export const CreateFileDto = z
   )
   .max(6);
 export type CreateFileDto = z.infer<typeof CreateFileDto>;
+
+export const FindFileDto = z.object({
+  name: z.string()
+});
+export type FindFileDto = z.infer<typeof FindFileDto>;

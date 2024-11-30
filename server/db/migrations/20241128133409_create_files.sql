@@ -1,7 +1,6 @@
 -- migrate:up
 CREATE TABLE IF NOT EXISTS tblFiles (
   path VARCHAR(36) PRIMARY KEY NOT NULL, -- 
-  type TEXT NOT NULL CHECK(type IN ('FILE','URL')), -- url, file
   contentType TEXT UNIQUE NOT NULL,
   filename TEXT, 
   checksum TEXT, 
