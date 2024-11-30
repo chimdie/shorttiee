@@ -1,17 +1,23 @@
 import { helper } from "./helper";
 import supertest from "supertest";
 import { app } from "../app";
-import { beforeAll, it, describe, jest, expect } from "@jest/globals";
+import {
+  beforeAll,
+  afterEach,
+  it,
+  describe,
+  jest,
+  expect
+} from "@jest/globals";
 import path from "path";
 import crypto from "node:crypto";
 import os from "node:os";
 import fs from "node:fs";
 import { MulterStorageHashing } from "../config/upload/hash-storage.upload";
-import { afterEach } from "node:test";
 
 // MulterStorageHashing.prototype._handleFile = ;
 type MulterFileHander = typeof MulterStorageHashing.prototype._handleFile;
-const _mockHandleFile: MulterFileHander = function(_req, file, callback) {
+const _mockHandleFile: MulterFileHander = function (_req, file, callback) {
   const filename = file.originalname;
   const destination = os.tmpdir();
 
@@ -21,7 +27,7 @@ const _mockHandleFile: MulterFileHander = function(_req, file, callback) {
   file.stream.pipe(outStream);
   outStream.on("error", callback);
   const hash = crypto.createHash("sha256");
-  file.stream.on("data", function(chunk) {
+  file.stream.on("data", function (chunk) {
     hash.update(chunk);
   });
 
@@ -44,17 +50,19 @@ beforeAll(() => {
   token = helper.getUserAuth().token;
 });
 
-const mockFileHandler = jest.spyOn(
-  MulterStorageHashing.prototype,
-  "_handleFile"
-);
-mockFileHandler.mockImplementation(_mockHandleFile);
-
-afterEach(() => {
-  mockFileHandler.mockRestore();
-});
-
 describe("POST /api/v1/files", () => {
+  let mockFileHandler: jest.SpiedFunction<
+    typeof MulterStorageHashing.prototype._handleFile
+  >;
+  beforeAll(() => {
+    mockFileHandler = jest.spyOn(MulterStorageHashing.prototype, "_handleFile");
+    mockFileHandler.mockImplementation(_mockHandleFile);
+  });
+
+  afterEach(() => {
+    mockFileHandler.mockClear();
+  });
+
   it("Should throw authentication error", async () => {
     await supertest(app).post("/api/v1/files").send().expect(401);
 
@@ -71,12 +79,28 @@ describe("POST /api/v1/files", () => {
     expect(mockFileHandler).not.toHaveBeenCalled();
   });
 
+  // handle duplicate upload
+  it("Should not upload duplicate", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/files")
+      .accept("multipart/form-data")
+      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .auth(token, { type: "bearer" })
+      .expect(201);
+
+    expect(mockFileHandler).toHaveBeenCalledTimes(2);
+    expect(res.body.data).toBeTruthy();
+    expect(Array.isArray(res.body.data)).toEqual(true);
+    expect(res.body.data.length).toEqual(1);
+  });
+
   it("Should upload file", async () => {
     const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
       .attach("files", path.resolve(process.cwd(), "README.md"))
-      .attach("files", path.resolve(process.cwd(), "package.json"))
+      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
       .auth(token, { type: "bearer" })
       .expect(201);
 
@@ -86,18 +110,22 @@ describe("POST /api/v1/files", () => {
     expect(res.body.data.length).toEqual(2);
   });
 
-  // handle duplicate upload
-
   // handle file link
 });
 
 describe("GET /api/v1/files/:name", () => {
-  it("Should return file", async () => {
-    const _res = await supertest(app)
-      .get("/api/v1/files/package.json")
-      .expect("Content-Type", /json/)
-      .expect(200);
+  it("Should not find file", async () => {
+    const res = await supertest(app)
+      .get("/api/v1/files/1234134139.png")
+      .expect(404);
 
-    console.log(_res.type);
+    expect(res.body.message).toMatch(/not found/);
+  });
+
+  it("Should return file", async () => {
+    await supertest(app)
+      .get("/api/v1/files/schema.sql")
+      .expect(200)
+      .expect("Content-Type", /sql/);
   });
 });

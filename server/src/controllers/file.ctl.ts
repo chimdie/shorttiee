@@ -1,21 +1,43 @@
 import assert from "assert";
+import { Request } from "express";
 import { db } from "../config/db.config";
-import { createFileQuery, findFileByChecksumQuery } from "../db/file.db";
+import {
+  createFileQuery,
+  findFileByChecksumQuery,
+  findFileByPathQuery
+} from "../db/file.db";
 import { ctlWrapper } from "../utils/ctl-wrapper";
-import { SuccessResponse } from "../utils/response";
+import { NotFoundResponse, SuccessResponse } from "../utils/response";
 import fs from "fs";
 import path from "path";
 import mime from "mime";
+import { FindFileDto } from "../dto/file.dto";
+import { appEnv } from "../config/env.config";
 
+const UPLOAD_FILE_PATH = "/api/v1/files/";
+// TODO: docs
 export const createFileCtl = ctlWrapper(async (req, res) => {
   const userId = req.user?.id;
   assert(userId);
   assert(Array.isArray(req.files));
 
-  const checksums = req.files.map((e) => e.hash);
+  // deduplicate
+  const filesMap = new Map<string, Express.Multer.File>();
+  for (const file of req.files) {
+    filesMap.set(file.hash, file);
+  }
+  const dedupedFiles = Array.from(filesMap.values());
+
+  const checksums = dedupedFiles.map((e) => e.hash);
+
+  const oldFiles = new Set(
+    findFileByChecksumQuery(checksums).map((e) => e.checksum)
+  );
+
+  const uploadfiles = dedupedFiles.filter((e) => !oldFiles.has(e.hash));
 
   const trx = db.transaction(() => {
-    for (const file of req.files as Express.Multer.File[]) {
+    for (const file of uploadfiles as Express.Multer.File[]) {
       createFileQuery().run({
         filename: file.filename,
         size: file.size,
@@ -23,7 +45,7 @@ export const createFileCtl = ctlWrapper(async (req, res) => {
         contentType: file.mimetype,
         ownerId: userId,
         checksum: file.hash,
-        path: "/api/v1/files/" + file.filename
+        path: UPLOAD_FILE_PATH + file.filename
       });
     }
   });
@@ -35,13 +57,16 @@ export const createFileCtl = ctlWrapper(async (req, res) => {
   return SuccessResponse(res, files, 201);
 });
 
-export const getFileCtl = ctlWrapper(async (req, res) => {
-  console.log("HERE");
-  const reader = fs.createReadStream(
-    path.resolve(process.cwd(), req.params.name)
-  );
+// TODO: docs
+export const getFileCtl = ctlWrapper(async (req: Request<FindFileDto>, res) => {
+  const file = findFileByPathQuery(UPLOAD_FILE_PATH + req.params.name);
+  if (!file) {
+    return NotFoundResponse(res);
+  }
+
+  const filePath = path.resolve(appEnv.UPLOAD_PATH, file.filename);
+  const reader = fs.createReadStream(filePath);
 
   res.type(mime.lookup(req.params.name));
-
   reader.pipe(res);
 });
