@@ -8,7 +8,10 @@ import { CreateApplicationService } from "../config/services.config";
 import { OTP } from "../utils/otp";
 
 beforeAll(() => {
-  new CreateApplicationService(app).addService("otp", OTP).build();
+  new CreateApplicationService(app)
+    .addService("otp", OTP)
+    .addService("domainValidator", async (_str: string) => [null, []] as const)
+    .build();
 });
 
 const userInfo: RegisterDto = {

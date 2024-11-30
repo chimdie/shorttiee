@@ -27,7 +27,6 @@ import {
   updateAuthOtpByUserId
 } from "../db/auth.db";
 import { signAuthToken } from "../utils/auth-token";
-import { domainValidator } from "../utils/domain-validator";
 import assert from "assert";
 import { db } from "../config/db.config";
 import { appEnv } from "../config/env.config";
@@ -36,7 +35,9 @@ import { Auth, User } from "../dto/types.dto";
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
     const emailDomain = req.body.email.split("@");
-    const [dnsResolverError] = await domainValidator(emailDomain[1]);
+    const [dnsResolverError] = await req.app.locals.domainValidator(
+      emailDomain[1]
+    );
     if (dnsResolverError) {
       return BadRequestResponse(res, "Invalid email domain");
     }

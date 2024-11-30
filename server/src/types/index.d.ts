@@ -14,6 +14,9 @@ declare global {
         verifyOtp: (otp: string, hash: string, otpTTL: Date) => boolean;
         hashOtp: (payload: string) => string;
       };
+      domainValidator: (
+        domain: string
+      ) => Promise<readonly [Error] | readonly [null, string[]]>;
     }
     namespace Multer {
       interface File {
