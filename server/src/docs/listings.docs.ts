@@ -33,7 +33,7 @@ export const ListingsDocSchema = {
     rate: { type: "number", nullable: true },
     facilities: { type: "array", items: { type: "string" }, nullable: true },
     restrictions: { type: "string", nullable: true },
-    images: { type: "array", items: { type: "string", format: "url" } },
+    images: { type: "array", items: { type: "string", format: "uri" } },
 
     // references
     userId: { type: "string", format: "uuid" },
@@ -57,7 +57,7 @@ export const CreateListingsDocSchema = {
     rate: { type: "number", nullable: true },
     facilities: { type: "array", items: { type: "string" }, nullable: true },
     restrictions: { type: "string", nullable: true },
-    images: { type: "array", items: { type: "string", format: "url" } },
+    images: { type: "array", items: { type: "string", format: "uri" } },
 
     // references
     categoryId: { type: "string", format: "uuid" }
