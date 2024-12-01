@@ -28,6 +28,11 @@ export const CreateFileDto = z
   .max(6);
 export type CreateFileDto = z.infer<typeof CreateFileDto>;
 
+export const CreateFileDocDto = z.object({
+  files: z.array(z.string())
+});
+export type CreateFileDocDto = z.infer<typeof CreateFileDocDto>;
+
 export const FindFileDto = z.object({
   name: z.string()
 });
