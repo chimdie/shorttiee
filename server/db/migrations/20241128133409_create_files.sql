@@ -1,10 +1,10 @@
 -- migrate:up
 CREATE TABLE IF NOT EXISTS tblFiles (
   path VARCHAR(36) PRIMARY KEY NOT NULL, -- 
-  contentType TEXT UNIQUE NOT NULL,
-  filename TEXT, 
-  checksum TEXT, 
-  size TEXT, 
+  filename TEXT UNIQUE NOT NULL, 
+  checksum TEXT UNIQUE NOT NULL, 
+  contentType TEXT NOT NULL,
+  size TEXT NOT NULL, 
   ownerId VARCHAR(36) NOT NULL,
   
   createdAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
