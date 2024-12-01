@@ -39,7 +39,7 @@ oapi.component("schemas", "CreateCategoryResponse", {
   properties: {
     message: { type: "string", example: "Success" },
     data: {
-      $ref: "#/components/schemas/CreateCategoryDto"
+      $ref: "#/components/schemas/CategoryDto"
     }
   }
 });

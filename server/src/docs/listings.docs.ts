@@ -83,6 +83,7 @@ oapi.component("schemas", "CreateListingResponse", {
 });
 export const createListingsDocs = oapi.path({
   tags: ["Listing"],
+  security: [{ BearerAuth: [] }],
   requestBody: {
     content: {
       "application/json": {
