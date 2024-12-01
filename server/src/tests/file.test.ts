@@ -10,41 +10,10 @@ import {
   expect
 } from "@jest/globals";
 import path from "path";
-import crypto from "node:crypto";
-import os from "node:os";
-import fs from "node:fs";
 import { MulterStorageHashing } from "../config/upload/hash-storage.upload";
 
-// MulterStorageHashing.prototype._handleFile = ;
-type MulterFileHander = typeof MulterStorageHashing.prototype._handleFile;
-const _mockHandleFile: MulterFileHander = function (_req, file, callback) {
-  const filename = file.originalname;
-  const destination = os.tmpdir();
-
-  const finalPath = path.join(destination, filename);
-  const outStream = fs.createWriteStream(finalPath);
-
-  file.stream.pipe(outStream);
-  outStream.on("error", callback);
-  const hash = crypto.createHash("sha256");
-  file.stream.on("data", function (chunk) {
-    hash.update(chunk);
-  });
-
-  outStream.on("finish", () => {
-    const hashVal = hash.digest("hex");
-
-    callback(null, {
-      destination,
-      filename,
-      path: finalPath,
-      size: outStream.bytesWritten,
-      hash: hashVal
-    });
-  });
-};
-
 let token = "";
+let fileUrl = "";
 
 beforeAll(() => {
   token = helper.getUserAuth().token;
@@ -56,7 +25,6 @@ describe("POST /api/v1/files", () => {
   >;
   beforeAll(() => {
     mockFileHandler = jest.spyOn(MulterStorageHashing.prototype, "_handleFile");
-    mockFileHandler.mockImplementation(_mockHandleFile);
   });
 
   afterEach(() => {
@@ -108,6 +76,8 @@ describe("POST /api/v1/files", () => {
     expect(res.body.data).toBeTruthy();
     expect(Array.isArray(res.body.data)).toEqual(true);
     expect(res.body.data.length).toEqual(2);
+
+    fileUrl = path.basename(res.body.data[1].path);
   });
 
   // handle file link
@@ -124,7 +94,7 @@ describe("GET /api/v1/files/:name", () => {
 
   it("Should return file", async () => {
     await supertest(app)
-      .get("/api/v1/files/schema.sql")
+      .get("/api/v1/files/" + fileUrl)
       .expect(200)
       .expect("Content-Type", /sql/);
   });
