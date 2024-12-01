@@ -111,5 +111,12 @@ describe("POST /api/v1/listings", () => {
 });
 
 describe("GET /api/v1/listings", () => {
-  it.todo("Should get all listings");
+  it("Should get all listings", async () => {
+    const res = await supertest(app)
+      .get("/api/v1/listings")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data).toBeInstanceOf(Array);
+  });
 });

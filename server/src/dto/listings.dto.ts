@@ -27,7 +27,7 @@ export const ListingDto = z.object({
   facilities: z.array(z.string()).nullish(),
   restrictions: z.string().nullish(),
   images: z
-    .array(z.string().url())
+    .array(z.string().url({ message: "Images must be valid URL" }))
     .min(3, { message: "Minimum of 3 images" })
     .max(6, { message: "Maximum of 6 images" }),
 

@@ -1,5 +1,9 @@
 import assert from "assert";
-import { createListingQuery, findListingByIdQuery } from "../db/listing.db";
+import {
+  createListingQuery,
+  findAllListingQuery,
+  findListingByIdQuery
+} from "../db/listing.db";
 import { CreateListingsDto } from "../dto/listings.dto";
 import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
@@ -33,5 +37,13 @@ export const createListingCtl = ctlWrapper(
     }
 
     return SuccessResponse(res, listing, 201);
+  }
+);
+
+export const getAllListingCtl = ctlWrapper(
+  async (_req: Request<unknown, unknown, CreateListingsDto>, res) => {
+    const listings = findAllListingQuery();
+
+    return SuccessResponse(res, listings);
   }
 );

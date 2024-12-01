@@ -33,7 +33,14 @@ export const ListingsDocSchema = {
     rate: { type: "number", nullable: true },
     facilities: { type: "array", items: { type: "string" }, nullable: true },
     restrictions: { type: "string", nullable: true },
-    images: { type: "array", items: { type: "string", format: "uri" } },
+    images: {
+      type: "array",
+      items: {
+        type: "string",
+        format: "uri",
+        pattern: "www\\.[a-z]{2,20}\\.[a-z]{2,4}"
+      }
+    },
 
     // references
     userId: { type: "string", format: "uuid" },
@@ -100,6 +107,38 @@ export const createListingsDocs = oapi.path({
         "application/json": {
           schema: {
             $ref: "#/components/schemas/CreateListingResponse"
+          }
+        }
+      }
+    }
+  }
+});
+
+//
+oapi.component("schemas", "GetAllListingResponse", {
+  type: "object",
+  additionalProperties: false,
+  required: ["data", "message"],
+  properties: {
+    message: { type: "string" },
+    data: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/ListingsDto"
+      }
+    }
+  }
+});
+export const getAllListingsDocs = oapi.path({
+  tags: ["Listing"],
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/components/schemas/GetAllListingResponse"
           }
         }
       }

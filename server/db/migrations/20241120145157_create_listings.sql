@@ -10,6 +10,7 @@ CREATE TABLE tblListings (
   price INT,
   rate INT,
   restrictions TEXT,
+  images TEXT,
 
   createdAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
   updatedAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
