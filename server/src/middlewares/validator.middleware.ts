@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AnyZodObject, AnyZodTuple, ZodArray } from "zod";
+import { AnyZodObject, ZodArray } from "zod";
 import { ValidationResponse } from "../utils/response";
 import debug from "debug";
 
@@ -34,6 +34,11 @@ export const validator = (opts?: {
     req.body = body[1];
     req.params = params[1] as Request["params"];
     req.query = query[1] as Request["query"];
+    /**
+     * WARN:
+     * don't strip values from request files
+     * req.files = files[1] as Request["files"];
+     */
 
     return next();
   };
