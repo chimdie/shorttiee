@@ -3,7 +3,7 @@ import { Request } from "express";
 import { db } from "../config/db.config";
 import {
   createFileQuery,
-  findFileByChecksumQuery,
+  findAllFileByChecksumQuery,
   findFileByPathQuery
 } from "../db/file.db";
 import { ctlWrapper } from "../utils/ctl-wrapper";
@@ -31,7 +31,7 @@ export const createFileCtl = ctlWrapper(async (req, res) => {
   const checksums = dedupedFiles.map((e) => e.hash);
 
   const oldFiles = new Set(
-    findFileByChecksumQuery(checksums).map((e) => e.checksum)
+    findAllFileByChecksumQuery(checksums).map((e) => e.checksum)
   );
 
   const uploadfiles = dedupedFiles.filter((e) => !oldFiles.has(e.hash));
@@ -51,7 +51,7 @@ export const createFileCtl = ctlWrapper(async (req, res) => {
   });
   trx();
 
-  const files = findFileByChecksumQuery(checksums);
+  const files = findAllFileByChecksumQuery(checksums);
   // console.log("files", req.baseUrl, files);
 
   return SuccessResponse(res, files, 201);
