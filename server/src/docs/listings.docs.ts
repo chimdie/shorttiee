@@ -114,7 +114,7 @@ export const createListingsDocs = oapi.path({
   }
 });
 
-//
+// get all listing
 oapi.component("schemas", "GetAllListingResponse", {
   type: "object",
   additionalProperties: false,
@@ -139,6 +139,33 @@ export const getAllListingsDocs = oapi.path({
         "application/json": {
           schema: {
             $ref: "#/components/schemas/GetAllListingResponse"
+          }
+        }
+      }
+    }
+  }
+});
+
+// get a lising
+oapi.component("schemas", "GetListingResponse", {
+  type: "object",
+  additionalProperties: false,
+  required: ["data", "message"],
+  properties: {
+    message: { type: "string" },
+    data: { $ref: "#/components/schemas/ListingsDto" }
+  }
+});
+export const getListingsDocs = oapi.path({
+  tags: ["Listing"],
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/components/schemas/GetListingResponse"
           }
         }
       }

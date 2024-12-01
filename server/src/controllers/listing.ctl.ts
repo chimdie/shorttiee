@@ -61,3 +61,18 @@ export const getAllListingCtl = ctlWrapper(
     return SuccessResponse(res, listingResult);
   }
 );
+
+export const getListingCtl = ctlWrapper(
+  async (req: Request<IdDto, unknown, CreateListingsDto>, res, next) => {
+    const [listingError, listingResult] = findListingByIdQuery(req.params.id);
+    if (listingError) {
+      return next(listingError);
+    }
+
+    if (!listingResult) {
+      return NotFoundResponse(res);
+    }
+
+    return SuccessResponse(res, listingResult);
+  }
+);

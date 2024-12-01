@@ -120,3 +120,40 @@ describe("GET /api/v1/listings", () => {
     expect(res.body.data).toBeInstanceOf(Array);
   });
 });
+
+describe("GET /api/v1/listings/:id", () => {
+  const listing = db
+    .prepare<[], { id: string }>("SELECT id from tblListings LIMIT 1")
+    .get();
+
+  if (!listing) {
+    throw Error("Could not get listing");
+  }
+
+  it("Should return 400 for invalid param", async () => {
+    const res = await supertest(app)
+      .get("/api/v1/listings/not-a-uuid")
+      .auth(token, { type: "bearer" })
+      .expect(400);
+
+    expect(res.body.error).toMatch(/validation/i);
+  });
+
+  it("Should return 404 for getting a listing", async () => {
+    const res = await supertest(app)
+      .get(`/api/v1/listings/${crypto.randomUUID()}`)
+      .auth(token, { type: "bearer" })
+      .expect(404);
+
+    expect(res.body.error).toBeTruthy();
+  });
+
+  it("Should get a listing", async () => {
+    const res = await supertest(app)
+      .get(`/api/v1/listings/${listing.id}`)
+      .auth(token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data.id).toEqual(listing.id);
+  });
+});
