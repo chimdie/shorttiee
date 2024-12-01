@@ -9,13 +9,15 @@ import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
   BadRequestResponse,
   ErrorResponse,
+  NotFoundResponse,
   SuccessResponse
 } from "../utils/response";
 import { Request } from "express";
 import { findCategoryByIdQuery } from "../db/category.db";
+import { IdDto } from "../dto/util.dto";
 
 export const createListingCtl = ctlWrapper(
-  async (req: Request<unknown, unknown, CreateListingsDto>, res) => {
+  async (req: Request<unknown, unknown, CreateListingsDto>, res, next) => {
     assert(req.user?.id);
 
     const category = findCategoryByIdQuery(req.body.categoryId);
@@ -29,21 +31,33 @@ export const createListingCtl = ctlWrapper(
       status: "AWAITING_REVIEW" as const,
       images: JSON.stringify(req.body.images)
     });
-    createListingQuery().run(createListingPayload);
+    const [createListingError, _] = createListingQuery(createListingPayload);
 
-    const listing = findListingByIdQuery(createListingPayload.id);
-    if (!listing) {
-      ErrorResponse(res, "An error occurred while creating listings");
+    if (createListingError) {
+      return next(createListingError);
     }
 
-    return SuccessResponse(res, listing, 201);
+    const [listingError, listingResult] = findListingByIdQuery(
+      createListingPayload.id
+    );
+    if (listingError) {
+      return next(listingError);
+    }
+    if (!listingResult) {
+      return ErrorResponse(res, "An error occurred while creating listings");
+    }
+
+    return SuccessResponse(res, listingResult, 201);
   }
 );
 
 export const getAllListingCtl = ctlWrapper(
-  async (_req: Request<unknown, unknown, CreateListingsDto>, res) => {
-    const listings = findAllListingQuery();
+  async (_req: Request<unknown, unknown, CreateListingsDto>, res, next) => {
+    const [listingError, listingResult] = findAllListingQuery();
+    if (listingError) {
+      return next(listingError);
+    }
 
-    return SuccessResponse(res, listings);
+    return SuccessResponse(res, listingResult);
   }
 );
