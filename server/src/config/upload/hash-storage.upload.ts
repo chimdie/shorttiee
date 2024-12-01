@@ -2,10 +2,10 @@ import { DiskStorageOptions, StorageEngine } from "multer";
 import type { Request } from "express";
 import path from "path";
 import crypto from "node:crypto";
-import os from "node:os";
 import fs from "node:fs";
 import fsPromise from "node:fs/promises";
 import mime from "mime";
+import { appEnv } from "../env.config";
 
 export class MulterStorageHashing implements StorageEngine {
   private getFilename(
@@ -23,7 +23,7 @@ export class MulterStorageHashing implements StorageEngine {
     _file: Express.Multer.File,
     cb: (err: any, dest: string) => void
   ) {
-    cb(null, os.tmpdir());
+    cb(null, appEnv.UPLOAD_PATH);
   }
 
   constructor(opts: DiskStorageOptions = {}) {
@@ -61,7 +61,8 @@ export class MulterStorageHashing implements StorageEngine {
         if (!filename) return cb(Error("No filename"));
 
         const ext = "." + (mime.extension(file.mimetype) || "");
-        const finalPath = path.join(destination, filename + ext);
+        filename += ext;
+        const finalPath = path.join(destination, filename);
         const outStream = fs.createWriteStream(finalPath);
 
         file.stream.pipe(outStream);
