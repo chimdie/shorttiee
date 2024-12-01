@@ -10,7 +10,10 @@ export function createCategoryQuery() {
 
 export function findCategoryByIdQuery(id: string) {
   return db
-    .prepare<WithId<{}>[]>("SELECT * FROM tblCategories WHERE id=@id")
+    .prepare<
+      WithId<{}>[],
+      CategoryDto
+    >("SELECT * FROM tblCategories WHERE id=@id")
     .get({ id });
 }
 
