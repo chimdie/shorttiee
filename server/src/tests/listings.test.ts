@@ -1,4 +1,4 @@
-import { describe, it, beforeAll } from "@jest/globals";
+import { describe, it, beforeAll, expect } from "@jest/globals";
 import { app } from "../app";
 import { db } from "../config/db.config";
 import { CreateApplicationService } from "../config/services.config";
@@ -80,6 +80,19 @@ describe("POST /api/v1/listings", () => {
 
     assert.equal(res.body.data, undefined);
     assert.equal("error" in res.body, true);
+  });
+
+  it("Should throw bad request error for wrong category", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/listings")
+      .auth(token, { type: "bearer" })
+      .set("Accept", "application/json")
+      .send({ ...payload, categoryId: crypto.randomUUID() })
+      .expect(400);
+
+    assert.equal(res.body.data, undefined);
+    assert.equal("error" in res.body, true);
+    expect(res.body.message).toMatch(/not exist/);
   });
 
   it("Should create a listing", async () => {
