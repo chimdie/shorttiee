@@ -15,6 +15,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
+import { DashboardRoutes } from "@/types/routes";
 
 export function NavUser({
   user,
@@ -67,15 +69,19 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <Link to={DashboardRoutes.account}>
               <DropdownMenuItem>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
+              </Link>
 
+              <Link to={DashboardRoutes.notification}>
               <DropdownMenuItem>
                 <Bell />
                 Notifications
               </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
