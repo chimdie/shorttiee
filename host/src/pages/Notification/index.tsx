@@ -1,6 +1,6 @@
-import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react'
-import { Link } from 'react-router-dom'
-import { DashboardRoutes } from '@/types/routes'
+import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/react";
+import { Link } from "react-router-dom";
+import { DashboardRoutes } from "@/types/routes";
 
 export default function Notification(): JSX.Element {
   return (
@@ -12,10 +12,7 @@ export default function Notification(): JSX.Element {
         <BreadcrumbItem>Notification</BreadcrumbItem>
       </Breadcrumbs>
 
-      <div className="space-y-4">
-        notifications
-      </div>
+      <div className="space-y-4">notifications</div>
     </div>
-
-  )
+  );
 }

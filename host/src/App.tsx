@@ -22,8 +22,6 @@ import EditShortlet from "@/pages/Dashboard/Shortlet/editShortlet";
 import Account from "./pages/Dashboard/Account";
 import Notification from "./pages/Notification";
 
-
-
 import NotFound from "@/components/NotFound";
 
 export const rootRouter = createBrowserRouter([
@@ -48,7 +46,7 @@ export const rootRouter = createBrowserRouter([
       { path: DashboardRoutes.payment, element: <Payments /> },
       { path: DashboardRoutes.settings, element: <Settings /> },
       { path: DashboardRoutes.account, element: <Account /> },
-      { path: DashboardRoutes.notification, element: <Notification /> }
+      { path: DashboardRoutes.notification, element: <Notification /> },
     ],
   },
 ]);

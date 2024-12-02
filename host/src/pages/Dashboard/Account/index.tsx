@@ -1,6 +1,6 @@
-import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react'
-import { Link } from 'react-router-dom'
-import { DashboardRoutes } from '@/types/routes'
+import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/react";
+import { Link } from "react-router-dom";
+import { DashboardRoutes } from "@/types/routes";
 
 export default function Account(): JSX.Element {
   return (
@@ -12,11 +12,7 @@ export default function Account(): JSX.Element {
         <BreadcrumbItem>Account</BreadcrumbItem>
       </Breadcrumbs>
 
-
-      <div className="space-y-4">
-        hehehe
-      </div>
+      <div className="space-y-4">hehehe</div>
     </div>
-  )
-
+  );
 }
