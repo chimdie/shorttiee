@@ -6,11 +6,11 @@ CREATE TABLE tblListings (
   -- location -- coordinate
   type TEXT CHECK(type IN ("SHORTLET","RENTAL","SALE")) NOT NULL,
   status TEXT CHECK(status IN ("AWAITING_REVIEW","REJECTED","APPROVED")) NOT NULL,
+  images TEXT NOT NULL,
   description TEXT,
   price INT,
   rate INT,
   restrictions TEXT,
-  images TEXT,
 
   createdAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
   updatedAt DATETIME DEFAULT (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
