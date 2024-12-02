@@ -3,6 +3,7 @@ import { CategoryDto } from "../dto/category.dto";
 import { ListingDto } from "../dto/listings.dto";
 import { Auth, User } from "../dto/types.dto";
 import { faker } from "@faker-js/faker";
+import { Merge } from "../types/utils";
 
 function seedUser() {
   const statements = Array.from({ length: 10 }).map(() => {
@@ -90,8 +91,8 @@ function seedCategories() {
 function seedListings(userIds: string[], categoryIds: string[]) {
   const statements = Array.from({ length: 30 }).map(() => {
     const listingStatement = db.prepare<Omit<ListingDto, "images">[]>(`
-      INSERT INTO tblListings (id, name, address, type, status, description, price, rate, restrictions, userId, categoryId)
-      VALUES(@id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId)
+      INSERT INTO tblListings (id, name, address, type, status, description, price, rate, restrictions, userId, categoryId, images)
+      VALUES(@id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId, @images)
     `);
 
     return listingStatement;
@@ -99,7 +100,7 @@ function seedListings(userIds: string[], categoryIds: string[]) {
 
   const trx = db.transaction(() => {
     for (const statement of statements) {
-      const listings: Omit<ListingDto, "images"> = {
+      const listings: Merge<Omit<ListingDto, "images">, { images: string }> = {
         id: faker.string.uuid(),
         name: faker.commerce.productName(),
         address: faker.location.streetAddress(),
@@ -114,6 +115,9 @@ function seedListings(userIds: string[], categoryIds: string[]) {
         restrictions: null,
         rate: +faker.commerce.price(),
         price: +faker.commerce.price(),
+        images: JSON.stringify(
+          Array.from<string>({ length: 3 }).fill(faker.image.url())
+        ),
 
         userId: faker.helpers.arrayElement(userIds),
         categoryId: faker.helpers.arrayElement(categoryIds)
