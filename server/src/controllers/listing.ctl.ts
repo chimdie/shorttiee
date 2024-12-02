@@ -47,6 +47,8 @@ export const createListingCtl = ctlWrapper(
       return ErrorResponse(res, "An error occurred while creating listings");
     }
 
+    listingResult.images = JSON.parse(listingResult.images);
+
     return SuccessResponse(res, listingResult, 201);
   }
 );
@@ -57,6 +59,10 @@ export const getAllListingCtl = ctlWrapper(
     if (listingError) {
       return next(listingError);
     }
+
+    listingResult.forEach((e) => {
+      e.images = JSON.parse(e.images);
+    });
 
     return SuccessResponse(res, listingResult);
   }
@@ -72,6 +78,8 @@ export const getListingCtl = ctlWrapper(
     if (!listingResult) {
       return NotFoundResponse(res);
     }
+
+    listingResult.images = JSON.parse(listingResult.images);
 
     return SuccessResponse(res, listingResult);
   }

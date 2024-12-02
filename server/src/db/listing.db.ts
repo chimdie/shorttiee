@@ -7,7 +7,10 @@ type InsertListings = CreateListingsDto &
 	Pick<ListingDto, "status"> & { id: string; userId: string };
 
 export function createListingQuery(data: InsertListings) {
-	const statment = db.prepare<Expand<InsertListings>[], ListingDto>(`
+	const statment = db.prepare<
+		Expand<InsertListings>[],
+		ListingDto & { images: string }
+	>(`
 		INSERT INTO tblListings (
 			id, name, address, type, status, description, price, rate, restrictions, userId, categoryId, images
 		) VALUES (
@@ -20,16 +23,19 @@ export function createListingQuery(data: InsertListings) {
 }
 
 export function findListingByIdQuery(id: string) {
-	const statment = db.prepare<Pick<ListingDto, "id">[], ListingDto>(
-		"SELECT * FROM tblListings WHERE id=@id"
-	);
+	const statment = db.prepare<
+		Pick<ListingDto, "id">[],
+		ListingDto & { images: string }
+	>("SELECT * FROM tblListings WHERE id=@id");
 	const fn = fnToResult(statment.get.bind(statment));
 
 	return fn({ id });
 }
 
 export function findAllListingQuery() {
-	const statment = db.prepare<[], ListingDto>("SELECT * FROM tblListings");
+	const statment = db.prepare<[], ListingDto & { images: string }>(
+		"SELECT * FROM tblListings"
+	);
 	const fn = fnToResult(statment.all.bind(statment));
 	return fn();
 }

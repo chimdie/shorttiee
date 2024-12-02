@@ -107,6 +107,7 @@ describe("POST /api/v1/listings", () => {
     assert.notEqual(res.body.data, null);
     assert.notEqual(res.body.data, undefined);
     assert.equal(res.body.data.name, payload.name);
+    expect(res.body.data.images).toBeInstanceOf(Array);
   });
 });
 
@@ -118,6 +119,7 @@ describe("GET /api/v1/listings", () => {
       .expect(200);
 
     expect(res.body.data).toBeInstanceOf(Array);
+    expect(res.body.data[0].images).toBeInstanceOf(Array);
   });
 });
 
@@ -155,5 +157,6 @@ describe("GET /api/v1/listings/:id", () => {
       .expect(200);
 
     expect(res.body.data.id).toEqual(listing.id);
+    expect(res.body.data.images).toBeInstanceOf(Array);
   });
 });
