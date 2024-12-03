@@ -34,10 +34,12 @@ import {
   Speech,
   Tickets,
   TriangleAlert,
-  TypeOutline,
   Users,
   Wallet,
   X,
+  BedSingle,
+  Bath,
+  Proportions,
 } from "lucide-react";
 
 type ShortletModalT = {
@@ -200,7 +202,7 @@ export default function AddShortletModal({
                           placeholder="Number of Bedrooms"
                           type="text"
                           startContent={
-                            <Wallet size={16} className="pointer-events-none text-grey_400" />
+                            <BedSingle size={16} className="pointer-events-none text-grey_400" />
                           }
                         />
                       </FormControl>
@@ -222,7 +224,7 @@ export default function AddShortletModal({
                           placeholder="Number of Bathrooms"
                           type="text"
                           startContent={
-                            <Tickets size={16} className="pointer-events-none text-grey_400" />
+                            <Bath size={16} className="pointer-events-none text-grey_400" />
                           }
                         />
                       </FormControl>
@@ -310,7 +312,7 @@ export default function AddShortletModal({
                         placeholder="Shortlet Type"
                         aria-label="type"
                         startContent={
-                          <TypeOutline size={16} className="pointer-events-none text-grey_400" />
+                          <Proportions size={16} className="pointer-events-none text-grey_400" />
                         }
                         classNames={{ popoverContent: "rounded-md" }}
                       >

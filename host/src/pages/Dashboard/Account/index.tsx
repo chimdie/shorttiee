@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { Avatar, BreadcrumbItem, Breadcrumbs, Button, Input } from "@nextui-org/react";
+import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input } from "@nextui-org/react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Link } from "react-router-dom";
 import { DashboardRoutes } from "@/types/routes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AccountSchema } from "@/schema/account.schema";
-import { Building2, Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { Building2, Camera, Mail, MapPin, Phone, UserRound } from "lucide-react";
 
 export default function Account(): JSX.Element {
-  const [isEdit, setIsEdit] = useState<boolean>(true)
+  const [isEdit, setIsEdit] = useState<boolean>(true);
 
   const form = useForm<AccountSchema>({
     resolver: zodResolver(AccountSchema),
@@ -26,10 +26,17 @@ export default function Account(): JSX.Element {
 
       <div className="flex flex-col justify-center items-center space-y-6 py-4">
         <div>
-          <Avatar
-            src="https://i.pravatar.cc/150?u=a04258114e29026708c"
-            className="w-40 h-40 text-large"
-          />
+          <Badge
+            color="default"
+            content={<Camera className="cursor-pointer size-12 text-shorttiee_primary" />}
+            placement="bottom-right"
+            isOneChar
+          >
+            <Avatar
+              src="https://i.pravatar.cc/150?u=a04258114e29026708c"
+              className="w-40 h-40 text-large"
+            />
+          </Badge>
         </div>
 
         <Form {...form}>
@@ -147,7 +154,6 @@ export default function Account(): JSX.Element {
                         <MapPin size={16} className="pointer-events-none text-grey_400" />
                       }
                       isDisabled={isEdit}
-
                     />
                   </FormControl>
                   <FormMessage />
