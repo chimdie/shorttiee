@@ -12,6 +12,7 @@ import {
   getListingsDocs
 } from "../docs/listings.docs";
 import { IdDto } from "../dto/util.dto";
+import { authenticate } from "../middlewares/auth.middleware";
 
 export const listingsRouter = Router();
 
@@ -19,6 +20,7 @@ listingsRouter
   .route("/")
   .get(getAllListingsDocs, getAllListingCtl)
   .post(
+    authenticate,
     createListingsDocs,
     validator({ body: CreateListingsDto }),
     createListingCtl

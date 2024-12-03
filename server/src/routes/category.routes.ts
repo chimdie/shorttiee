@@ -13,8 +13,9 @@ export const categoryRouter = Router();
 categoryRouter
   .route("/")
   .post(
+    authenticate,
     createCategoryDoc,
     validator({ body: CreateCategoryDto }),
     createCategoryCtl
   )
-  .get(getAllCategoryDoc, authenticate, getAllCategoriesCtl);
+  .get(getAllCategoryDoc, getAllCategoriesCtl);

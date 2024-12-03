@@ -131,7 +131,6 @@ oapi.component("schemas", "GetAllListingResponse", {
 });
 export const getAllListingsDocs = oapi.path({
   tags: ["Listing"],
-  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",
@@ -158,7 +157,6 @@ oapi.component("schemas", "GetListingResponse", {
 });
 export const getListingsDocs = oapi.path({
   tags: ["Listing"],
-  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",

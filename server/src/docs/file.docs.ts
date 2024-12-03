@@ -80,7 +80,6 @@ export const getFileDoc = oapi.path({
   tags: ["File"],
   description: "Get all categories",
   summary: "Get all categories",
-  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",
