@@ -4,10 +4,11 @@ import { db } from "../config/db.config";
 import { CreateApplicationService } from "../config/services.config";
 import { OTP } from "../utils/otp";
 import supertest from "supertest";
-import { CreateListingsDto } from "../dto/listings.dto";
+import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
 import { faker } from "@faker-js/faker";
 import assert from "node:assert";
 import { helper } from "./helper";
+import { FacilityDto } from "../dto/facility.dto";
 
 let token = "";
 let payload: CreateListingsDto;
@@ -17,17 +18,27 @@ beforeAll(() => {
 });
 
 const categories: string[] = [];
+const facilities: string[] = [];
+let createdListing: ListingDto;
 
 beforeAll(() => {
   const categoryResult = db
     .prepare<[], { id: string }>("SELECT id FROM tblCategories")
     .all();
+  const facilityResult = db
+    .prepare<[], { id: string }>("SELECT id FROM tblFacilities LIMIT 3")
+    .all();
 
-  if (!categoryResult.length) {
+  if (!categoryResult.length || !facilityResult.length) {
     throw "Categories cannot be empty";
   }
 
   categoryResult.forEach((e) => categories.push(e.id));
+
+  facilities.push(
+    ...faker.helpers.arrayElements(facilityResult.map((e) => e.id))
+  );
+
   payload = {
     type: faker.helpers.arrayElement(["SHORTLET", "RENTAL", "SALE"]),
     name: faker.commerce.productName(),
@@ -36,7 +47,7 @@ beforeAll(() => {
     images: Array.from<string>({ length: 3 }).fill(faker.image.url()),
     address: faker.location.streetAddress(),
     categoryId: faker.helpers.arrayElement(categories),
-    facilities: null,
+    facilities,
     description: faker.commerce.productDescription(),
     restrictions: null
   };
@@ -82,6 +93,23 @@ describe("POST /api/v1/listings", () => {
     assert.equal("error" in res.body, true);
   });
 
+  // TODO:
+  // test that facilities exist
+  // remove missing facilities
+  //
+  it("Should throw bad request error for wrong facilities", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/listings")
+      .auth(token, { type: "bearer" })
+      .set("Accept", "application/json")
+      .send({ ...payload, facilities: [crypto.randomUUID()] })
+      .expect(400);
+
+    assert.equal(res.body.data, undefined);
+    assert.equal("error" in res.body, true);
+    expect(res.body.message).toMatch(/invalid facilities/i);
+  });
+
   it("Should throw bad request error for wrong category", async () => {
     const res = await supertest(app)
       .post("/api/v1/listings")
@@ -108,6 +136,11 @@ describe("POST /api/v1/listings", () => {
     assert.notEqual(res.body.data, undefined);
     assert.equal(res.body.data.name, payload.name);
     expect(res.body.data.images).toBeInstanceOf(Array);
+    expect(res.body.data.facilities).toBeInstanceOf(Array);
+    expect(expect.arrayContaining(facilities)).toEqual(
+      res.body.data.facilities.map((e: FacilityDto) => e.id)
+    );
+    createdListing = res.body.data;
   });
 });
 
@@ -120,18 +153,11 @@ describe("GET /api/v1/listings", () => {
 
     expect(res.body.data).toBeInstanceOf(Array);
     expect(res.body.data[0].images).toBeInstanceOf(Array);
+    expect(res.body.data[0].facilities).toBeInstanceOf(Array);
   });
 });
 
 describe("GET /api/v1/listings/:id", () => {
-  const listing = db
-    .prepare<[], { id: string }>("SELECT id from tblListings LIMIT 1")
-    .get();
-
-  if (!listing) {
-    throw Error("Could not get listing");
-  }
-
   it("Should return 400 for invalid param", async () => {
     const res = await supertest(app)
       .get("/api/v1/listings/not-a-uuid")
@@ -151,12 +177,20 @@ describe("GET /api/v1/listings/:id", () => {
   });
 
   it("Should get a listing", async () => {
+    if (!createdListing) {
+      throw Error("no created Listing");
+    }
+
     const res = await supertest(app)
-      .get(`/api/v1/listings/${listing.id}`)
+      .get(`/api/v1/listings/${createdListing.id}`)
       .auth(token, { type: "bearer" })
       .expect(200);
 
-    expect(res.body.data.id).toEqual(listing.id);
+    expect(res.body.data.id).toEqual(createdListing.id);
     expect(res.body.data.images).toBeInstanceOf(Array);
+    expect(res.body.data.facilities).toBeInstanceOf(Array);
+    expect(expect.arrayContaining(facilities)).toEqual(
+      res.body.data.facilities.map((e: FacilityDto) => e.id)
+    );
   });
 });
