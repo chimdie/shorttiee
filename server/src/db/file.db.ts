@@ -8,11 +8,10 @@ export function createFileQuery() {
 }
 
 export function findAllFileByChecksumQuery(list: Array<string>) {
-  const query =
-    "SELECT path, checksum FROM tblFiles WHERE checksum IN (SELECT value FROM json_each(?))";
+  const query = `SELECT path, checksum FROM tblFiles WHERE checksum IN (${list.map((_) => "?").join()})`;
   return db
-    .prepare<string[], Pick<FileDto, "path" | "checksum">>(query)
-    .all(JSON.stringify(list));
+    .prepare<string[][], Pick<FileDto, "path" | "checksum">>(query)
+    .all(list);
 }
 
 export function findFileByPathQuery(path: string) {
