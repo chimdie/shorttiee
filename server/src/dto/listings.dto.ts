@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PopulatedEntity } from "../types/utils";
+import { FacilityDto } from "./facility.dto";
 
 export const ListingDto = z.object({
   id: z.string().uuid(),
@@ -24,7 +25,7 @@ export const ListingDto = z.object({
   description: z.string().nullish(),
   price: z.number().nullish(),
   rate: z.number().nullish(),
-  facilities: z.array(z.string()).nullish(),
+  facilities: z.array(FacilityDto),
   restrictions: z.string().nullish(),
   images: z
     .array(z.string().url({ message: "Images must be valid URL" }))
@@ -36,13 +37,25 @@ export const ListingDto = z.object({
   categoryId: z.string().uuid()
 });
 
+export const ListingDBDto = ListingDto.omit({
+  images: true,
+  facilities: true
+}).extend({
+  facilities: z.string(),
+  images: z.string()
+});
+export type ListingDBDto = z.infer<typeof ListingDBDto>;
+
 export type ListingDto = z.infer<typeof ListingDto>;
 export type PopulatedListings = PopulatedEntity<ListingDto>;
 
 export const CreateListingsDto = ListingDto.omit({
   userId: true,
   id: true,
-  status: true
+  status: true,
+  facilities: true
+}).extend({
+  facilities: z.array(z.string())
 });
 export type CreateListingsDto = z.infer<typeof CreateListingsDto>;
 

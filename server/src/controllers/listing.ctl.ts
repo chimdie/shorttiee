@@ -15,9 +15,13 @@ import {
 import { Request } from "express";
 import { findCategoryByIdQuery } from "../db/category.db";
 import { IdDto } from "../dto/util.dto";
+import { db } from "../config/db.config";
+import { createFacilityAndListingQuery } from "../db/facility-and-listing.db";
+import { fnToResult } from "../utils/fn-result";
+import { findAllFacilitiesInArrayQuery } from "../db/facility.db";
 
 export const createListingCtl = ctlWrapper(
-  async (req: Request<unknown, unknown, CreateListingsDto>, res, next) => {
+  async (req: Request<unknown, unknown, CreateListingsDto>, res) => {
     assert(req.user?.id);
 
     const category = findCategoryByIdQuery(req.body.categoryId);
@@ -25,29 +29,60 @@ export const createListingCtl = ctlWrapper(
       return BadRequestResponse(res, "Category does not exist");
     }
 
+    const [facilitiesError, facilitiesResult] = findAllFacilitiesInArrayQuery(
+      req.body.facilities
+    );
+    if (facilitiesError) {
+      return ErrorResponse(res);
+    }
+    if (!facilitiesResult.length) {
+      return BadRequestResponse(res, "Invalid facilities");
+    }
+
+    req.body.facilities = facilitiesResult.map((e) => e.id);
+
     const createListingPayload = Object.assign(req.body, {
       id: crypto.randomUUID(),
       userId: req.user.id,
       status: "AWAITING_REVIEW" as const,
       images: JSON.stringify(req.body.images)
     });
-    const [createListingError, _] = createListingQuery(createListingPayload);
 
+    const trx = fnToResult(
+      db.transaction(() => {
+        const [createListingError] = createListingQuery(createListingPayload);
+        for (const item of createListingPayload.facilities) {
+          const [createFacilityListingError] = createFacilityAndListingQuery({
+            listingId: createListingPayload.id,
+            facilityId: item
+          });
+
+          if (createFacilityListingError) {
+            throw createFacilityListingError;
+          }
+        }
+        if (createListingError) {
+          throw createListingError;
+        }
+      })
+    );
+
+    const [createListingError] = trx();
     if (createListingError) {
-      return next(createListingError);
+      console.log("createListingError", createListingError);
+      return ErrorResponse(res);
     }
 
     const [listingError, listingResult] = findListingByIdQuery(
       createListingPayload.id
     );
     if (listingError) {
-      return next(listingError);
+      console.log("listingError", listingError);
+      return ErrorResponse(res);
     }
     if (!listingResult) {
       return ErrorResponse(res, "An error occurred while creating listings");
     }
-
-    listingResult.images = JSON.parse(listingResult.images);
 
     return SuccessResponse(res, listingResult, 201);
   }
@@ -59,10 +94,6 @@ export const getAllListingCtl = ctlWrapper(
     if (listingError) {
       return next(listingError);
     }
-
-    listingResult.forEach((e) => {
-      e.images = JSON.parse(e.images);
-    });
 
     return SuccessResponse(res, listingResult);
   }
@@ -78,8 +109,6 @@ export const getListingCtl = ctlWrapper(
     if (!listingResult) {
       return NotFoundResponse(res);
     }
-
-    listingResult.images = JSON.parse(listingResult.images);
 
     return SuccessResponse(res, listingResult);
   }

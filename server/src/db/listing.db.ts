@@ -1,5 +1,9 @@
 import { db } from "../config/db.config";
-import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
+import {
+	CreateListingsDto,
+	ListingDBDto,
+	ListingDto
+} from "../dto/listings.dto";
 import { Expand } from "../types/utils";
 import { fnToResult } from "../utils/fn-result";
 
@@ -23,19 +27,57 @@ export function createListingQuery(data: InsertListings) {
 }
 
 export function findListingByIdQuery(id: string) {
-	const statment = db.prepare<
-		Pick<ListingDto, "id">[],
-		ListingDto & { images: string }
-	>("SELECT * FROM tblListings WHERE id=@id");
-	const fn = fnToResult(statment.get.bind(statment));
+	function _findListingByIdQuery(id: string) {
+		const sql = `
+		SELECT 
+			l.*,
+			json_group_array(json_object('name',f.name,'icon',f.icon,'color',f.color,'comment',f.comment,'id',f.id)) as facilities
+		FROM tblListingsFacilities AS lf
+			JOIN tblListings AS l ON lf.listingId=l.id
+			JOIN tblFacilities AS f ON lf.facilityId=f.id
+		WHERE l.id=@id
+		GROUP BY l.id
+	`;
+		const statment = db.prepare<Pick<ListingDto, "id">[], ListingDBDto>(sql);
 
-	return fn({ id });
+		const val = statment.get({ id });
+
+		if (val) {
+			val.images = JSON.parse(val.images);
+			val.facilities = JSON.parse(val.facilities);
+		}
+
+		return val as unknown as ListingDto;
+	}
+
+	const fn = fnToResult(_findListingByIdQuery);
+	return fn(id);
 }
 
 export function findAllListingQuery() {
-	const statment = db.prepare<[], ListingDto & { images: string }>(
-		"SELECT * FROM tblListings"
-	);
-	const fn = fnToResult(statment.all.bind(statment));
+	function run() {
+		const sql = `
+		SELECT 
+			l.*,
+			json_group_array(json_object('name',f.name,'icon',f.icon,'color',f.color,'comment',f.comment,'id',f.id)) as facilities
+		FROM tblListingsFacilities AS lf
+			JOIN tblListings AS l ON lf.listingId=l.id
+			JOIN tblFacilities AS f ON lf.facilityId=f.id
+		GROUP BY l.id
+	`;
+
+		const result = db.prepare<[], ListingDBDto>(sql).all();
+
+		result.forEach((val) => {
+			if (val) {
+				val.images = JSON.parse(val.images);
+				val.facilities = JSON.parse(val.facilities);
+			}
+		});
+
+		return result as unknown as ListingDto[];
+	}
+
+	const fn = fnToResult(run);
 	return fn();
 }
