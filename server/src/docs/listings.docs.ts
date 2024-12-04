@@ -4,6 +4,7 @@ import { oapi } from "../config/docs.config";
 import { Equals } from "../types/utils";
 import { typeAssert } from "../utils/asserts";
 import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
+import { FacilityDocSchema } from "./facility.docs";
 
 export const ListingsDocSchema = {
   type: "object",
@@ -15,6 +16,7 @@ export const ListingsDocSchema = {
     "type",
     "status",
     "images",
+    "facilities",
     "userId",
     "categoryId"
   ] as const,
@@ -31,7 +33,12 @@ export const ListingsDocSchema = {
     description: { type: "string", nullable: true },
     price: { type: "number", nullable: true },
     rate: { type: "number", nullable: true },
-    facilities: { type: "array", items: { type: "string" }, nullable: true },
+    facilities: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/FacilityDto"
+      } as unknown as typeof FacilityDocSchema
+    },
     restrictions: { type: "string", nullable: true },
     images: {
       type: "array",
@@ -53,7 +60,14 @@ typeAssert<Equals<FromSchema<typeof ListingsDocSchema>, ListingDto>>();
 export const CreateListingsDocSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["name", "address", "type", "images", "categoryId"] as const,
+  required: [
+    "name",
+    "address",
+    "type",
+    "images",
+    "categoryId",
+    "facilities"
+  ] as const,
   properties: {
     name: { type: "string" },
     address: { type: "string", format: "email" },
@@ -62,7 +76,7 @@ export const CreateListingsDocSchema = {
     description: { type: "string", nullable: true },
     price: { type: "number", nullable: true },
     rate: { type: "number", nullable: true },
-    facilities: { type: "array", items: { type: "string" }, nullable: true },
+    facilities: { type: "array", items: { type: "string", format: "uuid" } },
     restrictions: { type: "string", nullable: true },
     images: { type: "array", items: { type: "string", format: "uri" } },
 

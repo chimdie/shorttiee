@@ -10,7 +10,7 @@ export const FacilityDocSchema = {
   additionalProperties: false,
   required: ["id", "name", "icon"] as const,
   properties: {
-    id: { type: "string" },
+    id: { type: "string", format: "uuid" },
     name: { type: "string" },
     icon: { type: "string" },
     color: { type: "string", nullable: true },
@@ -52,6 +52,7 @@ export const createFacilityDoc = oapi.path({
   tags: ["Facility"],
   description: "Create a facility",
   summary: "Create a facility",
+  security: [{ BearerAuth: [] }],
   requestBody: {
     content: {
       "application/json": {
