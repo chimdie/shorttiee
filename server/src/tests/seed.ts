@@ -4,6 +4,8 @@ import { ListingDto } from "../dto/listings.dto";
 import { Auth, User } from "../dto/types.dto";
 import { faker } from "@faker-js/faker";
 import { Merge } from "../types/utils";
+import { FacilityDto } from "../dto/facility.dto";
+import { FacilityListing } from "../db/facility-and-listing.db";
 
 function seedUser() {
   const statements = Array.from({ length: 10 }).map(() => {
@@ -56,6 +58,40 @@ function seedUser() {
   return users;
 }
 
+function seedFacilities() {
+  const vals = ["Air Conditioning", "Swimming pool", "WiFi", "Laundry"];
+  const statements = Array.from({ length: vals.length }).map(() => {
+    const facilityStatement = db.prepare<CategoryDto[]>(`
+      INSERT INTO tblFacilities (id, name, icon, color, comment)
+      VALUES(@id, @name, @icon, @color, @comment)
+    `);
+
+    return facilityStatement;
+  });
+
+  const trx = db.transaction(() => {
+    // const
+    for (const statementIndex in statements) {
+      const facility: FacilityDto = {
+        id: faker.string.uuid(),
+        name: vals[statementIndex],
+        icon: faker.word.verb(),
+        color: faker.color.human(),
+        comment: faker.commerce.productDescription()
+      };
+
+      statements[statementIndex].run(facility);
+    }
+  });
+
+  trx();
+
+  const facilities = db
+    .prepare<[], CategoryDto>("SELECT * FROM tblFacilities")
+    .all();
+  return facilities;
+}
+
 function seedCategories() {
   const vals = ["Beach house", "Villa", "Duplex"];
   const statements = Array.from({ length: vals.length }).map(() => {
@@ -70,13 +106,13 @@ function seedCategories() {
   const trx = db.transaction(() => {
     // const
     for (const statementIndex in statements) {
-      const listings: CategoryDto = {
+      const category: CategoryDto = {
         id: faker.string.uuid(),
         name: vals[statementIndex],
         comment: null
       };
 
-      statements[statementIndex].run(listings);
+      statements[statementIndex].run(category);
     }
   });
 
@@ -88,9 +124,15 @@ function seedCategories() {
   return categories;
 }
 
-function seedListings(userIds: string[], categoryIds: string[]) {
+function seedListings(
+  userIds: string[],
+  categoryIds: string[],
+  facilityIds: string[]
+) {
   const statements = Array.from({ length: 30 }).map(() => {
-    const listingStatement = db.prepare<Omit<ListingDto, "images">[]>(`
+    const listingStatement = db.prepare<
+      Omit<ListingDto, "facilities" | "images">[]
+    >(`
       INSERT INTO tblListings (id, name, address, type, status, description, price, rate, restrictions, userId, categoryId, images)
       VALUES(@id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId, @images)
     `);
@@ -98,9 +140,16 @@ function seedListings(userIds: string[], categoryIds: string[]) {
     return listingStatement;
   });
 
+  const facilitiesListingStatement = db.prepare<FacilityListing[]>(
+    "INSERT INTO tblListingsFacilities (facilityId, listingId) VALUES (@facilityId, @listingId)"
+  );
+
   const trx = db.transaction(() => {
     for (const statement of statements) {
-      const listings: Merge<Omit<ListingDto, "images">, { images: string }> = {
+      const listing: Merge<
+        Omit<ListingDto, "images" | "facilities">,
+        { images: string }
+      > = {
         id: faker.string.uuid(),
         name: faker.commerce.productName(),
         address: faker.location.streetAddress(),
@@ -111,7 +160,7 @@ function seedListings(userIds: string[], categoryIds: string[]) {
           "AWAITING_REVIEW"
         ]),
         description: faker.commerce.productDescription(),
-        facilities: null,
+        // facilities: faker.helpers.arrayElements(facilityIds),
         restrictions: null,
         rate: +faker.commerce.price(),
         price: +faker.commerce.price(),
@@ -123,7 +172,10 @@ function seedListings(userIds: string[], categoryIds: string[]) {
         categoryId: faker.helpers.arrayElement(categoryIds)
       };
 
-      statement.run(listings);
+      statement.run(listing);
+      faker.helpers.arrayElements(facilityIds).forEach((facilityId) => {
+        facilitiesListingStatement.run({ facilityId, listingId: listing.id });
+      });
     }
   });
 
@@ -146,11 +198,13 @@ function skipForeignKeyConstraints<T = void>(fn: (...args: any[]) => T): T {
 async function main() {
   const users = skipForeignKeyConstraints(seedUser);
   const categories = skipForeignKeyConstraints(seedCategories);
+  const facilities = skipForeignKeyConstraints(seedFacilities);
 
   const listings = skipForeignKeyConstraints(() => {
     return seedListings(
       users.map((u) => u.id),
-      categories.map((c) => c.id)
+      categories.map((c) => c.id),
+      facilities.map((f) => f.id)
     );
   });
 
