@@ -1,4 +1,4 @@
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
+import { Bell, ChevronsUpDown, LogOut, UserPen } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -74,10 +74,10 @@ export function NavUser({
               <DropdownMenuSeparator />
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <Link to={DashboardRoutes.account}>
+                <Link to={DashboardRoutes.profile}>
                   <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
+                    <UserPen />
+                    Profile
                   </DropdownMenuItem>
                 </Link>
 

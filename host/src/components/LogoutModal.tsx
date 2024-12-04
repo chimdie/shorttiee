@@ -18,7 +18,7 @@ export default function LogoutModal({
         <ModalBody>
           <div className="flex flex-col p-4 space-y-8">
             <div className="rounded-full bg-gray-100 w-14 h-14 flex justify-center items-center mx-auto">
-              <div className="rounded-full bg-white w-10 h-10 flex justify-center items-center">
+              <div className="rounded-full bg-white w-10 h-10 flex justify-center items-center aspect-square">
                 <LogOut className="text-2xl text-shorttiee_red-dark" />
               </div>
             </div>
@@ -38,14 +38,14 @@ export default function LogoutModal({
             <Button
               onClick={onClose}
               size="lg"
-              fullWidth={true}
+              fullWidth
               className="bg-white shadow-sm border text-shorttiee_primary font-medium"
             >
               No, keep me logged in
             </Button>
             <Button
               size="lg"
-              fullWidth={true}
+              fullWidth
               className="bg-shorttiee_primary text-white shadow-sm font-medium"
               onClick={onClose}
             >

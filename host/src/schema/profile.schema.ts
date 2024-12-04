@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const AccountSchema = z.object({
+export const ProfileSchema = z.object({
   email: z.string({ message: "Email is required" }).email({ message: "Incorrect email format" }),
   firstName: z
     .string({ message: "First Name is required" })
@@ -13,4 +13,4 @@ export const AccountSchema = z.object({
   bussinessName: z.string().optional(),
 });
 
-export type AccountSchema = z.infer<typeof AccountSchema>;
+export type ProfileSchema = z.infer<typeof ProfileSchema>;

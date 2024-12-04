@@ -13,7 +13,7 @@ export const DashboardRoutes = {
   editShortlet: "/shortlet/edit/:id",
   settings: "/settings",
   payment: "/payments",
-  account: "/account",
+  profile: "/profile",
   notification: "/notification",
 };
 

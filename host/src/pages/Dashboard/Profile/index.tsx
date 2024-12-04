@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 import { DashboardRoutes } from "@/types/routes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AccountSchema } from "@/schema/account.schema";
+import { ProfileSchema } from "@/schema/profile.schema";
 import { Building2, Camera, Mail, MapPin, Phone, UserRound } from "lucide-react";
 
-export default function Account(): JSX.Element {
+export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
 
-  const form = useForm<AccountSchema>({
-    resolver: zodResolver(AccountSchema),
+  const form = useForm<ProfileSchema>({
+    resolver: zodResolver(ProfileSchema),
   });
 
   return (
@@ -21,7 +21,7 @@ export default function Account(): JSX.Element {
         <BreadcrumbItem>
           <Link to={DashboardRoutes.home}>Home</Link>
         </BreadcrumbItem>
-        <BreadcrumbItem>Account</BreadcrumbItem>
+        <BreadcrumbItem>Profile</BreadcrumbItem>
       </Breadcrumbs>
 
       <div className="flex flex-col justify-center items-center space-y-6 py-4">
