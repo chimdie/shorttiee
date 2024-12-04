@@ -4,36 +4,45 @@ import { WithId } from "../types/utils";
 import { fnToResult } from "../utils/fn-result";
 
 export const createFacilityQuery = (payload: WithId<CreateFacilityDto>) => {
-  const statement = db.prepare<WithId<CreateFacilityDto>[]>(`
+	const statement = db.prepare<WithId<CreateFacilityDto>[]>(`
 		INSERT INTO tblFacilities (id, name, icon, comment, color)
 		VALUES (@id, @name, @icon, @comment, @color)
 	`);
-  const fn = fnToResult(statement.run.bind(statement));
+	const fn = fnToResult(statement.run.bind(statement));
 
-  return fn(payload);
+	return fn(payload);
 };
 
 export const findAllFacilitiesQuery = () => {
-  const statement = db.prepare<[], FacilityDto>("SELECT * FROM tblFacilities");
-  const fn = fnToResult(statement.all.bind(statement));
+	const statement = db.prepare<[], FacilityDto>("SELECT * FROM tblFacilities");
+	const fn = fnToResult(statement.all.bind(statement));
 
-  return fn();
+	return fn();
 };
 
 export const findFacilityByIdQuery = (id: string) => {
-  const statement = db.prepare<{ id: string }[], FacilityDto>(
-    "SELECT * FROM tblFacilities WHERE id=@id"
-  );
-  const fn = fnToResult(statement.get.bind(statement));
+	const statement = db.prepare<{ id: string }[], FacilityDto>(
+		"SELECT * FROM tblFacilities WHERE id=@id"
+	);
+	const fn = fnToResult(statement.get.bind(statement));
 
-  return fn({ id });
+	return fn({ id });
 };
 
 export const findFacilityByNameQuery = (name: string) => {
-  const statement = db.prepare<{ name: string }[], FacilityDto>(
-    "SELECT * FROM tblFacilities WHERE name=@name"
-  );
-  const fn = fnToResult(statement.get.bind(statement));
+	const statement = db.prepare<{ name: string }[], FacilityDto>(
+		"SELECT * FROM tblFacilities WHERE name=@name"
+	);
+	const fn = fnToResult(statement.get.bind(statement));
 
-  return fn({ name });
+	return fn({ name });
 };
+
+export function findAllFacilitiesInArrayQuery(ids: string[]) {
+	const statement = db.prepare<string[][], FacilityDto>(
+		`SELECT * FROM tblFacilities WHERE id IN (${ids.map((_) => "?").join()})`
+	);
+	const fn = fnToResult(statement.all.bind(statement));
+
+	return fn(ids);
+}
