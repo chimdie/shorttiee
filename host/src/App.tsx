@@ -15,12 +15,11 @@ import ResetPassword from "@/pages/Auth/ResetPassword";
 // Dashboard pages
 import Home from "@/pages/Dashboard/Home";
 import Shortlet from "@/pages/Dashboard/Shortlet";
-import Payments from "@/pages/Dashboard/Payments";
 import Settings from "@/pages/Dashboard/Settings/index";
 import ShortletDetails from "@/pages/Dashboard/Shortlet/shortletDetails";
 import EditShortlet from "@/pages/Dashboard/Shortlet/editShortlet";
 import Profile from "@/pages/Dashboard/Profile";
-import Notification from "@/pages/Notification";
+import Notification from "@/pages/Dashboard/Notification";
 
 import NotFound from "@/components/NotFound";
 
@@ -43,7 +42,6 @@ export const rootRouter = createBrowserRouter([
       { path: DashboardRoutes.shortlets, element: <Shortlet /> },
       { path: DashboardRoutes.shortletDetail, element: <ShortletDetails /> },
       { path: DashboardRoutes.editShortlet, element: <EditShortlet /> },
-      { path: DashboardRoutes.payment, element: <Payments /> },
       { path: DashboardRoutes.settings, element: <Settings /> },
       { path: DashboardRoutes.profile, element: <Profile /> },
       { path: DashboardRoutes.notification, element: <Notification /> },
