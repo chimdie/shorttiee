@@ -50,11 +50,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {items.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton tooltip={item.title} asChild className="py-6 px-4 ">
-                  <Link
-                    to={item.url}
-                    className={`font-medium ${item.isActive ? "bg-shorttiee_primary text-white" : ""}`}
-                  >
+                <SidebarMenuButton tooltip={item.title} asChild data-active={item.isActive}
+                  className={`py-6 px-4 font-medium hover:bg-gray-200 hover:text-gray-900 data-[active=true]:bg-shorttiee_primary data-[active=true]:text-white`}>
+                  <Link to={item.url} >
                     {item.icon && <item.icon />}
                     {item.title}
                   </Link>
