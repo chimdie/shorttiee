@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuButton tooltip={item.title} asChild className="py-6 px-4 ">
                   <Link
                     to={item.url}
-                    className={`font-medium ${item.isActive ? "bg-shorttiee_primary text-white" : ""}`}
+                    className={`font-medium ${item.isActive ? "bg-shorttiee_primary text-white hover:bg-shorttiee_primary hover:text-white" : "text-gray-700 hover:bg-gray-200 hover:text-gray-900"}`}
                   >
                     {item.icon && <item.icon />}
                     {item.title}
