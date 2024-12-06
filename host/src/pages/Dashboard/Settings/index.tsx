@@ -15,7 +15,7 @@ export default function Settings(): JSX.Element {
           <BreadcrumbItem>Settings</BreadcrumbItem>
         </Breadcrumbs>
 
-        <div className="space-y-4 w-2/3">
+        <div className="space-y-4">
           <div className="flex justify-between items-center ">
             <div className="space-y-2">
               <h3 className="text-lg text-shorttiee_primary font-medium">Password</h3>
