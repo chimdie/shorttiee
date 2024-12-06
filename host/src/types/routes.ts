@@ -13,6 +13,8 @@ export const DashboardRoutes = {
   editShortlet: "/shortlet/edit/:id",
   settings: "/settings",
   payment: "/payments",
+  profile: "/profile",
+  notification: "/notification",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
