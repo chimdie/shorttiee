@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Feather, Ionicons} from '@expo/vector-icons';
 import tw from 'twrnc';
-import {router} from 'expo-router';
+import {Link, router} from 'expo-router';
 import {Heart, I3DRotate} from 'iconsax-react-native';
 import {getColor} from '@/config/theme';
 import {ShorttieeButton} from '@/components/Button';
@@ -20,7 +20,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {FlashList} from '@shopify/flash-list';
 import {useState} from 'react';
 import {BottomSheet} from '@rneui/themed';
-import DateTimePicker from 'react-native-ui-datepicker';
+import DateTimePicker, {DateType} from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import {currencyParser} from '@/utils/currencyParser';
 
@@ -40,9 +40,12 @@ export default function ApartmentDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const {height} = useWindowDimensions();
-  const [dateRange, setDateRange] = useState({
-    startDate: dayjs(),
-    endDate: dayjs(),
+  const [dateRange, setDateRange] = useState<{
+    startDate: DateType;
+    endDate: DateType;
+  }>({
+    startDate: undefined,
+    endDate: undefined,
   });
 
   const handlerShowSheet = () => {
@@ -51,8 +54,6 @@ export default function ApartmentDetailScreen() {
       setIsVisible(true);
     }, 300);
   };
-
-  console.log(dateRange);
 
   return (
     <SafeAreaView className="flex-1 justify-betweenn bg-white">
@@ -239,18 +240,22 @@ export default function ApartmentDetailScreen() {
                   fontWeight: 500,
                 }}
               />
-              <View className="flex-row items-center gap-4">
+              <View className="gap-4">
                 <View className="gap-1 flex-1">
                   <Text className="font-medium">Check in</Text>
                   <Pressable className="flex-row items-center gap-2 p-3 rounded-lg bg-gray-100">
-                    <Text className="flex-1">2024-12-01T21</Text>
+                    <Text className="flex-1">
+                      {dateRange.startDate?.toLocaleString()}
+                    </Text>
                     <Feather name="calendar" size={20} />
                   </Pressable>
                 </View>
                 <View className="gap-1 flex-1">
                   <Text className="font-medium">Check out</Text>
                   <Pressable className="flex-row items-center gap-2 p-3 rounded-lg bg-gray-100">
-                    <Text className="flex-1">2024-12-01T21</Text>
+                    <Text className="flex-1">
+                      {dateRange.endDate?.toLocaleString()}
+                    </Text>
                     <Feather name="calendar" size={20} />
                   </Pressable>
                 </View>
@@ -292,7 +297,12 @@ export default function ApartmentDetailScreen() {
                   </Text>
                 </View>
               </View>
-              <ShorttieeButton title="Continue" />
+              <Link href="/(tabs)/confirm-booking" asChild>
+                <ShorttieeButton
+                  title="Continue"
+                  onPress={() => setIsVisible(false)}
+                />
+              </Link>
             </View>
           </ScrollView>
         </View>
