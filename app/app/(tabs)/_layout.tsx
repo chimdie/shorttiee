@@ -75,6 +75,14 @@ export default function TabLayout() {
           tabBarStyle: {display: 'none'},
         }}
       />
+      <Tabs.Screen
+        name="confirm-booking"
+        options={{
+          href: null,
+          title: 'Confirm Booking',
+          tabBarStyle: {display: 'none'},
+        }}
+      />
     </Tabs>
   );
 }
