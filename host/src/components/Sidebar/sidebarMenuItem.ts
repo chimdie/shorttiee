@@ -1,5 +1,5 @@
 import { DashboardRoutes } from "@/types/routes";
-import { CreditCard, Hotel, House, type LucideIcon, Settings2 } from "lucide-react";
+import { Hotel, House, type LucideIcon, Settings2 } from "lucide-react";
 
 type Menu = {
   title: string;
@@ -21,12 +21,6 @@ export function getSidebarList(pathname: string): Menu[] {
       url: DashboardRoutes.shortlets,
       icon: Hotel,
       isActive: pathname.includes(DashboardRoutes.shortlets),
-    },
-    {
-      title: "Payments",
-      url: DashboardRoutes.payment,
-      icon: CreditCard,
-      isActive: pathname.includes(DashboardRoutes.payment),
     },
 
     {
