@@ -17,7 +17,7 @@ export default function Settings(): JSX.Element {
 
         <div className="space-y-4">
           <div className="flex justify-between items-center ">
-            <div className="space-y-2">
+            <div>
               <h3 className="text-lg text-shorttiee_primary font-medium">Password</h3>
               <p className="text-md text-grey_300">Set a unique password to protect your account</p>
             </div>
@@ -31,7 +31,7 @@ export default function Settings(): JSX.Element {
           <Divider />
 
           <div className="flex justify-between items-center ">
-            <div className="space-y-2">
+            <div>
               <h3 className="text-lg text-shorttiee_primary font-medium">Delete Acccount</h3>
               <p className="text-md text-grey_300">
                 This will delete your account.Your account will be permanently deleted from
