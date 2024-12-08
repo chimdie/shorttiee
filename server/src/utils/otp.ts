@@ -15,8 +15,7 @@ function verifyOtp(otp: string, hash: string, otpTTL: Date) {
     return false;
   }
 
-  const otpHash = nodeCrypto.createHash("sha1").update(otp).digest("hex");
-  return otpHash === hash;
+  return hashOtp(otp) === hash;
 }
 
 function hashOtp(payload: string) {

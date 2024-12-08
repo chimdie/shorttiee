@@ -1,5 +1,6 @@
 node_modules/
+uploads/*
 .env*
-db/db.sqlite*
+db/*.sqlite3
 db/schema.sql
-
+**.nvim

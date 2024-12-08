@@ -1,9 +1,18 @@
-import { describe, it } from "node:test";
+import { beforeAll, describe, it } from "@jest/globals";
 import assert from "node:assert";
 import supertest from "supertest";
 import { app } from "../app";
 import { ChangePasswordDto, LoginDto, RegisterDto } from "../dto/auth.dto";
 import { faker } from "@faker-js/faker";
+import { CreateApplicationService } from "../config/services.config";
+import { OTP } from "../utils/otp";
+
+beforeAll(() => {
+  new CreateApplicationService(app)
+    .addService("otp", OTP)
+    .addService("domainValidator", async (_str: string) => [null, []] as const)
+    .build();
+});
 
 const userInfo: RegisterDto = {
   email: faker.internet.email(),
