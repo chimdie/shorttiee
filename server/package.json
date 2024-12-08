@@ -48,6 +48,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.2",
     "@wesleytodd/openapi": "github:micaiah-effiong/express-openapi#e3c5619",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.5.0",
