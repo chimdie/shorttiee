@@ -3,7 +3,7 @@ import { createFileCtl, getFileCtl } from "../controllers/file.ctl";
 import { upload } from "../config/upload";
 import { validator } from "../middlewares/validator.middleware";
 import { CreateFileDto } from "../dto/file.dto";
-import { authenticate } from "../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/authenticate.middleware";
 import { createFileDoc, getFileDoc } from "../docs/file.docs";
 
 export const filesRouter = Router();

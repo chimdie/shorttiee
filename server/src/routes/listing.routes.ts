@@ -12,7 +12,8 @@ import {
   getListingsDocs
 } from "../docs/listings.docs";
 import { IdDto } from "../dto/util.dto";
-import { authenticate } from "../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/authenticate.middleware";
+import { authorize } from "../middlewares/authorize.middleware";
 
 export const listingsRouter = Router();
 
@@ -21,6 +22,7 @@ listingsRouter
   .get(getAllListingsDocs, getAllListingCtl)
   .post(
     authenticate,
+    authorize("create", "listing"),
     createListingsDocs,
     validator({ body: CreateListingsDto }),
     createListingCtl
