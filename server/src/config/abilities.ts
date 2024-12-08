@@ -1,12 +1,10 @@
-import { defineAbility, ForbiddenError, MongoAbility } from "@casl/ability";
+import { defineAbility, MongoAbility } from "@casl/ability";
 import { User } from "../dto/types.dto";
-import { type Request, type Response, type NextFunction } from "express";
-import { ForbiddenResponse } from "../utils/response";
 import { ListingDto } from "../dto/listings.dto";
 import { FileDto } from "../dto/file.dto";
 import { CategoryDto } from "../dto/category.dto";
 import { FacilityDto } from "../dto/facility.dto";
-import { Actions, SubjectFields, Subjects } from "./types/abilities";
+import { Actions, Subjects } from "./types/abilities";
 
 export function defineAbilityFor(user: User) {
   return defineAbility<MongoAbility<[Actions, Subjects]>>((can) => {
