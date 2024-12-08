@@ -10,8 +10,8 @@ import { FacilityListing } from "../db/facility-and-listing.db";
 function seedUser() {
   const statements = Array.from({ length: 10 }).map(() => {
     const userStatement = db.prepare<User[]>(`
-      INSERT INTO tblUsers (email, gender, address, firstName, lastName, mobileNumber, businessName, id, referrerCode)
-      VALUES(@email, @gender, @address, @firstName, @lastName, @mobileNumber, @businessName, @id, @referrerCode)
+      INSERT INTO tblUsers (email, gender, address, firstName, lastName, mobileNumber, businessName, id, referrerCode, role)
+      VALUES(@email, @gender, @address, @firstName, @lastName, @mobileNumber, @businessName, @id, @referrerCode, @role)
     `);
 
     const authStatement = db.prepare<Auth[]>(`
@@ -21,6 +21,8 @@ function seedUser() {
 
     return [userStatement, authStatement] as const;
   });
+
+  const adminStatement = statements.pop() as (typeof statements)[0];
 
   const trx = db.transaction(() => {
     for (const [userStatement, authStatement] of statements) {
@@ -35,6 +37,7 @@ function seedUser() {
         mobileNumber: faker.helpers.fromRegExp("+2347[0-9]{9}"), //.phone.number({ style: "international" })
         businessName: faker.helpers.arrayElement([faker.company.name(), null]),
         id: crypto.randomUUID(),
+        role: "USER",
         referrerCode: null
       };
 
@@ -51,6 +54,34 @@ function seedUser() {
       authStatement.run(auth);
       userStatement.run(user);
     }
+
+    const [userStatement, authStatement] = adminStatement;
+
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const admin: User = {
+      firstName,
+      lastName,
+      email: faker.internet.email({ firstName, lastName }),
+      gender: faker.helpers.arrayElement(["M", "F"]),
+      address: faker.location.streetAddress(),
+      mobileNumber: faker.helpers.fromRegExp("+2347[0-9]{9}"), //.phone.number({ style: "international" })
+      businessName: faker.helpers.arrayElement([faker.company.name(), null]),
+      id: crypto.randomUUID(),
+      role: "ADMIN",
+      referrerCode: null
+    };
+
+    const adminAuth: Auth = {
+      id: crypto.randomUUID(),
+      nonce: "nonce",
+      userId: admin.id,
+      otpTTL: null,
+      otp: null,
+      hash: "$2b$10$3dCwdyc7U0BvZKCkPe5JWOgfLzEhhvVUOanVNz/cQXfu9SmvY.C2q" // hash for password
+    };
+    authStatement.run(adminAuth);
+    userStatement.run(admin);
   });
   trx();
 

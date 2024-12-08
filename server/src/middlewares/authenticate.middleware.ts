@@ -40,6 +40,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   const user: WithDBTimestamps<User> = {
     id: userWithAuth.id,
     email: userWithAuth.email,
+    role: userWithAuth.role,
     gender: userWithAuth.gender,
     lastName: userWithAuth.lastName,
     address: userWithAuth.address,

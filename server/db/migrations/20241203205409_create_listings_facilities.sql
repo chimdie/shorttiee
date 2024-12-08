@@ -10,5 +10,5 @@ CREATE TABLE tblListingsFacilities (
 CREATE INDEX listingsFacilitiesId ON tblListingsFacilities (facilityId, listingId);
 
 -- migrate:down
-DROP INDEX listingsFacilitiesId ON tblListingsFacilities;
+DROP INDEX IF EXISTS tblListingsFacilities.listingsFacilitiesId;
 DROP TABLE IF EXISTS tblListingsFacilities;

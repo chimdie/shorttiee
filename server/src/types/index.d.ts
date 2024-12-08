@@ -1,6 +1,8 @@
 import { User } from "../dto/types.dto";
 import type { EnvDto } from "../dto/env.dto";
 import { WithDBTimestamps } from "./utils";
+import type { Subjects, Actions } from "../config/types/abilities";
+import type { MongoQuery, MongoAbility } from "@casl/ability";
 
 declare global {
   namespace NodeJS {
@@ -25,6 +27,7 @@ declare global {
     }
     interface Request {
       user?: WithDBTimestamps<User>;
+      userAbility?: MongoAbility<[Actions, Subjects], MongoQuery>;
     }
   }
 }

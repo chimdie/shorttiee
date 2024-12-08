@@ -4,7 +4,7 @@ import { WithDBTimestamps } from "../types/utils";
 
 export function createUser() {
   return db.prepare<Array<User>>(
-    "INSERT INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address, gender) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address, @gender)"
+    "INSERT INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address, gender, role) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address, @gender, @role)"
   );
 }
 

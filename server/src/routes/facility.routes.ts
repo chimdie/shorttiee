@@ -6,7 +6,8 @@ import {
   getAllFacilityCtl,
   getFacilityCtl
 } from "../controllers/facility.ctl";
-import { authenticate } from "../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/authenticate.middleware";
+import { authorize } from "../middlewares/authorize.middleware";
 import { IdDto } from "../dto/util.dto";
 import {
   createFacilityDoc,
@@ -20,6 +21,7 @@ facilityRouter.post(
   "/",
   createFacilityDoc,
   authenticate,
+  authorize("create", "facility"),
   validator({ body: CreateFacilityDto }),
   createFacilityCtl
 );

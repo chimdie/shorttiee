@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS tblFiles (
   FOREIGN KEY (ownerId) REFERENCES tblUsers(id) ON DELETE CASCADE
 );
 
-CREATE TRIGGER IF NOT EXISTS trgFilesUpdatedAt AFTER UPDATE ON tblUsers 
+CREATE TRIGGER IF NOT EXISTS trgFilesUpdatedAt AFTER UPDATE ON tblFiles
 BEGIN 
-  UPDATE tblFiles SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
+  UPDATE tblFiles SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE path=OLD.path;
 END;
 
 -- migrate:down

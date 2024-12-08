@@ -1,4 +1,4 @@
-import { beforeAll, describe, it } from "@jest/globals";
+import { beforeAll, describe, expect, it } from "@jest/globals";
 import supertest from "supertest";
 import { app } from "../app";
 import { CreateCategoryDto } from "../dto/category.dto";
@@ -9,9 +9,11 @@ import { OTP } from "../utils/otp";
 import { helper } from "./helper";
 
 let token = "";
+let adminToken = "";
 
 beforeAll(() => {
   token = helper.getUserAuth().token;
+  adminToken = helper.getAdminAuth().token;
 });
 
 beforeAll(() => {
@@ -24,11 +26,23 @@ describe("POST /api/v1/categories", () => {
     name: "Beach Mansion"
   };
 
-  it("Should create a category", async () => {
+  it("Should not create category for non-admin", async () => {
     const res = await supertest(app)
       .post("/api/v1/categories")
       .set("Accept", "application/json")
       .auth(token, { type: "bearer" })
+      .send(payload)
+      .expect(403);
+
+    expect(typeof res.body.error).toEqual("string");
+    expect(res.body.message).toMatch(/cannot execute/i);
+  });
+
+  it("Should create a category", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/categories")
+      .set("Accept", "application/json")
+      .auth(adminToken, { type: "bearer" })
       .send(payload)
       .expect(201);
 
@@ -41,7 +55,7 @@ describe("POST /api/v1/categories", () => {
     const res = await supertest(app)
       .post("/api/v1/categories")
       .set("Accept", "application/json")
-      .auth(token, { type: "bearer" })
+      .auth(adminToken, { type: "bearer" })
       .send(payload)
       .expect(400);
 
@@ -53,7 +67,7 @@ describe("POST /api/v1/categories", () => {
     const res = await supertest(app)
       .post("/api/v1/categories")
       .set("Accept", "application/json")
-      .auth(token, { type: "bearer" })
+      .auth(adminToken, { type: "bearer" })
       .send({})
       .expect(400);
 

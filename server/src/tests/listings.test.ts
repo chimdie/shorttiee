@@ -11,10 +11,12 @@ import { helper } from "./helper";
 import { FacilityDto } from "../dto/facility.dto";
 
 let token = "";
+let businessToken = "";
 let payload: CreateListingsDto;
 
 beforeAll(() => {
   token = helper.getUserAuth().token;
+  businessToken = helper.getUserAuthWithBusiness().token;
 });
 
 const categories: string[] = [];
@@ -72,7 +74,7 @@ describe("POST /api/v1/listings", () => {
   it("Should throw validation error", async () => {
     const res = await supertest(app)
       .post("/api/v1/listings")
-      .auth(token, { type: "bearer" })
+      .auth(businessToken, { type: "bearer" })
       .set("Accept", "application/json")
       .send({})
       .expect(400);
@@ -84,7 +86,7 @@ describe("POST /api/v1/listings", () => {
   it("Should throw validation error if images array is empty", async () => {
     const res = await supertest(app)
       .post("/api/v1/listings")
-      .auth(token, { type: "bearer" })
+      .auth(businessToken, { type: "bearer" })
       .set("Accept", "application/json")
       .send({ ...payload, images: [] })
       .expect(400);
@@ -93,14 +95,10 @@ describe("POST /api/v1/listings", () => {
     assert.equal("error" in res.body, true);
   });
 
-  // TODO:
-  // test that facilities exist
-  // remove missing facilities
-  //
   it("Should throw bad request error for wrong facilities", async () => {
     const res = await supertest(app)
       .post("/api/v1/listings")
-      .auth(token, { type: "bearer" })
+      .auth(businessToken, { type: "bearer" })
       .set("Accept", "application/json")
       .send({ ...payload, facilities: [crypto.randomUUID()] })
       .expect(400);
@@ -113,7 +111,7 @@ describe("POST /api/v1/listings", () => {
   it("Should throw bad request error for wrong category", async () => {
     const res = await supertest(app)
       .post("/api/v1/listings")
-      .auth(token, { type: "bearer" })
+      .auth(businessToken, { type: "bearer" })
       .set("Accept", "application/json")
       .send({ ...payload, categoryId: crypto.randomUUID() })
       .expect(400);
@@ -123,10 +121,22 @@ describe("POST /api/v1/listings", () => {
     expect(res.body.message).toMatch(/not exist/);
   });
 
-  it("Should create a listing", async () => {
+  it("Should not create a listing for non-business account", async () => {
     const res = await supertest(app)
       .post("/api/v1/listings")
       .auth(token, { type: "bearer" })
+      .set("Accept", "application/json")
+      .send(payload)
+      .expect(403);
+
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.message).toMatch(/cannot execute/i);
+  });
+
+  it("Should create a listing", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/listings")
+      .auth(businessToken, { type: "bearer" })
       .set("Accept", "application/json")
       .send(payload)
       .expect(201);
