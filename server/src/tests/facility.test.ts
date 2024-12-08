@@ -6,9 +6,11 @@ import { faker } from "@faker-js/faker";
 import { helper } from "./helper";
 
 let token = "";
+let adminToken = "";
 
 beforeAll(() => {
   token = helper.getUserAuth().token;
+  adminToken = helper.getAdminAuth().token;
 });
 
 describe("POST /api/v1/facilities", () => {
@@ -19,11 +21,23 @@ describe("POST /api/v1/facilities", () => {
     comment: faker.commerce.productDescription()
   };
 
-  it("Should create a facility", async () => {
+  it("Should not create a facility for non-admin user", async () => {
     const res = await supertest(app)
       .post("/api/v1/facilities")
       .set("Accept", "application/json")
       .auth(token, { type: "bearer" })
+      .send(payload)
+      .expect(403);
+
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.message).toMatch(/cannot execute/i);
+  });
+
+  it("Should create a facility", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/facilities")
+      .set("Accept", "application/json")
+      .auth(adminToken, { type: "bearer" })
       .send(payload)
       .expect(201);
 
@@ -36,7 +50,7 @@ describe("POST /api/v1/facilities", () => {
     const res = await supertest(app)
       .post("/api/v1/facilities")
       .set("Accept", "application/json")
-      .auth(token, { type: "bearer" })
+      .auth(adminToken, { type: "bearer" })
       .send(payload)
       .expect(400);
 
@@ -48,7 +62,7 @@ describe("POST /api/v1/facilities", () => {
     const res = await supertest(app)
       .post("/api/v1/facilities")
       .set("Accept", "application/json")
-      .auth(token, { type: "bearer" })
+      .auth(adminToken, { type: "bearer" })
       .send({})
       .expect(400);
 
