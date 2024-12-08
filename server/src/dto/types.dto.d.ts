@@ -25,4 +25,5 @@ export type User = {
   referrerCode?: string | null;
   address?: string | null;
   gender?: "M" | "F" | null;
+  role: "ADMIN" | "USER";
 };
