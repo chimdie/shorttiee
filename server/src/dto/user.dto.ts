@@ -14,3 +14,16 @@ export const UserDto = z.object({
 });
 
 export type UserDto = z.infer<typeof UserDto>;
+
+//
+export const UpdateUserDto = UserDto.pick({
+  firstName: true,
+  lastName: true,
+  mobileNumber: true,
+  businessName: true,
+  address: true,
+  photo: true,
+  gender: true
+}).partial();
+
+export type UpdateUserDto = z.infer<typeof UpdateUserDto>;
