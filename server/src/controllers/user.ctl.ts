@@ -51,8 +51,6 @@ export const updateUserProfile = ctlWrapper(async (req, res) => {
     businessName: data.businessName ?? null
   });
 
-  console.log(data.photo, req.body);
-
   if (updateUserError) {
     console.log(updateUserError);
     return ErrorResponse(res);
