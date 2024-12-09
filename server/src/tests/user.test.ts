@@ -3,6 +3,7 @@ import supertest from "supertest";
 import { app } from "../app";
 import { helper } from "./helper";
 import { faker } from "@faker-js/faker";
+import { UpdateUserDto } from "../dto/user.dto";
 
 let token = "";
 let userId: string;
@@ -46,6 +47,22 @@ describe("PATCH /api/v1/users/profile", () => {
       .expect(401);
 
     expect(res.body).toHaveProperty("error");
+  });
+
+  it("Should not update due to validation error", async () => {
+    const payload: UpdateUserDto = {
+      mobileNumber: faker.string.nanoid(),
+      gender: "C" as any
+    };
+    const res = await supertest(app)
+      .patch("/api/v1/users/profile")
+      .set("Accept", "application/json")
+      .auth(token, { type: "bearer" })
+      .send(payload)
+      .expect(400);
+
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.error).toMatch(/validation/i);
   });
 
   it("Should not update user solid data", async () => {
