@@ -1,4 +1,4 @@
-import { User } from "../dto/types.dto";
+import { UserDto } from "../dto/user.dto";
 import type { EnvDto } from "../dto/env.dto";
 import { WithDBTimestamps } from "./utils";
 
@@ -24,7 +24,7 @@ declare global {
       }
     }
     interface Request {
-      user?: WithDBTimestamps<User>;
+      user?: WithDBTimestamps<UserDto>;
     }
   }
 }

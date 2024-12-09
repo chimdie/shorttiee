@@ -3,8 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import { UnauthorizedResponse } from "../utils/response";
 import { verifyAuthToken } from "../utils/auth-token";
 import { findUserByIdWithAuth } from "../db/users.db";
-import { User } from "../dto/types.dto";
 import { WithDBTimestamps } from "../types/utils";
+import { UserDto } from "../dto/user.dto";
 
 export function authenticate(req: Request, res: Response, next: NextFunction) {
   const header = req.get("Authorization") || "";
@@ -37,7 +37,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     return UnauthorizedResponse(res);
   }
 
-  const user: WithDBTimestamps<User> = {
+  const user: WithDBTimestamps<UserDto> = {
     id: userWithAuth.id,
     email: userWithAuth.email,
     gender: userWithAuth.gender,

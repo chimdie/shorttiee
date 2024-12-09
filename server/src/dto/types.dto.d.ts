@@ -14,15 +14,3 @@ export type Auth = {
   /** datetime */
   otpTTL?: string | null;
 };
-
-export type User = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNumber: string;
-  businessName?: string | null;
-  referrerCode?: string | null;
-  address?: string | null;
-  gender?: "M" | "F" | null;
-};

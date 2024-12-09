@@ -30,7 +30,8 @@ import { signAuthToken } from "../utils/auth-token";
 import assert from "assert";
 import { db } from "../config/db.config";
 import { appEnv } from "../config/env.config";
-import { Auth, User } from "../dto/types.dto";
+import { Auth } from "../dto/types.dto";
+import { UserDto } from "../dto/user.dto";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
@@ -75,7 +76,7 @@ export const registerCtl = ctlWrapper(
         const err = new Error("An error occured while creating user");
         throw err;
       }
-      const user: User = {
+      const user: UserDto = {
         id: userWithAuth.id,
         email: userWithAuth.email,
         gender: userWithAuth.gender,

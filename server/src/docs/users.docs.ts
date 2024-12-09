@@ -3,7 +3,7 @@ import { OpenAPIV3 } from "openapi-types";
 import { typeAssert } from "../utils/asserts";
 import { oapi } from "../config/docs.config";
 import { Equals, WithDBTimestamps } from "../types/utils";
-import { User } from "../dto/types.dto";
+import { UserDto } from "../dto/user.dto";
 
 const UserDoc = {
   type: "object",
@@ -37,5 +37,5 @@ const UserDoc = {
     updatedAt: { type: "string", format: "date-time" }
   }
 } satisfies OpenAPIV3.SchemaObject;
-typeAssert<Equals<FromSchema<typeof UserDoc>, WithDBTimestamps<User>>>();
+typeAssert<Equals<FromSchema<typeof UserDoc>, WithDBTimestamps<UserDto>>>();
 oapi.component("schemas", "User", UserDoc);
