@@ -27,6 +27,7 @@ const UserDoc = {
     businessName: { type: "string", nullable: true },
     referrerCode: { type: "string", nullable: true },
     address: { type: "string", nullable: true },
+    photo: { type: "string", nullable: true },
     gender: {
       type: "string",
       enum: ["M", "F"] as const,

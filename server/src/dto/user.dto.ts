@@ -9,6 +9,7 @@ export const UserDto = z.object({
   businessName: z.string().nullish(),
   referrerCode: z.string().nullish(),
   address: z.string().nullish(),
+  photo: z.string().nullish(),
   gender: z.union([z.literal("M"), z.literal("F")]).nullish()
 });
 
