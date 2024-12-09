@@ -61,6 +61,7 @@ export const registerCtl = ctlWrapper(
         address: req.body.address,
         referrerCode: req.body.referrerCode,
         businessName: req.body.businessName,
+        role: "USER",
         gender: req.body.gender
       });
 
@@ -79,6 +80,7 @@ export const registerCtl = ctlWrapper(
       const user: UserDto = {
         id: userWithAuth.id,
         email: userWithAuth.email,
+        role: userWithAuth.role,
         gender: userWithAuth.gender,
         lastName: userWithAuth.lastName,
         address: userWithAuth.address,

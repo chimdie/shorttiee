@@ -15,6 +15,7 @@ const UserDoc = {
     "lastName",
     "email",
     "mobileNumber",
+    "role",
     "createdAt",
     "updatedAt"
   ] as const,
@@ -28,6 +29,10 @@ const UserDoc = {
     referrerCode: { type: "string", nullable: true },
     address: { type: "string", nullable: true },
     photo: { type: "string", nullable: true },
+    role: {
+      type: "string",
+      enum: ["USER", "ADMIN"] as const
+    },
     gender: {
       type: "string",
       enum: ["M", "F"] as const,

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticate } from "../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/authenticate.middleware";
 import { getUserProfile, updateUserProfile } from "../controllers/user.ctl";
 import { validator } from "../middlewares/validator.middleware";
 import { UpdateUserDto } from "../dto/user.dto";

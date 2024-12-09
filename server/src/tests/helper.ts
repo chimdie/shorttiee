@@ -54,7 +54,29 @@ function getUserAuth() {
   };
 }
 
+function getAdminAuth() {
+  const user = db
+    .prepare<[], { id: string; nonce: string }>(
+      `SELECT u.id, a.nonce 
+        FROM tblUsers AS u
+        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE role='ADMIN' LIMIT 1`
+    )
+    .get();
+
+  if (!user) {
+    throw "Can't setup user";
+  }
+
+  const token = getAuthFromUser(user);
+
+  return {
+    token,
+    user
+  };
+}
+
 export const helper = {
+  getAdminAuth,
   getUserAuth,
   getUserAuthWithBusiness
 };
