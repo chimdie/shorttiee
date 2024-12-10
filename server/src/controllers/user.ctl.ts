@@ -9,7 +9,7 @@ import {
 } from "../utils/response";
 import { UserDto } from "../dto/user.dto";
 
-export const getUserProfile = ctlWrapper(async (req, res) => {
+export const getUserProfileCtl = ctlWrapper(async (req, res) => {
   assert(req.user);
   const [userError, userResult] = findUserById(req.user.id);
 
@@ -24,7 +24,7 @@ export const getUserProfile = ctlWrapper(async (req, res) => {
   return SuccessResponse(res, userResult);
 });
 
-export const updateUserProfile = ctlWrapper(async (req, res) => {
+export const updateUserProfileCtl = ctlWrapper(async (req, res) => {
   assert(req.user);
   const [userError, userResult] = findUserById(req.user.id);
 

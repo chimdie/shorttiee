@@ -51,7 +51,7 @@ oapi.component("schemas", "RegisterResponse", {
     data: {
       allOf: [
         {
-          $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/UserDto"
         },
         {
           type: "object",
@@ -121,7 +121,7 @@ oapi.component("schemas", "LoginResponse", {
       type: "object",
       allOf: [
         {
-          $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/UserDto"
         },
         {
           type: "object",
