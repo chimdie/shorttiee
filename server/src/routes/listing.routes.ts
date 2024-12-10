@@ -10,7 +10,7 @@ import {
   createListingsDocs,
   getAllListingsDocs,
   getListingsDocs
-} from "../docs/listings.docs";
+} from "../docs/listing.docs";
 import { IdDto } from "../dto/util.dto";
 import { authenticate } from "../middlewares/authenticate.middleware";
 import { authorize } from "../middlewares/authorize.middleware";

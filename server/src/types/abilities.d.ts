@@ -1,12 +1,12 @@
-import { User } from "../../dto/types.dto";
-import { ListingDto } from "../../dto/listings.dto";
-import { FileDto } from "../../dto/file.dto";
-import { CategoryDto } from "../../dto/category.dto";
-import { FacilityDto } from "../../dto/facility.dto";
+import { UserDto } from "../dto/user.dto";
+import { ListingDto } from "../dto/listings.dto";
+import { FileDto } from "../dto/file.dto";
+import { CategoryDto } from "../dto/category.dto";
+import { FacilityDto } from "../dto/facility.dto";
 
 export type Actions = "read" | "create" | "update" | "delete" | "manage";
 export type Models = {
-  user: User;
+  user: UserDto;
   listing: ListingDto;
   file: FileDto;
   category: CategoryDto;

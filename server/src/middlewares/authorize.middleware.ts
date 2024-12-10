@@ -1,10 +1,6 @@
 import { ForbiddenError } from "@casl/ability";
 import type { NextFunction, Request, Response } from "express";
-import type {
-  Actions,
-  Subjects,
-  SubjectFields
-} from "../config/types/abilities";
+import type { Actions, Subjects, SubjectFields } from "../types/abilities";
 import { defineAbilityFor } from "../config/abilities";
 import { ForbiddenResponse } from "../utils/response";
 

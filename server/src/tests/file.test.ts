@@ -77,7 +77,11 @@ describe("POST /api/v1/files", () => {
     expect(Array.isArray(res.body.data)).toEqual(true);
     expect(res.body.data.length).toEqual(2);
 
-    fileUrl = path.basename(res.body.data[1].path);
+    fileUrl = path.basename(
+      res.body.data.find((e: { path: string; checksum: string }) =>
+        e.path.includes("sql")
+      )?.path
+    );
   });
 
   // handle file link

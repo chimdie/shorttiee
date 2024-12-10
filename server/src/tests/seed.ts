@@ -1,15 +1,16 @@
 import { db } from "../config/db.config";
 import { CategoryDto } from "../dto/category.dto";
 import { ListingDto } from "../dto/listings.dto";
-import { Auth, User } from "../dto/types.dto";
+import { Auth } from "../dto/types.dto";
 import { faker } from "@faker-js/faker";
 import { Merge } from "../types/utils";
 import { FacilityDto } from "../dto/facility.dto";
 import { FacilityListing } from "../db/facility-and-listing.db";
+import { UserDto } from "../dto/user.dto";
 
 function seedUser() {
   const statements = Array.from({ length: 10 }).map(() => {
-    const userStatement = db.prepare<User[]>(`
+    const userStatement = db.prepare<UserDto[]>(`
       INSERT INTO tblUsers (email, gender, address, firstName, lastName, mobileNumber, businessName, id, referrerCode, role)
       VALUES(@email, @gender, @address, @firstName, @lastName, @mobileNumber, @businessName, @id, @referrerCode, @role)
     `);
@@ -28,7 +29,7 @@ function seedUser() {
     for (const [userStatement, authStatement] of statements) {
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
-      const user: User = {
+      const user: UserDto = {
         firstName,
         lastName,
         email: faker.internet.email({ firstName, lastName }),
@@ -59,7 +60,7 @@ function seedUser() {
 
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
-    const admin: User = {
+    const admin: UserDto = {
       firstName,
       lastName,
       email: faker.internet.email({ firstName, lastName }),
@@ -85,7 +86,7 @@ function seedUser() {
   });
   trx();
 
-  const users = db.prepare<[], User>("SELECT * FROM tblUsers").all();
+  const users = db.prepare<[], UserDto>("SELECT * FROM tblUsers").all();
   return users;
 }
 

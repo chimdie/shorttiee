@@ -1,4 +1,4 @@
-import { User } from "../dto/types.dto";
+import { UserDto } from "../dto/user.dto";
 import type { EnvDto } from "../dto/env.dto";
 import { WithDBTimestamps } from "./utils";
 import type { Subjects, Actions } from "../config/types/abilities";
@@ -26,7 +26,7 @@ declare global {
       }
     }
     interface Request {
-      user?: WithDBTimestamps<User>;
+      user?: WithDBTimestamps<UserDto>;
       userAbility?: MongoAbility<[Actions, Subjects], MongoQuery>;
     }
   }
