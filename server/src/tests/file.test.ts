@@ -11,9 +11,11 @@ import {
 } from "@jest/globals";
 import path from "path";
 import { MulterStorageHashing } from "../config/upload/hash-storage.upload";
+import { appEnv } from "../config/env.config";
 
 let token = "";
 let fileUrl = "";
+const fileSize = appEnv.FILE_SIZE_LIMIT;
 
 beforeAll(() => {
   token = helper.getUserAuth().token;
@@ -29,6 +31,7 @@ describe("POST /api/v1/files", () => {
 
   afterEach(() => {
     mockFileHandler.mockClear();
+    appEnv.FILE_SIZE_LIMIT = fileSize;
   });
 
   it("Should throw authentication error", async () => {
@@ -45,6 +48,19 @@ describe("POST /api/v1/files", () => {
       .expect(400);
 
     expect(mockFileHandler).not.toHaveBeenCalled();
+  });
+
+  it("Should not upload over file limit", async () => {
+    appEnv.FILE_SIZE_LIMIT = 1;
+
+    const res = await supertest(app)
+      .post("/api/v1/files")
+      .accept("multipart/form-data")
+      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .auth(token, { type: "bearer" })
+      .expect(413);
+
+    expect(res.body).toHaveProperty("error");
   });
 
   // handle duplicate upload
