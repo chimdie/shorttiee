@@ -13,7 +13,7 @@ export class MulterStorageHashing implements StorageEngine {
     _file: Express.Multer.File,
     cb: (err: any, name?: string) => void
   ) {
-    crypto.randomBytes(16, function(err, raw) {
+    crypto.randomBytes(16, function (err, raw) {
       cb(err, err ? undefined : raw.toString("hex"));
     });
   }
@@ -60,26 +60,35 @@ export class MulterStorageHashing implements StorageEngine {
         if (err) return cb(err);
         if (!filename) return cb(Error("No filename"));
 
-        const ext = "." + (mime.extension(file.mimetype) || "");
+        const ext = "." + (mime.extension(file.mimetype) ?? "");
         filename += ext;
-        const finalPath = path.join(destination, filename);
-        const outStream = fs.createWriteStream(finalPath);
+        const tempPath = path.join(destination, filename);
+        const outStream = fs.createWriteStream(tempPath);
+
+        const hash = crypto.createHash("sha256");
 
         file.stream.pipe(outStream);
+        file.stream.pipe(hash);
+
         outStream.on("error", cb);
-        const hash = crypto.createHash("sha256");
-        file.stream.on("data", function(chunk) {
-          hash.update(chunk);
-        });
-        outStream.on("finish", () => {
-          const hashVal = hash.digest("hex");
+        outStream.on("finish", async () => {
+          const fileBufferHash = hash.digest("hex");
+
+          const filenameHash = crypto
+            .createHash("md5")
+            .update(fileBufferHash)
+            .digest("hex");
+
+          const newFilename = filenameHash + ext;
+          const newPath = path.join(destination, newFilename);
+          await fsPromise.rename(tempPath, newPath);
 
           cb(null, {
-            destination: destination,
-            filename: filename,
-            path: finalPath,
+            destination,
+            filename: newFilename,
+            path: newPath,
             size: outStream.bytesWritten,
-            hash: hashVal
+            hash: fileBufferHash
           });
         });
       });

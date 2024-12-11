@@ -29,14 +29,18 @@ oapi.component("schemas", "CreateFileResponse", {
   properties: {
     message: { type: "string", example: "Success" },
     data: {
-      type: "object",
+      type: "array",
       additionalProperties: false,
-      required: ["path", "checksum"],
-      properties: {
-        path: { type: "string", format: "uri" },
-        checksum: {
-          type: "string",
-          pattern: "^\\w{64}"
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["path", "checksum"],
+        properties: {
+          path: { type: "string", format: "uri" },
+          checksum: {
+            type: "string",
+            pattern: "^\\w{64}"
+          }
         }
       }
     }
