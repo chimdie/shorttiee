@@ -1,6 +1,5 @@
 import { Chip } from "@nextui-org/react";
 
-
 export type ConfirmedResevartionProps = {
   name: string;
   confirmDate: string;
@@ -9,7 +8,7 @@ export type ConfirmedResevartionProps = {
   nights: number;
   apartment: string;
   price: string;
-}
+};
 export default function ConfirmedReservation(props: ConfirmedResevartionProps): JSX.Element {
   return (
     <div className="py-4 px-6 border rounded-xl shadow-sm">
