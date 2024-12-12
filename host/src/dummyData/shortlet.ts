@@ -89,3 +89,55 @@ export const shortletData: ShortletT[] = [
     status: "active",
   },
 ];
+
+export type IncomingReservationI = {
+  name: string;
+  reserveNo: string;
+  date: string;
+  nights: number;
+  apartment: string;
+  price: string;
+};
+
+export const incomingReservations: IncomingReservationI[] = [
+  {
+    name: "John Doe",
+    reserveNo: "RES123456",
+    date: "2023-10-15",
+    nights: 3,
+    apartment: "Ocean View Suite",
+    price: "$450.00",
+  },
+  {
+    name: "Jane Smith",
+    reserveNo: "RES123457",
+    date: "2023-10-20",
+    nights: 2,
+    apartment: "Mountain Retreat",
+    price: "$300.00",
+  },
+  {
+    name: "Alice Johnson",
+    reserveNo: "RES123458",
+    date: "2023-11-01",
+    nights: 5,
+    apartment: "City Center Loft",
+    price: "$750.00",
+  },
+  {
+    name: "Bob Brown",
+    reserveNo: "RES123459",
+    date: "2023-11-10",
+    nights: 4,
+    apartment: "Cozy Cabin",
+    price: "$600.00",
+  },
+  {
+    name: "Charlie Green",
+    reserveNo: "RES123460",
+    date: "2023-12-05",
+    nights: 1,
+    apartment: "Beachfront Bungalow",
+    price: "$200.00",
+  },
+];
