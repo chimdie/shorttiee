@@ -7,7 +7,7 @@
     "pretest": "dbmate --env-file \".env.test\" drop && dbmate --env-file \".env.test\" up && NODE_ENV=test tsx src/tests/seed.ts",
     "test": "NODE_ENV=test jest",
     "posttest": "dbmate --env-file \".env.test\" drop",
-    "dev": "tsx watch src/index.ts",
+    "dev": "DEBUG=app:* tsx watch src/index.ts",
     "lint": "tsc --noEmit",
     "migrate:up": "dbmate up",
     "migrate:down": "dbmate down"
