@@ -1,6 +1,6 @@
 import { Button, Chip } from "@nextui-org/react";
 
-type IncomingReservationProps = {
+export type IncomingReservationProps = {
   name: string;
   reserveNo: string;
   date: string;

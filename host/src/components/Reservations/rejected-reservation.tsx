@@ -1,5 +1,14 @@
 import { Chip } from "@nextui-org/react";
 
+export type RejectedReservationProps = {
+  name: string;
+  rejectDate: string;
+  reserveNo: string;
+  night: number;
+  apartment: string;
+  price: string;
+  reason: string;
+}
 export default function RejectedReservation(): JSX.Element {
   return (
     <div className="py-4 px-6 border rounded-xl shadow-sm">

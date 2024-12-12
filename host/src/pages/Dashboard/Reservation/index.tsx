@@ -5,7 +5,7 @@ import IncomingReservation from "@/components/Reservations/incoming-reservation"
 import ConfirmedReservation from "@/components/Reservations/confirmed-reservation";
 import RejectedReservation from "@/components/Reservations/rejected-reservation";
 import TablePagination from "@/components/TablePagination";
-import { incomingReservations } from "@/dummyData/shortlet";
+import { confirmedReservations, incomingReservations } from "@/dummyData/shortlet";
 
 export default function Reservation(): JSX.Element {
   return (
@@ -49,8 +49,10 @@ export default function Reservation(): JSX.Element {
             </Tab>
 
             <Tab key="confirm" title="Confirmed Reservation">
-              <div className="p-2">
-                <ConfirmedReservation />
+              <div className="p-2 space-y-5">
+                {confirmedReservations.map((confirmed) => (
+                  <ConfirmedReservation key={confirmed.name} name={confirmed.name} confirmDate={confirmed.confirmDate} reserveNo={confirmed.reserveNo} date={confirmed.date} nights={confirmed.nights} apartment={confirmed.apartment} price={confirmed.price} />
+                ))}
               </div>
               <div className="py-4 flex justify-end">
                 <TablePagination />
