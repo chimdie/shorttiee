@@ -14,6 +14,7 @@ export const DashboardRoutes = {
   settings: "/settings",
   profile: "/profile",
   notification: "/notification",
+  reservation: "/reservation",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

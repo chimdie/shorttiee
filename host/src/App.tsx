@@ -20,6 +20,7 @@ import ShortletDetails from "@/pages/Dashboard/Shortlet/shortletDetails";
 import EditShortlet from "@/pages/Dashboard/Shortlet/editShortlet";
 import Profile from "@/pages/Dashboard/Profile";
 import Notification from "@/pages/Dashboard/Notification";
+import Reservation from "@/pages/Dashboard/Reservation";
 
 import NotFound from "@/components/NotFound";
 
@@ -45,6 +46,7 @@ export const rootRouter = createBrowserRouter([
       { path: DashboardRoutes.settings, element: <Settings /> },
       { path: DashboardRoutes.profile, element: <Profile /> },
       { path: DashboardRoutes.notification, element: <Notification /> },
+      { path: DashboardRoutes.reservation, element: <Reservation /> },
     ],
   },
 ]);
