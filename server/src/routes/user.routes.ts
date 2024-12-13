@@ -12,7 +12,6 @@ export const userRouter = Router();
 
 userRouter.use(authenticate);
 
-// TODO: Docs for profile
 userRouter
   .route("/profile")
   .get(getUserProfileDoc, getUserProfileCtl)
