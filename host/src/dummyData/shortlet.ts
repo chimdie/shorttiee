@@ -1,7 +1,3 @@
-import { ConfirmedResevartionProps } from "@/components/Reservations/confirmed-reservation";
-import { IncomingReservationProps } from "@/components/Reservations/incoming-reservation";
-import { RejectedReservationProps } from "@/components/Reservations/rejected-reservation";
-
 export type ShortletT = {
   _id: string;
   name: string;
@@ -9,6 +5,24 @@ export type ShortletT = {
   location: string;
   price: string;
   status: string;
+};
+
+export type IncomingReservationProps = {
+  name: string;
+  reserveNo: string;
+  date?: string;
+  nights?: number;
+  apartment: string;
+  price?: string;
+};
+
+export type ConfirmedResevartionProps = IncomingReservationProps & {
+  confirmDate: string;
+};
+
+export type RejectedReservationProps = IncomingReservationProps & {
+  rejectDate: string;
+  reason: string;
 };
 
 export const shortletData: ShortletT[] = [
@@ -190,50 +204,35 @@ export const rejectedReservations: RejectedReservationProps[] = [
     name: "David Wilson",
     rejectDate: "2023-10-02",
     reserveNo: "REJ123456",
-    nights: 3,
     apartment: "Lakeside Cabin",
-    price: "$450.00",
     reason: "Payment not received",
-    date: "2023-12-05",
   },
   {
     name: "Emma Thompson",
     rejectDate: "2023-10-06",
     reserveNo: "REJ123457",
-    nights: 2,
     apartment: "Urban Loft",
-    price: "$300.00",
     reason: "Booking canceled by guest",
-    date: "2023-12-05",
   },
   {
     name: "James Taylor",
     rejectDate: "2023-10-11",
     reserveNo: "REJ123458",
-    nights: 5,
     apartment: "Coastal Retreat",
-    price: "$750.00",
     reason: "Overbooking issue",
-    date: "2023-12-05",
   },
   {
     name: "Isabella Martinez",
     rejectDate: "2023-10-15",
     reserveNo: "REJ123459",
-    nights: 4,
     apartment: "Mountain Lodge",
-    price: "$600.00",
     reason: "Invalid reservation details",
-    date: "2023-12-05",
   },
   {
     name: "William Anderson",
     rejectDate: "2023-10-20",
     reserveNo: "REJ123460",
-    nights: 1,
     apartment: "City View Suite",
-    price: "$200.00",
     reason: "Guest did not meet age requirements",
-    date: "2023-12-05",
   },
 ];
