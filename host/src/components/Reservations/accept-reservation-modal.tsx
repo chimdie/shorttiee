@@ -28,6 +28,9 @@ export default function AcceptReservationModal({
 }: AcceptReservationT): JSX.Element {
   const form = useForm<AcceptReservationSchema>({
     resolver: zodResolver(AcceptReservationSchema),
+    defaultValues: {
+      reserveNo: id,
+    },
   });
 
   const onSubmit = (data: AcceptReservationSchema) => {
@@ -56,7 +59,7 @@ export default function AcceptReservationModal({
                         isDisabled
                         variant="bordered"
                         placeholder="Reservation Number"
-                        defaultValue={id}
+                        value={id}
                         type="text"
                         startContent={
                           <Signature size={16} className="pointer-events-none text-grey_400" />
@@ -158,20 +161,17 @@ export default function AcceptReservationModal({
               <div className="py-4 flex  gap-4">
                 <Button
                   onClick={onClose}
-                  size="lg"
+                  size="md"
                   fullWidth={true}
                   className="bg-white shadow-sm border text-shorttiee_primary font-medium"
                 >
                   Cancel
                 </Button>
                 <Button
-                  size="lg"
+                  size="md"
                   fullWidth={true}
                   className="bg-shorttiee_primary text-white shadow-sm font-medium"
-                  onClick={() => {
-                    console.log(id);
-                    onClose();
-                  }}
+                  type="submit"
                 >
                   Accept
                 </Button>
