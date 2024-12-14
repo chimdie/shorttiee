@@ -149,7 +149,7 @@ export default function AcceptReservationModal({
                         variant="bordered"
                         placeholder="Additional Information(Optional)"
                         startContent={
-                          <Info size={16} className="pointer-events-none text-grey_400" />
+                          <Info size={16} className="pointer-events-none text-grey_400 mt-0.5" />
                         }
                       />
                     </FormControl>

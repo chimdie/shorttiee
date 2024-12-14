@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dropdown,
   DropdownMenu,
@@ -15,10 +16,11 @@ import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
 import { incomingReservations } from "@/dummyData/shortlet";
 import AcceptReservationModal from "./accept-reservation-modal";
-import { useState } from "react";
+import RejectReservationModal from "./reject-reservation-modal";
 
 export default function IncomingReservation(): JSX.Element {
   const acceptReservation = useDisclosure();
+  const rejectReservation = useDisclosure();
   const [reservationId, setReservationId] = useState<string | null>(null);
   return (
     <>
@@ -72,7 +74,17 @@ export default function IncomingReservation(): JSX.Element {
                         >
                           Accept
                         </DropdownItem>
-                        <DropdownItem key="reject" className="text-danger" color="danger">
+                        <DropdownItem
+                          key="reject"
+                          className="text-danger"
+                          color="danger"
+                          onClick={() => {
+                            if (item.reserveNo) {
+                              setReservationId(item.reserveNo);
+                              rejectReservation.onOpen();
+                            }
+                          }}
+                        >
                           Reject
                         </DropdownItem>
                       </DropdownMenu>
@@ -90,6 +102,15 @@ export default function IncomingReservation(): JSX.Element {
           isOpen={acceptReservation.isOpen}
           onClose={acceptReservation.onClose}
           onOpenChange={acceptReservation.onOpenChange}
+          id={reservationId}
+        />
+      ) : null}
+
+      {reservationId ? (
+        <RejectReservationModal
+          isOpen={rejectReservation.isOpen}
+          onClose={rejectReservation.onClose}
+          onOpenChange={rejectReservation.onOpenChange}
           id={reservationId}
         />
       ) : null}
