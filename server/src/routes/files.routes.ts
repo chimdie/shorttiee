@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { createFileCtl, getFileCtl } from "../controllers/file.ctl";
-import { upload } from "../config/upload";
 import { validator } from "../middlewares/validator.middleware";
 import { CreateFileDto } from "../dto/file.dto";
 import { authenticate } from "../middlewares/authenticate.middleware";
 import { createFileDoc, getFileDoc } from "../docs/file.docs";
+import { uploadMiddleware } from "../middlewares/upload.middleware";
 
 export const filesRouter = Router();
 
@@ -12,7 +12,7 @@ filesRouter.post(
   "/",
   createFileDoc,
   authenticate,
-  upload.array("files", 6),
+  uploadMiddleware,
   validator({ files: CreateFileDto }),
   createFileCtl
 );

@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 import { EnvDto } from "../dto/env.dto";
 
-const _configEnv = {};
-dotenv.config({ path: getProcessEnvironmentFile(), processEnv: _configEnv });
+const _env = {};
+dotenv.config({ path: getProcessEnvironmentFile(), processEnv: _env });
 
 function getProcessEnvironmentFile() {
   if (!process.env.NODE_ENV) {
@@ -12,24 +12,13 @@ function getProcessEnvironmentFile() {
   return `.env.${process.env.NODE_ENV}`;
 }
 
-function setEnv(env: EnvDto) {
-  Object.assign(_configEnv, env);
-}
-
-function getEnv() {
-  return _configEnv as EnvDto;
-}
-
 // zod verify env
-const env = EnvDto.safeParse(_configEnv);
-if (env.error) {
+const parsed = EnvDto.safeParse(_env);
+if (parsed.error) {
   console.error("Invalid environment variables");
   process.exit(1);
 }
 
-const configEnv: EnvDto = env.data;
+const configEnv: EnvDto = parsed.data;
 
-setEnv(env.data);
-
-export const appConfig = { setEnv, getEnv };
 export let appEnv = configEnv;
