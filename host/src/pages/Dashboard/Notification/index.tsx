@@ -45,7 +45,7 @@ const notifcationArr: NotificationCardProp[] = [
 
 const NotificationCard = ({ icon: Icon, time, title, description }: NotificationCardProp) => {
   return (
-    <div className="border border-grey_200 rounded-sm p-4 w-2/3 shadow-sm even:bg-grey_100 cursor-pointer">
+    <div className="border border-grey_200 rounded-sm p-4 mb-3 shadow-sm even:bg-grey_100 cursor-pointer">
       <div className="flex gap-6 items-center">
         <div>
           <Icon className="text-xl text-shorttiee_primary" />

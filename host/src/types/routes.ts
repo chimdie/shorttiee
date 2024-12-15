@@ -12,7 +12,6 @@ export const DashboardRoutes = {
   shortletDetail: "/shortlet/:id",
   editShortlet: "/shortlet/edit/:id",
   settings: "/settings",
-  payment: "/payments",
   profile: "/profile",
   notification: "/notification",
 };

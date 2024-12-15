@@ -1,0 +1,32 @@
+name: Server CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - server/**
+
+jobs:
+  run-server-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - run: npm ci
+      - run: npm run lint
+      - name: Decrypt large secret
+        run: echo $TEST_ENV | base64 -d > .env.test
+        env:
+          TEST_ENV: ${{ secrets.SERVER_TEST_ENV }}
+      - name: Run migration and rollback
+        run: ./src/tests/rollback.sh # test all db migration
+      - run: npm test

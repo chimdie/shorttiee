@@ -27,17 +27,18 @@ import {
   updateAuthOtpByUserId
 } from "../db/auth.db";
 import { signAuthToken } from "../utils/auth-token";
-import { domainValidator } from "../utils/domain-validator";
-import { OTP } from "../utils/otp";
 import assert from "assert";
 import { db } from "../config/db.config";
 import { appEnv } from "../config/env.config";
-import { Auth, User } from "../dto/types.dto";
+import { Auth } from "../dto/types.dto";
+import { UserDto } from "../dto/user.dto";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
     const emailDomain = req.body.email.split("@");
-    const [dnsResolverError] = await domainValidator(emailDomain[1]);
+    const [dnsResolverError] = await req.app.locals.domainValidator(
+      emailDomain[1]
+    );
     if (dnsResolverError) {
       return BadRequestResponse(res, "Invalid email domain");
     }
@@ -60,6 +61,7 @@ export const registerCtl = ctlWrapper(
         address: req.body.address,
         referrerCode: req.body.referrerCode,
         businessName: req.body.businessName,
+        role: "USER",
         gender: req.body.gender
       });
 
@@ -67,7 +69,7 @@ export const registerCtl = ctlWrapper(
         id: crypto.randomUUID(),
         hash,
         userId: userId,
-        nonce: OTP.hashOtp(hash)
+        nonce: req.app.locals.otp.hashOtp(hash)
       });
 
       const userWithAuth = findUserByIdWithAuth(userId);
@@ -75,9 +77,10 @@ export const registerCtl = ctlWrapper(
         const err = new Error("An error occured while creating user");
         throw err;
       }
-      const user: User = {
+      const user: UserDto = {
         id: userWithAuth.id,
         email: userWithAuth.email,
+        role: userWithAuth.role,
         gender: userWithAuth.gender,
         lastName: userWithAuth.lastName,
         address: userWithAuth.address,
@@ -163,7 +166,7 @@ export const forgetPasswordCtl = ctlWrapper(
       return BadRequestResponse(res, "Account does not exist");
     }
 
-    const [otp, hash] = OTP.generateOtp();
+    const [otp, hash] = req.app.locals.otp.generateOtp();
     console.log({ otp });
 
     // send otp in email
@@ -199,7 +202,7 @@ export const resetPasswordCtl = ctlWrapper(
       return ForbiddenResponse(res, "Invalid Operation");
     }
 
-    const isValid = !OTP.verifyOtp(
+    const isValid = !req.app.locals.otp.verifyOtp(
       req.body.otp,
       auth.otp,
       new Date(auth.otpTTL)
@@ -212,7 +215,7 @@ export const resetPasswordCtl = ctlWrapper(
     updateAuthOtpAndHashByUserId().run({
       userId: user.id,
       hash,
-      nonce: OTP.hashOtp(hash),
+      nonce: req.app.locals.otp.hashOtp(hash),
       otp: null,
       otpTTL: null
     });
@@ -236,7 +239,9 @@ export const changePasswordCtl = ctlWrapper(
     }
 
     const hash = await bcrypt.hash(req.body.newPassword, 10);
-    const nonce = req.body.reauth ? OTP.hashOtp(hash) : auth.nonce;
+    const nonce = req.body.reauth
+      ? req.app.locals.otp.hashOtp(hash)
+      : auth.nonce;
 
     updateAuthHashByUserId().run({
       userId: req.user.id,

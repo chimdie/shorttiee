@@ -1,9 +1,15 @@
 import jwt from "jsonwebtoken";
 import { appEnv } from "../config/env.config";
 
-export function signAuthToken<T extends { id: string; nonce: string }>(
-  payload: T
-) {
+type AuthPayload = {
+  /**
+   * @description
+   * userId
+   */
+  id: string;
+  nonce: string;
+};
+export function signAuthToken(payload: AuthPayload) {
   try {
     const token = jwt.sign({ payload }, appEnv.JWT_SECRET, {
       expiresIn: "30d",

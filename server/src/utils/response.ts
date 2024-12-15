@@ -1,7 +1,12 @@
 import type { Response } from "express";
 
-export const ErrorResponse = (res: Response, msg?: string, error?: string) => {
-  res.status(500).json({
+export const ErrorResponse = (
+  res: Response,
+  msg?: string,
+  error?: string,
+  code?: number
+) => {
+  res.status(code ?? 500).json({
     message: msg ?? "Something went wrong",
     error: error ?? "ServerError"
   });

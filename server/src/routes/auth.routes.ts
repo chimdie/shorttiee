@@ -21,7 +21,7 @@ import {
   RegisterDto,
   ResetPasswordDto
 } from "../dto/auth.dto";
-import { authenticate } from "../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/authenticate.middleware";
 
 export const authRouter = Router();
 

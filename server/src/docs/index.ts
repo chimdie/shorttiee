@@ -1,3 +1,6 @@
 import "./auth.docs";
-import "./users.docs";
 import "./extra.docs";
+import "./category.docs";
+import "./file.docs";
+import "./listing.docs";
+import "./user.docs";

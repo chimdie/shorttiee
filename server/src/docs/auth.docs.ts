@@ -25,8 +25,8 @@ export const RegisterDocSchema = {
     firstName: { type: "string" },
     lastName: { type: "string" },
     email: { type: "string", format: "email" },
-    password: { type: "string", format: "password" },
-    mobileNumber: { type: "string" },
+    password: { type: "string", format: "password", minLength: 8 },
+    mobileNumber: { type: "string", pattern: "^090\\d{8}$" },
     businessName: { type: "string" },
     referrerCode: { type: "string" },
     address: { type: "string" },
@@ -51,7 +51,7 @@ oapi.component("schemas", "RegisterResponse", {
     data: {
       allOf: [
         {
-          $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/UserDto"
         },
         {
           type: "object",
@@ -87,7 +87,7 @@ export const registerDoc = oapi.path({
     }
   },
   responses: {
-    200: {
+    201: {
       description: "Account registered",
       content: {
         "application/json": {
@@ -107,7 +107,7 @@ export const LoginDocSchema = {
   required: ["email", "password"] as const,
   properties: {
     email: { type: "string", format: "email" },
-    password: { type: "string", format: "password" }
+    password: { type: "string", format: "password", minLength: 8 }
   }
 } satisfies OpenAPIV3.SchemaObject;
 oapi.component("schemas", "LoginDto", LoginDocSchema);
@@ -121,7 +121,7 @@ oapi.component("schemas", "LoginResponse", {
       type: "object",
       allOf: [
         {
-          $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/UserDto"
         },
         {
           type: "object",

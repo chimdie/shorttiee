@@ -21,6 +21,7 @@ app.use("*", (_, res) => {
 
 app.use((err: Error, _: Request, res: Response, _next: NextFunction) => {
   debug("app:error")(err.message);
+  // console.log(err);
   debug("app:error")(err);
 
   if (
