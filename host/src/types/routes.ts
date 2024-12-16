@@ -9,8 +9,8 @@ export const AuthRoutes = {
 export const DashboardRoutes = {
   home: "/dashboard",
   shortlets: "/shortlets",
-  shortletDetail: "/shortlet/:id",
-  editShortlet: "/shortlet/edit/:id",
+  shortletDetail: "/shortlets/:id",
+  editShortlet: "/shortlets/:id/edit",
   settings: "/settings",
   profile: "/profile",
   notifications: "/notifications",
