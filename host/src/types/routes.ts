@@ -8,13 +8,13 @@ export const AuthRoutes = {
 
 export const DashboardRoutes = {
   home: "/dashboard",
-  shortlets: "/shortlet",
+  shortlets: "/shortlets",
   shortletDetail: "/shortlet/:id",
   editShortlet: "/shortlet/edit/:id",
   settings: "/settings",
   profile: "/profile",
-  notification: "/notification",
-  reservation: "/reservation",
+  notifications: "/notifications",
+  reservations: "/reservations",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

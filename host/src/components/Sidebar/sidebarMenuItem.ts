@@ -24,9 +24,9 @@ export function getSidebarList(pathname: string): Menu[] {
     },
     {
       title: "Reservations",
-      url: DashboardRoutes.reservation,
+      url: DashboardRoutes.reservations,
       icon: CalendarClock,
-      isActive: pathname.includes(DashboardRoutes.reservation),
+      isActive: pathname.includes(DashboardRoutes.reservations),
     },
     {
       title: "Settings",
