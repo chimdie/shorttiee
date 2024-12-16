@@ -10,10 +10,9 @@ docsRouter.use("/static", express.static(path.resolve("src/public")));
 
 docsRouter.use("/reference", (req, res) => {
   apiReference({
-    theme: "bluePlanet",
+    theme: req.query.theme ?? "bluePlanet",
     // layout?: 'modern' | 'classic';
     layout: req.query.layout ?? "modern",
-    isEditable: true,
 
     darkMode: true,
     cdn: "/api/v1/docs/static/js/api-reference.js",
