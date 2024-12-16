@@ -15,7 +15,7 @@ import { FindFileDto } from "../dto/file.dto";
 import { appEnv } from "../config/env.config";
 
 const UPLOAD_FILE_PATH = "/api/v1/files/";
-// TODO: docs
+
 export const createFileCtl = ctlWrapper(async (req, res) => {
   const userId = req.user?.id;
   assert(userId);
@@ -57,7 +57,6 @@ export const createFileCtl = ctlWrapper(async (req, res) => {
   return SuccessResponse(res, files, 201);
 });
 
-// TODO: docs
 export const getFileCtl = ctlWrapper(async (req: Request<FindFileDto>, res) => {
   const file = findFileByPathQuery(UPLOAD_FILE_PATH + req.params.name);
   if (!file) {
