@@ -20,13 +20,13 @@ const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description
     title: "Shortlets",
     description: "Discover and monitor your shortlets",
   },
-  [DashboardRoutes.payment]: {
-    title: "Payments",
-    description: "Payments History",
-  },
   [DashboardRoutes.settings]: {
     title: "Settings",
     description: "Configure and set up your profile",
+  },
+  [DashboardRoutes.reservation]: {
+    title: "Reservations",
+    description: "All your reservations in one place",
   },
 };
 

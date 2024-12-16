@@ -81,7 +81,7 @@ export function NavUser({
                   </DropdownMenuItem>
                 </Link>
 
-                <Link to={DashboardRoutes.notification}>
+                <Link to={DashboardRoutes.notifications}>
                   <DropdownMenuItem>
                     <Bell />
                     Notifications

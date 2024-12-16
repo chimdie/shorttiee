@@ -1,5 +1,5 @@
 import { DashboardRoutes } from "@/types/routes";
-import { Hotel, House, type LucideIcon, Settings2 } from "lucide-react";
+import { CalendarClock, Hotel, House, type LucideIcon, Settings2 } from "lucide-react";
 
 type Menu = {
   title: string;
@@ -22,7 +22,12 @@ export function getSidebarList(pathname: string): Menu[] {
       icon: Hotel,
       isActive: pathname.includes(DashboardRoutes.shortlets),
     },
-
+    {
+      title: "Reservations",
+      url: DashboardRoutes.reservations,
+      icon: CalendarClock,
+      isActive: pathname.includes(DashboardRoutes.reservations),
+    },
     {
       title: "Settings",
       url: DashboardRoutes.settings,
