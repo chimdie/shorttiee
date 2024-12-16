@@ -21,11 +21,11 @@ export default function Reservation(): JSX.Element {
             <IncomingReservation />
           </Tab>
 
-          <Tab key="confirm" title="Confirmed Reservation">
+          <Tab key="confirm" title="Confirmed Reservations">
             <ConfirmedReservation />
           </Tab>
 
-          <Tab key="reject" title="Rejected Reservation">
+          <Tab key="reject" title="Rejected Reservations">
             <RejectedReservation />
           </Tab>
         </Tabs>
