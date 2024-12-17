@@ -44,7 +44,7 @@ export const rootRouter = createBrowserRouter([
       { path: DashboardRoutes.shortletDetail, element: <ShortletDetails /> },
       { path: DashboardRoutes.editShortlet, element: <EditShortlet /> },
       { path: DashboardRoutes.settings, element: <Settings /> },
-      { path: DashboardRoutes.profile, element: <Profile /> },
+      { path: DashboardRoutes.account, element: <Profile /> },
       { path: DashboardRoutes.notifications, element: <Notification /> },
       { path: DashboardRoutes.reservations, element: <Reservation /> },
     ],

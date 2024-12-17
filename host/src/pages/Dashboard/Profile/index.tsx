@@ -21,7 +21,7 @@ export default function Profile(): JSX.Element {
         <BreadcrumbItem>
           <Link to={DashboardRoutes.home}>Home</Link>
         </BreadcrumbItem>
-        <BreadcrumbItem>Profile</BreadcrumbItem>
+        <BreadcrumbItem>Account</BreadcrumbItem>
       </Breadcrumbs>
 
       <div className="flex flex-col justify-center items-center space-y-6 py-4">

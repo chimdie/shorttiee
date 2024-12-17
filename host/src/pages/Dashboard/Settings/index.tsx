@@ -1,20 +1,13 @@
 import { Link } from "react-router-dom";
-import { BreadcrumbItem, Breadcrumbs, Button, Divider, useDisclosure } from "@nextui-org/react";
+import { Button, Divider, useDisclosure } from "@nextui-org/react";
 import DeleteAccountModal from "@/components/DeleteAccountModal";
-import { AuthRoutes, DashboardRoutes } from "@/types/routes";
+import { AuthRoutes } from "@/types/routes";
 
 export default function Settings(): JSX.Element {
   const deleteAcount = useDisclosure();
   return (
     <>
-      <div className="py-6 space-y-6">
-        <Breadcrumbs>
-          <BreadcrumbItem>
-            <Link to={DashboardRoutes.home}>Home</Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>Settings</BreadcrumbItem>
-        </Breadcrumbs>
-
+      <div className="py-6">
         <div className="space-y-4">
           <div className="flex justify-between items-center ">
             <div>

@@ -1,4 +1,4 @@
-import { Bell, ChevronsUpDown, LogOut, UserPen } from "lucide-react";
+import { Bell, ChevronsUpDown, LogOut, Settings2, UserPen } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -74,10 +74,10 @@ export function NavUser({
               <DropdownMenuSeparator />
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <Link to={DashboardRoutes.profile}>
+                <Link to={DashboardRoutes.account}>
                   <DropdownMenuItem>
                     <UserPen />
-                    Profile
+                    Account
                   </DropdownMenuItem>
                 </Link>
 
@@ -85,6 +85,13 @@ export function NavUser({
                   <DropdownMenuItem>
                     <Bell />
                     Notifications
+                  </DropdownMenuItem>
+                </Link>
+
+                <Link to={DashboardRoutes.settings}>
+                  <DropdownMenuItem>
+                    <Settings2 />
+                    Settings
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuGroup>
