@@ -46,7 +46,7 @@ export default function DeleteAccountModal({
           <Button
             size="lg"
             fullWidth
-            className="bg-shorttiee_primary text-white shadow-sm font-medium"
+            className="bg-shorttiee_red-dark text-white shadow-sm font-medium"
             onClick={onClose}
           >
             Yes, delete
