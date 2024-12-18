@@ -77,7 +77,10 @@ export default function ConfirmBooking() {
         </ScrollView>
 
         <View className="p-4">
-          <ShorttieeButton title="Continue" />
+          <ShorttieeButton
+            title="Continue"
+            onPress={() => router.navigate('/(tabs)')}
+          />
         </View>
       </SafeAreaView>
     </View>
