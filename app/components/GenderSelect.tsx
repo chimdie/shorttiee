@@ -15,24 +15,29 @@ const genderData: GenderT[] = [
   {key: 'female', label: 'Female'},
 ];
 
-type GenderSelectT = {
-  control: Control<FieldValues, any> | undefined;
+type GenderSelectT<T extends FieldValues> = {
+  control: Control<T>;
   errors: FieldError | undefined;
   selectedGender: GenderT | undefined;
   setSelectedGender: React.Dispatch<React.SetStateAction<GenderT | undefined>>;
 };
 
-export const GenderSelector = (props: GenderSelectT) => {
+export const GenderSelector = <T extends FieldValues>({
+  control,
+  errors,
+  selectedGender,
+  setSelectedGender,
+}: GenderSelectT<T>) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleSelect = (gender: GenderT) => {
-    props.setSelectedGender(gender);
+    setSelectedGender(gender);
     setModalVisible(false);
   };
 
   return (
     <Controller
-      control={props.control}
+      control={control}
       name="gender"
       render={({field}) => (
         <View style={tw`w-full gap-1`}>
@@ -51,10 +56,8 @@ export const GenderSelector = (props: GenderSelectT) => {
               color={getColor('shorttiee-grey-300')}
             />
             <Text
-              style={tw`text-sm pl-2 flex-1 ${props.selectedGender ? 'text-black' : 'text-gray-400'}`}>
-              {props.selectedGender
-                ? props.selectedGender.label
-                : 'Select gender'}
+              style={tw`text-sm pl-2 flex-1 ${selectedGender ? 'text-black' : 'text-gray-400'}`}>
+              {selectedGender ? selectedGender.label : 'Select gender'}
             </Text>
             <View>
               <Feather
@@ -64,7 +67,7 @@ export const GenderSelector = (props: GenderSelectT) => {
               />
             </View>
           </Pressable>
-          {props.errors && (
+          {errors && (
             <Text style={tw`text-xs text-red-400 font-normal`}>
               Select your gender
             </Text>
@@ -91,7 +94,7 @@ export const GenderSelector = (props: GenderSelectT) => {
                       <Text style={tw`text-black text-base flex-1`}>
                         {gender.label}
                       </Text>
-                      {gender.key === props.selectedGender?.key && (
+                      {gender.key === selectedGender?.key && (
                         <Feather name="check" size={18} />
                       )}
                     </View>
