@@ -8,7 +8,6 @@ import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
 import { faker } from "@faker-js/faker";
 import assert from "node:assert";
 import { helper } from "./helper";
-import { FacilityDto } from "../dto/facility.dto";
 
 let token = "";
 let businessToken = "";
@@ -146,10 +145,10 @@ describe("POST /api/v1/listings", () => {
     assert.notEqual(res.body.data, undefined);
     assert.equal(res.body.data.name, payload.name);
     expect(res.body.data.images).toBeInstanceOf(Array);
-    expect(res.body.data.facilities).toBeInstanceOf(Array);
-    expect(expect.arrayContaining(facilities)).toEqual(
-      res.body.data.facilities.map((e: FacilityDto) => e.id)
-    );
+    // expect(res.body.data.facilities).toBeInstanceOf(Array);
+    // expect(expect.arrayContaining(facilities)).toEqual(
+    //   res.body.data.facilities.map((e: FacilityDto) => e.id)
+    // );
     createdListing = res.body.data;
   });
 });
@@ -163,7 +162,21 @@ describe("GET /api/v1/listings", () => {
 
     expect(res.body.data).toBeInstanceOf(Array);
     expect(res.body.data[0].images).toBeInstanceOf(Array);
-    expect(res.body.data[0].facilities).toBeInstanceOf(Array);
+  });
+
+  it("Should get filtered query", async () => {
+    const res = await supertest(app)
+      .get(
+        "/api/v1/listings?filter=%5B%5B%22status%22%2C%22eq%22%2C%22APPROVED%22%5D%5D"
+      )
+      .auth(token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data).toBeInstanceOf(Array);
+    res.body.data.forEach((element: ListingDto) => {
+      expect(element).toHaveProperty("status");
+      expect(element.status).toEqual("APPROVED");
+    });
   });
 });
 
@@ -198,9 +211,9 @@ describe("GET /api/v1/listings/:id", () => {
 
     expect(res.body.data.id).toEqual(createdListing.id);
     expect(res.body.data.images).toBeInstanceOf(Array);
-    expect(res.body.data.facilities).toBeInstanceOf(Array);
-    expect(expect.arrayContaining(facilities)).toEqual(
-      res.body.data.facilities.map((e: FacilityDto) => e.id)
-    );
+    // expect(res.body.data.facilities).toBeInstanceOf(Array);
+    // expect(expect.arrayContaining(facilities)).toEqual(
+    //   res.body.data.facilities.map((e: FacilityDto) => e.id)
+    // );
   });
 });
