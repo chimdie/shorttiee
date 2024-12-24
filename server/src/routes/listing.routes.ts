@@ -14,12 +14,13 @@ import {
 import { IdDto } from "../dto/util.dto";
 import { authenticate } from "../middlewares/authenticate.middleware";
 import { authorize } from "../middlewares/authorize.middleware";
+import { RequestQuery } from "../dto/query.dto";
 
 export const listingsRouter = Router();
 
 listingsRouter
   .route("/")
-  .get(getAllListingsDocs, getAllListingCtl)
+  .get(getAllListingsDocs, validator({ query: RequestQuery }), getAllListingCtl)
   .post(
     authenticate,
     authorize("create", "listing"),

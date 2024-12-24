@@ -90,7 +90,8 @@ export const createListingCtl = ctlWrapper(
 
 export const getAllListingCtl = ctlWrapper(
   async (_req: Request<unknown, unknown, CreateListingsDto>, res, next) => {
-    const [listingError, listingResult] = findAllListingQuery();
+    const [listingError, listingResult] = findAllListingQuery(_req.query);
+
     if (listingError) {
       return next(listingError);
     }

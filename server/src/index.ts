@@ -22,7 +22,7 @@ process.on("SIGINT", shutDown);
 process.on("exit", shutDown);
 
 server.on("connection", () => {
-  console.log("connection");
+  // console.log("connection");
 });
 
 function shutDown() {
