@@ -178,3 +178,23 @@ export const getListingsDocs = oapi.path({
     }
   }
 });
+
+// get listing facilities
+export const getListingFacilitiesDocs = oapi.path({
+  tags: ["Listing"],
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/FacilityDto"
+            }
+          }
+        }
+      }
+    }
+  }
+});
