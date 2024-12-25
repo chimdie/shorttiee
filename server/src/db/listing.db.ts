@@ -18,12 +18,12 @@ export function createListingQuery(data: InsertListings) {
     Expand<InsertListings>[],
     ListingDto & { images: string }
   >(`
-		INSERT INTO tblListings (
-			id, name, address, type, status, description, price, rate, restrictions, userId, categoryId, images
-		) VALUES (
-			@id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId, @images
-		)
-	`);
+      INSERT INTO tblListings (
+	id, name, address, type, status, description, price, rate, restrictions, userId, categoryId, images
+      ) VALUES (
+	@id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId, @images
+      )
+    `);
 
   const fn = fnToResult(statment.run.bind(statment));
   return fn(data);
@@ -31,16 +31,7 @@ export function createListingQuery(data: InsertListings) {
 
 export function findListingByIdQuery(id: string) {
   function _findListingByIdQuery(id: string) {
-    const sql = `
-		SELECT 
-			l.*,
-			json_group_array(json_object('name',f.name,'icon',f.icon,'color',f.color,'comment',f.comment,'id',f.id)) as facilities
-		FROM tblListingsFacilities AS lf
-			JOIN tblListings AS l ON lf.listingId=l.id
-			JOIN tblFacilities AS f ON lf.facilityId=f.id
-		WHERE l.id=@id
-		GROUP BY l.id
-	`;
+    const sql = "SELECT * FROM tblListings WHERE id=@id";
     const statment = db.prepare<Pick<ListingDto, "id">[], ListingDBDto>(sql);
 
     const val = statment.get({ id });
@@ -63,10 +54,7 @@ export function findAllListingQuery(query: RequestQuery) {
     query.shift
   );
   function run() {
-    const sql = `
-			SELECT * FROM tblListings 
-			${q}
-		`;
+    const sql = `SELECT * FROM tblListings ${q}`;
 
     const result = db.prepare<unknown[], ListingDBDto>(sql).all(replacement);
 
@@ -86,11 +74,11 @@ export function findAllListingQuery(query: RequestQuery) {
 export function findListingFacilitiesQuery(listingId: string) {
   function run() {
     const sql = `
-			SELECT f.* 
-			FROM tblListingsFacilities  as lf
-			JOIN tblFacilities as f on f.id = lf.facilityId
-			where lf.listingId = ?
-		`;
+      SELECT f.* 
+      FROM tblListingsFacilities  as lf
+      JOIN tblFacilities as f on f.id = lf.facilityId
+      where lf.listingId = ?
+    `;
 
     return db.prepare<string[], FacilityDto>(sql).all(listingId);
   }
