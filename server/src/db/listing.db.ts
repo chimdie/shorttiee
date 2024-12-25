@@ -8,6 +8,7 @@ import { Expand } from "../types/utils";
 import { fnToResult } from "../utils/fn-result";
 import { queryToSql } from "../utils/request-query";
 import { RequestQuery } from "../dto/query.dto";
+import { FacilityDto } from "../dto/facility.dto";
 
 type InsertListings = CreateListingsDto &
   Pick<ListingDto, "status"> & { id: string; userId: string };
@@ -76,6 +77,22 @@ export function findAllListingQuery(query: RequestQuery) {
     });
 
     return result as unknown as ListingDto[];
+  }
+
+  const fn = fnToResult(run);
+  return fn();
+}
+
+export function findListingFacilitiesQuery(listingId: string) {
+  function run() {
+    const sql = `
+			SELECT f.* 
+			FROM tblListingsFacilities  as lf
+			JOIN tblFacilities as f on f.id = lf.facilityId
+			where lf.listingId = ?
+		`;
+
+    return db.prepare<string[], FacilityDto>(sql).all(listingId);
   }
 
   const fn = fnToResult(run);

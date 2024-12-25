@@ -2,13 +2,15 @@ import { Router } from "express";
 import {
   createListingCtl,
   getAllListingCtl,
-  getListingCtl
+  getListingCtl,
+  getListingFacilitiesCtl
 } from "../controllers/listing.ctl";
 import { validator } from "../middlewares/validator.middleware";
 import { CreateListingsDto } from "../dto/listings.dto";
 import {
   createListingsDocs,
   getAllListingsDocs,
+  getListingFacilitiesDocs,
   getListingsDocs
 } from "../docs/listing.docs";
 import { IdDto } from "../dto/util.dto";
@@ -28,6 +30,13 @@ listingsRouter
     validator({ body: CreateListingsDto }),
     createListingCtl
   );
+
+listingsRouter.get(
+  "/:id/facilities",
+  getListingFacilitiesDocs,
+  validator({ params: IdDto }),
+  getListingFacilitiesCtl
+);
 
 listingsRouter.get(
   "/:id",
