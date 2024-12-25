@@ -8,6 +8,7 @@ import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
 import { faker } from "@faker-js/faker";
 import assert from "node:assert";
 import { helper } from "./helper";
+import { FacilityDto } from "../dto/facility.dto";
 
 let token = "";
 let businessToken = "";
@@ -215,5 +216,47 @@ describe("GET /api/v1/listings/:id", () => {
     // expect(expect.arrayContaining(facilities)).toEqual(
     //   res.body.data.facilities.map((e: FacilityDto) => e.id)
     // );
+  });
+});
+
+describe("GET /api/v1/listings/:id/facilities", () => {
+  it("Should not get any facilities for listing", async () => {
+    const res = await supertest(app)
+      .get(`/api/v1/listings/${crypto.randomUUID()}/facilities`)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    expect(res.body).toHaveProperty("data");
+    expect(res.body.data).toBeInstanceOf(Array);
+    expect(res.body.data.length).toEqual(0);
+  });
+
+  it("Should get all facilities for a listing", async () => {
+    if (!createdListing) {
+      throw Error("no created Listing");
+    }
+
+    const totalListingFacitities = db
+      .prepare<
+        string[],
+        { total: number }
+      >("SELECT count(*) as  total FROM tblListingsFacilities where listingId = ?")
+      .get(createdListing.id);
+
+    if (totalListingFacitities === undefined) {
+      throw Error("Error getting listings facilities");
+    }
+
+    const res = await supertest(app)
+      .get(`/api/v1/listings/${createdListing.id}/facilities`)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    expect(res.body).toHaveProperty("data");
+    expect(res.body.data).toBeInstanceOf(Array);
+    expect(res.body.data.length).toEqual(totalListingFacitities.total);
+    expect(expect.arrayContaining(facilities)).toEqual(
+      res.body.data.map((e: FacilityDto) => e.id)
+    );
   });
 });
