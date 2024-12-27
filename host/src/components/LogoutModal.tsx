@@ -33,20 +33,18 @@ export default function LogoutModal({
             </div>
           </div>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className="justify-center">
           <div className="flex justify-between gap-6">
             <Button
               onClick={onClose}
-              size="lg"
               fullWidth
-              className="bg-white shadow-sm border text-shorttiee_primary font-medium"
+              className="bg-white shadow-sm border text-shorttiee_primary font-medium px-6"
             >
               No, keep me logged in
             </Button>
             <Button
-              size="lg"
               fullWidth
-              className="bg-shorttiee_primary text-white shadow-sm font-medium"
+              className="bg-shorttiee_primary text-white shadow-sm font-medium px-6"
               onClick={onClose}
             >
               Yes, log me out
