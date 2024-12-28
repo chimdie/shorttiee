@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Feather, Ionicons} from '@expo/vector-icons';
 import tw from 'twrnc';
-import {Link, router} from 'expo-router';
+import {router} from 'expo-router';
 import {Heart, I3DRotate} from 'iconsax-react-native';
 import {getColor} from '@/config/theme';
 import {ShorttieeButton} from '@/components/Button';
@@ -219,7 +219,7 @@ export default function ApartmentDetailScreen() {
               }),
             },
           ]}>
-          <ScrollView>
+          <ScrollView className="flex-1">
             <View className="gap-8">
               <Text className="text-center font-bold text-xl">Select Date</Text>
               <DateTimePicker
@@ -297,12 +297,15 @@ export default function ApartmentDetailScreen() {
                   </Text>
                 </View>
               </View>
-              <Link href="/(tabs)/confirm-booking" asChild>
-                <ShorttieeButton
-                  title="Continue"
-                  onPress={() => setIsVisible(false)}
-                />
-              </Link>
+              <ShorttieeButton
+                title="Continue"
+                onPress={() => {
+                  if (isVisible) {
+                    router.navigate('/(tabs)/confirm-booking');
+                    setIsVisible(false);
+                  }
+                }}
+              />
             </View>
           </ScrollView>
         </View>
