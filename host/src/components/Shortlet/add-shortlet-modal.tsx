@@ -56,7 +56,7 @@ export default function AddShortletModal({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [isLinkInput, setIsLinkInput] = useState<boolean>(false);
-  const [linkInputValue, setLinkInputValue] = useState<string>("");
+  const [linkInputValue, setLinkInputValue] = useState<string[]>([]);
 
   const form = useForm<AddShortletSchema>({
     resolver: zodResolver(AddShortletSchema),
@@ -466,7 +466,14 @@ export default function AddShortletModal({
                               className="flex flex-col items-center cursor-pointer"
                               onClick={() => {
                                 setIsLinkInput(!isLinkInput);
-                                setLinkInputValue(field.value || "");
+                                // setLinkInputValue(field.value || "");
+
+                                setLinkInputValue(
+                                  Array.isArray(field.value) &&
+                                    field.value.every((item) => typeof item === "string")
+                                    ? field.value
+                                    : [], // Provide a default value if it's not a string array
+                                );
                               }}
                             >
                               <Link size={24} className="pointer-events-none text-grey_400" />
@@ -524,7 +531,7 @@ export default function AddShortletModal({
                       {isLinkInput && (
                         <div>
                           <Textarea
-                            value={linkInputValue}
+                            value={linkInputValue.join(",")}
                             radius="sm"
                             variant="bordered"
                             placeholder="Links to shortlet images(comma seperated)"
@@ -536,8 +543,9 @@ export default function AddShortletModal({
                             }
                             onChange={(e) => {
                               const newValue = e.target.value;
-                              setLinkInputValue(newValue);
-                              field.onChange(newValue);
+                              const newArray = newValue.split(",").map((str) => str.trim());
+                              setLinkInputValue(newArray);
+                              field.onChange(newArray);
                             }}
                           />
                         </div>
