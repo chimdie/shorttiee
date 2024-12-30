@@ -5,11 +5,17 @@ import {
   sqlite,
   SqlOperator
 } from "@ucast/sql";
+import assert from "node:assert";
 
 function manyParamsOperator(
   name: string
 ): SqlOperator<FieldCondition<unknown[]>> {
   return (condition, query) => {
+    assert(
+      Array.isArray(condition.value),
+      `Expected array for '${condition.operator}' operator but got ${typeof condition.value}`
+    );
+
     const params = query.manyParams(condition.value);
 
     return query.whereRaw(
@@ -22,12 +28,33 @@ function manyParamsOperator(
 const between = manyParamsOperator("between");
 const notBetween = manyParamsOperator("not between");
 
+function manyInParamsOperator(
+  name: string
+): SqlOperator<FieldCondition<unknown[]>> {
+  return (condition, query) => {
+    assert(
+      Array.isArray(condition.value),
+      `Expected array for '${condition.operator}' operator but got ${typeof condition.value}`
+    );
+
+    return query.whereRaw(
+      `${query.field(condition.field)} ${name}(${query.manyParams(condition.value).join(", ")})`,
+      ...condition.value
+    );
+  };
+}
+
+export const within = manyInParamsOperator("in");
+export const nin = manyInParamsOperator("not in");
+
 const like: SqlOperator<FieldCondition> = (node, query) => {
   return query.where(node.field, node.operator, node.value);
 };
 
 const interpret = createSqlInterpreter({
   ...allInterpreters,
+  in: within,
+  nin: nin,
   like,
   between,
   "not like": like,
