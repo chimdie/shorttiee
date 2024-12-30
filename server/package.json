@@ -51,6 +51,7 @@
   "dependencies": {
     "@casl/ability": "^6.7.2",
     "@scalar/express-api-reference": "^0.4.172",
+    "@ucast/sql": "^1.0.0-alpha.1",
     "@wesleytodd/openapi": "github:micaiah-effiong/express-openapi#e3c5619",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.5.0",

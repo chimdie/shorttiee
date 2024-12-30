@@ -4,3 +4,4 @@ import "./category.docs";
 import "./file.docs";
 import "./listing.docs";
 import "./user.docs";
+import "./query.docs";

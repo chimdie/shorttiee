@@ -146,10 +146,10 @@ describe("POST /api/v1/listings", () => {
     assert.notEqual(res.body.data, undefined);
     assert.equal(res.body.data.name, payload.name);
     expect(res.body.data.images).toBeInstanceOf(Array);
-    expect(res.body.data.facilities).toBeInstanceOf(Array);
-    expect(expect.arrayContaining(facilities)).toEqual(
-      res.body.data.facilities.map((e: FacilityDto) => e.id)
-    );
+    // expect(res.body.data.facilities).toBeInstanceOf(Array);
+    // expect(expect.arrayContaining(facilities)).toEqual(
+    //   res.body.data.facilities.map((e: FacilityDto) => e.id)
+    // );
     createdListing = res.body.data;
   });
 });
@@ -163,7 +163,21 @@ describe("GET /api/v1/listings", () => {
 
     expect(res.body.data).toBeInstanceOf(Array);
     expect(res.body.data[0].images).toBeInstanceOf(Array);
-    expect(res.body.data[0].facilities).toBeInstanceOf(Array);
+  });
+
+  it("Should get filtered query", async () => {
+    const res = await supertest(app)
+      .get(
+        "/api/v1/listings?filter=%5B%5B%22status%22%2C%22eq%22%2C%22APPROVED%22%5D%5D"
+      )
+      .auth(token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data).toBeInstanceOf(Array);
+    res.body.data.forEach((element: ListingDto) => {
+      expect(element).toHaveProperty("status");
+      expect(element.status).toEqual("APPROVED");
+    });
   });
 });
 
@@ -198,9 +212,51 @@ describe("GET /api/v1/listings/:id", () => {
 
     expect(res.body.data.id).toEqual(createdListing.id);
     expect(res.body.data.images).toBeInstanceOf(Array);
-    expect(res.body.data.facilities).toBeInstanceOf(Array);
+    // expect(res.body.data.facilities).toBeInstanceOf(Array);
+    // expect(expect.arrayContaining(facilities)).toEqual(
+    //   res.body.data.facilities.map((e: FacilityDto) => e.id)
+    // );
+  });
+});
+
+describe("GET /api/v1/listings/:id/facilities", () => {
+  it("Should not get any facilities for listing", async () => {
+    const res = await supertest(app)
+      .get(`/api/v1/listings/${crypto.randomUUID()}/facilities`)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    expect(res.body).toHaveProperty("data");
+    expect(res.body.data).toBeInstanceOf(Array);
+    expect(res.body.data.length).toEqual(0);
+  });
+
+  it("Should get all facilities for a listing", async () => {
+    if (!createdListing) {
+      throw Error("no created Listing");
+    }
+
+    const totalListingFacitities = db
+      .prepare<
+        string[],
+        { total: number }
+      >("SELECT count(*) as  total FROM tblListingsFacilities where listingId = ?")
+      .get(createdListing.id);
+
+    if (totalListingFacitities === undefined) {
+      throw Error("Error getting listings facilities");
+    }
+
+    const res = await supertest(app)
+      .get(`/api/v1/listings/${createdListing.id}/facilities`)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    expect(res.body).toHaveProperty("data");
+    expect(res.body.data).toBeInstanceOf(Array);
+    expect(res.body.data.length).toEqual(totalListingFacitities.total);
     expect(expect.arrayContaining(facilities)).toEqual(
-      res.body.data.facilities.map((e: FacilityDto) => e.id)
+      res.body.data.map((e: FacilityDto) => e.id)
     );
   });
 });

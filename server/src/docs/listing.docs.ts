@@ -4,7 +4,7 @@ import { oapi } from "../config/docs.config";
 import { Equals } from "../types/utils";
 import { typeAssert } from "../utils/asserts";
 import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
-import { FacilityDocSchema } from "./facility.docs";
+import { BasicQueriesDocs } from "./query.docs";
 
 export const ListingsDocSchema = {
   type: "object",
@@ -16,7 +16,6 @@ export const ListingsDocSchema = {
     "type",
     "status",
     "images",
-    "facilities",
     "userId",
     "categoryId"
   ] as const,
@@ -33,12 +32,6 @@ export const ListingsDocSchema = {
     description: { type: "string", nullable: true },
     price: { type: "number", nullable: true },
     rate: { type: "number", nullable: true },
-    facilities: {
-      type: "array",
-      items: {
-        $ref: "#/components/schemas/FacilityDto"
-      } as unknown as typeof FacilityDocSchema
-    },
     restrictions: { type: "string", nullable: true },
     images: {
       type: "array",
@@ -145,6 +138,7 @@ oapi.component("schemas", "GetAllListingResponse", {
 });
 export const getAllListingsDocs = oapi.path({
   tags: ["Listing"],
+  parameters: [...BasicQueriesDocs],
   responses: {
     200: {
       description: "Success",
@@ -178,6 +172,26 @@ export const getListingsDocs = oapi.path({
         "application/json": {
           schema: {
             $ref: "#/components/schemas/GetListingResponse"
+          }
+        }
+      }
+    }
+  }
+});
+
+// get listing facilities
+export const getListingFacilitiesDocs = oapi.path({
+  tags: ["Listing"],
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/FacilityDto"
+            }
           }
         }
       }

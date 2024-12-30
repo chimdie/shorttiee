@@ -2,7 +2,8 @@ import assert from "assert";
 import {
   createListingQuery,
   findAllListingQuery,
-  findListingByIdQuery
+  findListingByIdQuery,
+  findListingFacilitiesQuery
 } from "../db/listing.db";
 import { CreateListingsDto } from "../dto/listings.dto";
 import { ctlWrapper } from "../utils/ctl-wrapper";
@@ -90,7 +91,8 @@ export const createListingCtl = ctlWrapper(
 
 export const getAllListingCtl = ctlWrapper(
   async (_req: Request<unknown, unknown, CreateListingsDto>, res, next) => {
-    const [listingError, listingResult] = findAllListingQuery();
+    const [listingError, listingResult] = findAllListingQuery(_req.query);
+
     if (listingError) {
       return next(listingError);
     }
@@ -111,5 +113,19 @@ export const getListingCtl = ctlWrapper(
     }
 
     return SuccessResponse(res, listingResult);
+  }
+);
+
+export const getListingFacilitiesCtl = ctlWrapper(
+  async (req: Request<IdDto>, res, next) => {
+    const [facilitiesError, facilities] = findListingFacilitiesQuery(
+      req.params.id
+    );
+
+    if (facilitiesError) {
+      next(facilitiesError);
+    }
+
+    SuccessResponse(res, facilities);
   }
 );
