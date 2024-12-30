@@ -40,6 +40,7 @@ import {
   BedSingle,
   Bath,
   Proportions,
+  Link,
 } from "lucide-react";
 
 type ShortletModalT = {
@@ -54,6 +55,8 @@ export default function AddShortletModal({
 }: ShortletModalT): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [images, setImages] = useState<File[]>([]);
+  const [isLinkInput, setIsLinkInput] = useState<boolean>(false);
+  const [linkInputValue, setLinkInputValue] = useState<string[]>([]);
 
   const form = useForm<AddShortletSchema>({
     resolver: zodResolver(AddShortletSchema),
@@ -437,11 +440,8 @@ export default function AddShortletModal({
                   <FormItem>
                     <>
                       {/* empty uploader */}
-                      {images.length === 0 && (
-                        <div
-                          className="border-2 border-grey_200 rounded-xl py-8 flex flex-col justify-center items-center cursor-pointer w-full"
-                          onClick={() => fileInputRef?.current?.click()}
-                        >
+                      {!isLinkInput && images.length === 0 && (
+                        <div className="border-2 border-grey_200 rounded-xl py-8 flex flex-col justify-center items-center w-full">
                           <input
                             type="file"
                             accept="image/*"
@@ -453,13 +453,38 @@ export default function AddShortletModal({
                               handleImageUpload(e);
                             }}
                           />
-                          <Images size={24} className="pointer-events-none text-grey_400" />
-                          <p className="text-grey_400 text-sm py-1">Add shortlet image</p>
+                          <div className="flex items-center gap-8">
+                            <div
+                              className="flex flex-col items-center cursor-pointer"
+                              onClick={() => fileInputRef?.current?.click()}
+                            >
+                              <Images size={24} className="pointer-events-none text-grey_400" />
+                              <p className="text-grey_400 text-sm py-1">Add shortlet image</p>
+                            </div>
+
+                            <div
+                              className="flex flex-col items-center cursor-pointer"
+                              onClick={() => {
+                                setIsLinkInput(!isLinkInput);
+                                // setLinkInputValue(field.value || "");
+
+                                setLinkInputValue(
+                                  Array.isArray(field.value) &&
+                                    field.value.every((item) => typeof item === "string")
+                                    ? field.value
+                                    : [], // Provide a default value if it's not a string array
+                                );
+                              }}
+                            >
+                              <Link size={24} className="pointer-events-none text-grey_400" />
+                              <p className="text-grey_400 text-sm py-1">Add shortlet image link</p>
+                            </div>
+                          </div>
                         </div>
                       )}
 
                       {/* image preview and upload */}
-                      {images.length > 0 && (
+                      {!isLinkInput && images.length > 0 && (
                         <div className="flex  items-center gap-4 w-full space-y-2">
                           <div
                             className="border-2 border-grey_200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
@@ -477,8 +502,9 @@ export default function AddShortletModal({
                               }}
                             />
                             <Images size={24} className="pointer-events-none text-grey_400" />
-                            <p className="text-grey_400 text-sm py-1">Add shortlet image</p>
+                            <p className="text-grey_400 text-sm py-1">Upload shortlet image</p>
                           </div>
+
                           {/* preview */}
 
                           <div className="flex items-center overflow-x-auto gap-2 w-full scroll">
@@ -501,7 +527,31 @@ export default function AddShortletModal({
                           </div>
                         </div>
                       )}
+                      {/* textareaa to hold images as links */}
+                      {isLinkInput && (
+                        <div>
+                          <Textarea
+                            value={linkInputValue.join(",")}
+                            radius="sm"
+                            variant="bordered"
+                            placeholder="Links to shortlet images(comma seperated)"
+                            startContent={
+                              <Link
+                                size={16}
+                                className="pointer-events-none text-grey_400 mt-0.5"
+                              />
+                            }
+                            onChange={(e) => {
+                              const newValue = e.target.value;
+                              const newArray = newValue.split(",").map((str) => str.trim());
+                              setLinkInputValue(newArray);
+                              field.onChange(newArray);
+                            }}
+                          />
+                        </div>
+                      )}
                     </>
+
                     <FormMessage />
                   </FormItem>
                 )}

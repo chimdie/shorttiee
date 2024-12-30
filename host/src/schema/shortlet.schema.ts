@@ -9,7 +9,7 @@ export const shortletType = [
 export const shortletCategory = [
   { key: "apartment", label: "Apartment" },
   { key: "beach villa", label: "Beach Villa" },
-  { key: "vaction home", label: "Vaction Home" },
+  { key: "vacation home", label: "Vacation Home" },
   { key: "duplex", label: "Duplex" },
   { key: "party home", label: "Party Home" },
   { key: "studio apartment", label: "Studio Apartment" },
@@ -50,15 +50,30 @@ export const AddShortletSchema = z.object({
   bedroom: z.string({ message: "Number of bedroom is required" }),
   bathroom: z.string({ message: "Number of bathroom is required" }),
   location: z.string({ message: "Location is required" }),
-  image: z.array(z.any()),
+  image: z
+    .union([
+      z
+        .array(z.instanceof(File))
+        .min(1, { message: "Upload at least one image file" })
+        .refine((files) => files.every((file) => file.type.startsWith("image/")), {
+          message: "All files must be image files",
+        }),
+      z.array(z.string()).min(1, { message: "Enter valid urls" }),
+    ])
+    .refine(
+      (data) =>
+        data.every((item) => typeof item === "string") ||
+        data.every((item) => item instanceof File),
+      { message: "You must upload only image files or enter the links to the image(s), not both" },
+    ),
   description: z.string({ message: "Description is required" }),
   price: z.string({ message: "Price is required" }),
   rate: z.string({ message: "Rate is required" }),
   type: z.string({ message: "Type is required" }),
   category: z.string({ message: "Category is required" }),
   cautionFee: z.string({ message: "Caution Fee is required" }),
-  facilities: z.array(z.string({ message: "Select atleast one facility" })),
-  restrictions: z.array(z.string({ message: "Select atleast one restrictions" })),
+  facilities: z.string({ message: "Select atleast one facility" }),
+  restrictions: z.string({ message: "Select atleast one restrictions" }),
 });
 
 export type AddShortletSchema = z.infer<typeof AddShortletSchema>;
