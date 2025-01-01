@@ -7,6 +7,7 @@ import { listingsRouter } from "./listing.routes";
 import { filesRouter } from "./files.routes";
 import { facilityRouter } from "./facility.routes";
 import { userRouter } from "./user.routes";
+import { reservationRouter } from "./reservation.routes";
 
 export const apiV1router = Router();
 
@@ -18,3 +19,4 @@ apiV1router.use("/files", filesRouter);
 apiV1router.use("/facilities", facilityRouter);
 apiV1router.use("/categories", categoryRouter);
 apiV1router.use("/listings", listingsRouter);
+apiV1router.use("/reservations", reservationRouter);
