@@ -15,7 +15,8 @@ export const ReservationDto = z.object({
    * The user creating the reservation
    */
   userId: z.string().uuid(),
-  listingId: z.string().uuid()
+  listingId: z.string().uuid(),
+  listingOwnerId: z.string().uuid()
 });
 
 export type ReservationDto = z.infer<typeof ReservationDto>;

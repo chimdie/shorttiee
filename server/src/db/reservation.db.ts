@@ -6,8 +6,8 @@ import { fnToResult } from "../utils/fn-result";
 export const createReservationQuery = (payload: ReservationDto) => {
   return fnToResult(() => {
     const reservationStatement = db.prepare<ReservationDto[]>(`
-      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId)
-      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId)
+      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId, listingOwnerId)
+      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId, @listingOwnerId)
     `);
     reservationStatement.run(payload);
 

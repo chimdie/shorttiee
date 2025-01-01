@@ -40,6 +40,7 @@ export const createReservationCtl = ctlWrapper(
       {
         code,
         userId: req.user.id,
+        listingOwnerId: listingResult.userId,
         id: crypto.randomUUID() as string,
         amount
       },
@@ -49,7 +50,7 @@ export const createReservationCtl = ctlWrapper(
     const [createResError, result] = createReservationQuery(payload);
 
     if (createResError) {
-      return next(codeError);
+      return next(createResError);
     }
 
     return SuccessResponse(res, result, 201);

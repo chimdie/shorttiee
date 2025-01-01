@@ -13,9 +13,11 @@ CREATE TABLE tblReservations (
   -- ref
   userId VARCHAR(36) NOT NULL,
   listingId varchar(50) NOT NULL,
+  listingOwnerId varchar(50) NOT NULL,
   
   FOREIGN KEY (userId) REFERENCES tblUsers(id) ON DELETE CASCADE,
-  FOREIGN KEY (listingId) REFERENCES tblListings(id) ON DELETE CASCADE
+  FOREIGN KEY (listingId) REFERENCES tblListings(id) ON DELETE CASCADE,
+  FOREIGN KEY (listingOwnerId) REFERENCES tblUsers(id) ON DELETE CASCADE
 );
 
 

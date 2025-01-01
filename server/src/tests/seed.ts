@@ -220,11 +220,11 @@ function seedListings(
   return listings;
 }
 
-function seedReservation(userIds: string[], listingIds: string[]) {
+function seedReservation(userIds: string[], listingIds: ListingDto[]) {
   const statements = Array.from({ length: 30 }).map(() => {
     const reservationStatement = db.prepare<ReservationDto[]>(`
-      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId)
-      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId)
+      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId, listingOwnerId)
+      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId, @listingOwnerId)
     `);
 
     return reservationStatement;
@@ -232,6 +232,7 @@ function seedReservation(userIds: string[], listingIds: string[]) {
 
   const trx = db.transaction(() => {
     for (const statement of statements) {
+      const listing = faker.helpers.arrayElement(listingIds);
       const reservation: ReservationDto = {
         id: faker.string.uuid(),
         code: faker.commerce.productName(),
@@ -240,7 +241,8 @@ function seedReservation(userIds: string[], listingIds: string[]) {
         endDate: faker.date.soon().toISOString(),
 
         userId: faker.helpers.arrayElement(userIds),
-        listingId: faker.helpers.arrayElement(listingIds)
+        listingId: listing.id,
+        listingOwnerId: listing.userId
       };
 
       statement.run(reservation);
@@ -279,7 +281,7 @@ async function main() {
   const restrictions = skipForeignKeyConstraints(() => {
     return seedReservation(
       users.map((u) => u.id),
-      listings.map((u) => u.id)
+      listings
     );
   });
 
