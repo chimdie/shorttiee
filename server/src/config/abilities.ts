@@ -20,6 +20,7 @@ export function defineAbilityFor(user: UserDto) {
     if (user.businessName?.trim()) {
       can<ListingDto>("create", "listing");
       can<ListingDto>("read", "listing", { userId: user.id });
+      can<ReservationDto>("read", "reservation", { listingOwnerId: user.id });
     } else {
       can<ReservationDto>("create", "reservation");
       can<ReservationDto>("read", "reservation", { userId: user.id });

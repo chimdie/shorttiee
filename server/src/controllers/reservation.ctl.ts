@@ -5,7 +5,8 @@ import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
 import { BadRequestResponse, SuccessResponse } from "../utils/response";
 import {
   createReservationQuery,
-  createReservationCodeQuery
+  createReservationCodeQuery,
+  findAllReservationByUserIdQuery
 } from "../db/reservation.db";
 import assert from "assert";
 import { getDayDuration } from "../utils/get-day-duration";
@@ -56,3 +57,18 @@ export const createReservationCtl = ctlWrapper(
     return SuccessResponse(res, result, 201);
   }
 );
+
+export const getAllReservationCtl = ctlWrapper(async (req, res, next) => {
+  assert(req.user);
+
+  const [reservationError, reservations] = findAllReservationByUserIdQuery(
+    req.user.id,
+    req.query
+  );
+
+  if (reservationError) {
+    return next(reservationError);
+  }
+
+  return SuccessResponse(res, reservations);
+});

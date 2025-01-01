@@ -2,6 +2,8 @@ import db from "../config/db.config";
 import { ReservationDto } from "../dto/reservation.dto";
 import { WithDBTimestamps } from "../types/utils";
 import { fnToResult } from "../utils/fn-result";
+import { queryToSql } from "../utils/request-query";
+import { RequestQuery } from "../dto/query.dto";
 
 export const createReservationQuery = (payload: ReservationDto) => {
   return fnToResult(() => {
@@ -22,12 +24,32 @@ export const createReservationQuery = (payload: ReservationDto) => {
 
 export const findReservationByIdQuery = (id: string) => {
   return fnToResult(() => {
-    const reservationStatement = db.prepare<string[]>(`
-      SELECT * FROM tblReservations WHERE id = ?
-		`);
+    const reservationStatement = db.prepare<string[], ReservationDto>(
+      "SELECT * FROM tblReservations WHERE id = ?"
+    );
 
     return reservationStatement.get(id);
   });
+};
+
+export const findAllReservationByUserIdQuery = (
+  id: string,
+  query: RequestQuery
+) => {
+  return fnToResult(() => {
+    const [q, replacement] = queryToSql(
+      query.filter,
+      query.or_filter,
+      query.shift,
+      false
+    );
+
+    const reservationStatement = db.prepare<unknown[], ReservationDto>(
+      `SELECT *  FROM tblReservations WHERE (userId = ?  or listingOwnerId = ?) ${q ? "and " + q : q}`
+    );
+
+    return reservationStatement.all([id, id, ...replacement]);
+  })();
 };
 
 const countReservations = () => {

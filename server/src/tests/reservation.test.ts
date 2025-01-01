@@ -8,13 +8,16 @@ import assert from "node:assert";
 import { helper } from "./helper";
 import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
 
-let token = "";
-let businessToken = "";
 let payload: CreateReservationDto;
+let user: { token: string; id: string };
+let business: { token: string; id: string };
 
 beforeAll(() => {
-  token = helper.getUserAuth().token;
-  businessToken = helper.getUserAuthWithBusiness().token;
+  const _user = helper.getUserAuth();
+  user = { id: _user.user.id, token: _user.token };
+
+  const _bus = helper.getUserAuthWithBusiness();
+  business = { id: _bus.user.id, token: _bus.token };
 
   payload = {
     listingId: faker.helpers.arrayElement(helper.getListings()).id,
@@ -44,7 +47,7 @@ describe("POST /api/v1/users/reservations", () => {
   it("Should throw validation error", async () => {
     const res = await supertest(app)
       .post("/api/v1/users/reservations")
-      .auth(token, { type: "bearer" })
+      .auth(user.token, { type: "bearer" })
       .set("Accept", "application/json")
       .send({})
       .expect(400);
@@ -56,7 +59,7 @@ describe("POST /api/v1/users/reservations", () => {
   it("Should throw bad request error for wrong reservation", async () => {
     const res = await supertest(app)
       .post("/api/v1/users/reservations")
-      .auth(token, { type: "bearer" })
+      .auth(user.token, { type: "bearer" })
       .set("Accept", "application/json")
       .send({ ...payload, listingId: crypto.randomUUID() })
       .expect(400);
@@ -69,7 +72,7 @@ describe("POST /api/v1/users/reservations", () => {
   it("Should not create reservation with business account", async () => {
     const res = await supertest(app)
       .post("/api/v1/users/reservations")
-      .auth(businessToken, { type: "bearer" })
+      .auth(business.token, { type: "bearer" })
       .set("Accept", "application/json")
       .send(payload)
       .expect(403);
@@ -82,7 +85,7 @@ describe("POST /api/v1/users/reservations", () => {
     const res = await supertest(app)
       .post("/api/v1/users/reservations")
       .set("Accept", "application/json")
-      .auth(token, { type: "bearer" })
+      .auth(user.token, { type: "bearer" })
       .send(payload)
       .expect(201);
 
@@ -92,50 +95,70 @@ describe("POST /api/v1/users/reservations", () => {
   });
 });
 
-// describe("GET /api/v1/users/reservations", () => {
-// it("Should not get all reservations for a business user", async () => {
-//   const res = await supertest(app)
-//     .get("/api/v1/users/reservations")
-//     .auth(token, { type: "bearer" })
-//     .expect(200);
-//
-//   expect(res.body.data).toBeInstanceOf(Array);
-//   res.body.data.forEach((elt: ReservationDto) => {
-//     expect(elt).toHaveProperty("code");
-//     expect(elt).toHaveProperty("amount");
-//     expect(elt).toHaveProperty("id");
-//   });
-// });
-//
-// it("Should get all reservations", async () => {
-//   const res = await supertest(app)
-//     .get("/api/v1/users/reservations")
-//     .auth(token, { type: "bearer" })
-//     .expect(200);
-//
-//   expect(res.body.data).toBeInstanceOf(Array);
-//   res.body.data.forEach((elt: ReservationDto) => {
-//     expect(elt).toHaveProperty("code");
-//     expect(elt).toHaveProperty("amount");
-//     expect(elt).toHaveProperty("id");
-//   });
-// });
-// it("Should get filtered query", async () => {
-// const res = await supertest(app)
-//   .get(
-//     "/api/v1/listings?filter=%5B%5B%22status%22%2C%22eq%22%2C%22APPROVED%22%5D%5D"
-//   )
-//   .auth(token, { type: "bearer" })
-//   .expect(200);
-//
-// expect(res.body.data).toBeInstanceOf(Array);
-// res.body.data.forEach((element: ReservationDto) => {
-//   expect(element).toHaveProperty("code");
-//   expect(element).toHaveProperty("amount");
-//   expect(element).toHaveProperty("id");
-// });
-// });
-// });
+describe("GET /api/v1/users/reservations", () => {
+  it("Should get all reservations for a business user", async () => {
+    const res = await supertest(app)
+      .get("/api/v1/users/reservations")
+      .auth(business.token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data).toBeInstanceOf(Array);
+    res.body.data.forEach((elt: ReservationDto) => {
+      expect(elt).toHaveProperty("code");
+      expect(elt).toHaveProperty("amount");
+      expect(elt).toHaveProperty("id");
+      expect(elt.listingOwnerId).toEqual(business.id);
+    });
+  });
+
+  it("Should get all reservations for a user", async () => {
+    const res = await supertest(app)
+      .get("/api/v1/users/reservations")
+      .auth(user.token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data).toBeInstanceOf(Array);
+    res.body.data.forEach((elt: ReservationDto) => {
+      expect(elt).toHaveProperty("code");
+      expect(elt).toHaveProperty("amount");
+      expect(elt).toHaveProperty("id");
+      expect(elt.userId).toEqual(user.id);
+    });
+  });
+
+  it("Should get all reservations for a user", async () => {
+    const res = await supertest(app)
+      .get(
+        "/api/v1/users/reservations?filter=%5B%5B%22code%22%2C+%22eq%22%2C+%22RES-031%22%5D%5D"
+      )
+      .auth(user.token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data).toBeInstanceOf(Array);
+    expect(res.body.data.length).toEqual(1);
+    res.body.data.forEach((elt: ReservationDto) => {
+      expect(elt).toHaveProperty("code");
+      expect(elt).toHaveProperty("amount");
+      expect(elt).toHaveProperty("id");
+      expect(elt.code).toEqual("RES-031");
+    });
+  });
+  // it("Should get filtered query", async () => {
+  //   const res = await supertest(app)
+  //     .get(
+  //       "/api/v1/listings?filter=%5B%5B%22status%22%2C%22eq%22%2C%22APPROVED%22%5D%5D"
+  //     )
+  //     .auth(token, { type: "bearer" })
+  //     .expect(200);
+  //
+  //   expect(res.body.data).toBeInstanceOf(Array);
+  //   res.body.data.forEach((element: ReservationDto) => {
+  //     expect(element).toHaveProperty("code");
+  //     expect(element).toHaveProperty("amount");
+  //     expect(element).toHaveProperty("id");
+  //   });
+  // });
+});
 //
 // describe("GET /api/v1/listings/:id", () => {
 //   it("Should return 400 for invalid param", async () => {
