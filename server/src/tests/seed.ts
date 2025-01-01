@@ -7,6 +7,7 @@ import { Merge } from "../types/utils";
 import { FacilityDto } from "../dto/facility.dto";
 import { FacilityListing } from "../db/facility-and-listing.db";
 import { UserDto } from "../dto/user.dto";
+import { ReservationDto } from "../dto/reservation.dto";
 
 function seedUser() {
   const statements = Array.from({ length: 10 }).map(() => {
@@ -219,6 +220,41 @@ function seedListings(
   return listings;
 }
 
+function seedReservation(userIds: string[], listingIds: string[]) {
+  const statements = Array.from({ length: 30 }).map(() => {
+    const reservationStatement = db.prepare<ReservationDto[]>(`
+      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId)
+      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId)
+    `);
+
+    return reservationStatement;
+  });
+
+  const trx = db.transaction(() => {
+    for (const statement of statements) {
+      const reservation: ReservationDto = {
+        id: faker.string.uuid(),
+        code: faker.commerce.productName(),
+        amount: +faker.commerce.price(),
+        startDate: faker.date.soon().toISOString(),
+        endDate: faker.date.soon().toISOString(),
+
+        userId: faker.helpers.arrayElement(userIds),
+        listingId: faker.helpers.arrayElement(listingIds)
+      };
+
+      statement.run(reservation);
+    }
+  });
+
+  trx();
+
+  const reservations = db
+    .prepare<[], ReservationDto>("SELECT * FROM tblReservations")
+    .all();
+  return reservations;
+}
+
 function skipForeignKeyConstraints<T = void>(fn: (...args: any[]) => T): T {
   db.exec("PRAGMA foreign_keys=OFF;");
   const result = fn();
@@ -240,7 +276,14 @@ async function main() {
     );
   });
 
-  return { users, categories, listings };
+  const restrictions = skipForeignKeyConstraints(() => {
+    return seedReservation(
+      users.map((u) => u.id),
+      listings.map((u) => u.id)
+    );
+  });
+
+  return { users, categories, listings, restrictions };
 }
 
 main();

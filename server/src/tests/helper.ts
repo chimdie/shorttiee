@@ -75,8 +75,20 @@ function getAdminAuth() {
   };
 }
 
+function getListings() {
+  const listings = db
+    .prepare<[], { id: string }>(
+      `SELECT id
+        FROM tblListings`
+    )
+    .all();
+
+  return listings;
+}
+
 export const helper = {
   getAdminAuth,
   getUserAuth,
-  getUserAuthWithBusiness
+  getUserAuthWithBusiness,
+  getListings
 };
