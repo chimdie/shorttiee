@@ -272,17 +272,15 @@ async function main() {
 
   const listings = skipForeignKeyConstraints(() => {
     return seedListings(
-      users.map((u) => u.id),
+      users.filter((u) => u.businessName).map((u) => u.id),
       categories.map((c) => c.id),
       facilities.map((f) => f.id)
     );
   });
 
   const restrictions = skipForeignKeyConstraints(() => {
-    return seedReservation(
-      users.map((u) => u.id),
-      listings
-    );
+    const userIds = users.filter((u) => !u.businessName).map((u) => u.id);
+    return seedReservation(userIds, listings);
   });
 
   return { users, categories, listings, restrictions };
