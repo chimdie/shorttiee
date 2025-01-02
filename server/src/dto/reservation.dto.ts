@@ -9,8 +9,24 @@ export const ReservationDto = z.object({
    */
   code: z.string(),
   amount: z.number(),
-  startDate: z.string().date("Invalid datetime string! Must be UTC."),
-  endDate: z.string().date("Invalid datetime string! Must be UTC."),
+  startDate: z
+    .string()
+    .date("Invalid start date!")
+    .refine(
+      (d) => {
+        return new Date(d) > new Date();
+      },
+      { message: "Reservation date cannot be in the past" }
+    ),
+  endDate: z
+    .string()
+    .date("Invalid end date string!")
+    .refine(
+      (d) => {
+        return new Date(d) > new Date();
+      },
+      { message: "Reservation date cannot be in the past" }
+    ),
   /**
    * The user creating the reservation
    */
