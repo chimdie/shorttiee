@@ -15,8 +15,9 @@ const dbTables = [
   "tblFiles",
   "tblListings",
   "tblListingsFacilities",
-  "tblUsers"
-] as const;
+  "tblUsers",
+  "tblReservations"
+].sort();
 
 export function dbPrepare<
   BindParameters extends unknown[] | {} = unknown[],
@@ -46,7 +47,7 @@ export function isAllDBTableMigrated() {
   }
 
   const fn = fnToResult(statement.all.bind(statement));
-  const [error, tables] = fn();
+  const [error, _tables] = fn();
 
   if (error) {
     console.error(error);
@@ -54,12 +55,14 @@ export function isAllDBTableMigrated() {
     return false;
   }
 
+  const tables = _tables.map((t) => t.name).sort();
+
   if (tables.length != dbTables.length) {
     return false;
   }
 
   for (const index in tables) {
-    if (dbTables[index] != tables[index].name) {
+    if (dbTables[index] != tables[index]) {
       return false;
     }
   }
