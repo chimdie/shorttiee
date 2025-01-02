@@ -122,48 +122,28 @@ export const getAllReservationsDocs = oapi.path({
   }
 });
 
-// get a lising
-// oapi.component("schemas", "GetListingResponse", {
-//   type: "object",
-//   additionalProperties: false,
-//   required: ["data", "message"],
-//   properties: {
-//     message: { type: "string" },
-//     data: { $ref: "#/components/schemas/ListingsDto" }
-//   }
-// });
-// export const getListingsDocs = oapi.path({
-//   tags: ["Listing"],
-//   responses: {
-//     200: {
-//       description: "Success",
-//       content: {
-//         "application/json": {
-//           schema: {
-//             $ref: "#/components/schemas/GetListingResponse"
-//           }
-//         }
-//       }
-//     }
-//   }
-// });
-//
-// // get listing facilities
-// export const getListingFacilitiesDocs = oapi.path({
-//   tags: ["Listing"],
-//   responses: {
-//     200: {
-//       description: "Success",
-//       content: {
-//         "application/json": {
-//           schema: {
-//             type: "array",
-//             items: {
-//               $ref: "#/components/schemas/FacilityDto"
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-// });
+// get a reservation
+oapi.component("schemas", "GetReservationResponse", {
+  type: "object",
+  additionalProperties: false,
+  required: ["data", "message"],
+  properties: {
+    message: { type: "string" },
+    data: { $ref: "#/components/schemas/ReservationDto" }
+  }
+});
+export const getReservationDocs = oapi.path({
+  tags: ["Reservation"],
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/components/schemas/GetReservationResponse"
+          }
+        }
+      }
+    }
+  }
+});

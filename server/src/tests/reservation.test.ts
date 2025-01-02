@@ -69,6 +69,23 @@ describe("POST /api/v1/users/reservations", () => {
     expect(res.body.message).toMatch(/invalid listing/i);
   });
 
+  it("Should not create reservation for past date", async () => {
+    const res = await supertest(app)
+      .post("/api/v1/users/reservations")
+      .auth(user.token, { type: "bearer" })
+      .set("Accept", "application/json")
+      .send({
+        ...payload,
+        endDate: faker.date.past().toISOString().split("T")[0],
+        startDate: faker.date.past().toISOString().split("T")[0]
+      })
+      .expect(400);
+
+    assert.equal(res.body.data, undefined);
+    assert.equal("error" in res.body, true);
+    expect(res.body.message).toMatch(/past/i);
+  });
+
   it("Should not create reservation with business account", async () => {
     const res = await supertest(app)
       .post("/api/v1/users/reservations")
@@ -127,9 +144,10 @@ describe("GET /api/v1/users/reservations", () => {
   });
 
   it("Should get all reservations for a user", async () => {
+    const filter_query = JSON.stringify([["code", "eq", "RES-031"]]);
     const res = await supertest(app)
       .get(
-        "/api/v1/users/reservations?filter=%5B%5B%22code%22%2C+%22eq%22%2C+%22RES-031%22%5D%5D"
+        "/api/v1/users/reservations?filter=" + encodeURIComponent(filter_query)
       )
       .auth(user.token, { type: "bearer" })
       .expect(200);
@@ -143,99 +161,39 @@ describe("GET /api/v1/users/reservations", () => {
       expect(elt.code).toEqual("RES-031");
     });
   });
-  // it("Should get filtered query", async () => {
-  //   const res = await supertest(app)
-  //     .get(
-  //       "/api/v1/listings?filter=%5B%5B%22status%22%2C%22eq%22%2C%22APPROVED%22%5D%5D"
-  //     )
-  //     .auth(token, { type: "bearer" })
-  //     .expect(200);
-  //
-  //   expect(res.body.data).toBeInstanceOf(Array);
-  //   res.body.data.forEach((element: ReservationDto) => {
-  //     expect(element).toHaveProperty("code");
-  //     expect(element).toHaveProperty("amount");
-  //     expect(element).toHaveProperty("id");
-  //   });
-  // });
 });
-//
-// describe("GET /api/v1/listings/:id", () => {
-//   it("Should return 400 for invalid param", async () => {
-//     const res = await supertest(app)
-//       .get("/api/v1/listings/not-a-uuid")
-//       .auth(token, { type: "bearer" })
-//       .expect(400);
-//
-//     expect(res.body.error).toMatch(/validation/i);
-//   });
-//
-//   it("Should return 404 for getting a listing", async () => {
-//     const res = await supertest(app)
-//       .get(`/api/v1/listings/${crypto.randomUUID()}`)
-//       .auth(token, { type: "bearer" })
-//       .expect(404);
-//
-//     expect(res.body.error).toBeTruthy();
-//   });
-//
-//   it("Should get a listing", async () => {
-//     if (!createdListing) {
-//       throw Error("no created Listing");
-//     }
-//
-//     const res = await supertest(app)
-//       .get(`/api/v1/listings/${createdListing.id}`)
-//       .auth(token, { type: "bearer" })
-//       .expect(200);
-//
-//     expect(res.body.data.id).toEqual(createdListing.id);
-//     expect(res.body.data.images).toBeInstanceOf(Array);
-//     // expect(res.body.data.facilities).toBeInstanceOf(Array);
-//     // expect(expect.arrayContaining(facilities)).toEqual(
-//     //   res.body.data.facilities.map((e: FacilityDto) => e.id)
-//     // );
-//   });
-// });
-//
-// describe("GET /api/v1/listings/:id/facilities", () => {
-//   it("Should not get any facilities for listing", async () => {
-//     const res = await supertest(app)
-//       .get(`/api/v1/listings/${crypto.randomUUID()}/facilities`)
-//       .set("Accept", "application/json")
-//       .expect(200);
-//
-//     expect(res.body).toHaveProperty("data");
-//     expect(res.body.data).toBeInstanceOf(Array);
-//     expect(res.body.data.length).toEqual(0);
-//   });
-//
-//   it("Should get all facilities for a listing", async () => {
-//     if (!createdListing) {
-//       throw Error("no created Listing");
-//     }
-//
-//     const totalListingFacitities = db
-//       .prepare<
-//         string[],
-//         { total: number }
-//       >("SELECT count(*) as  total FROM tblListingsFacilities where listingId = ?")
-//       .get(createdListing.id);
-//
-//     if (totalListingFacitities === undefined) {
-//       throw Error("Error getting listings facilities");
-//     }
-//
-//     const res = await supertest(app)
-//       .get(`/api/v1/listings/${createdListing.id}/facilities`)
-//       .set("Accept", "application/json")
-//       .expect(200);
-//
-//     expect(res.body).toHaveProperty("data");
-//     expect(res.body.data).toBeInstanceOf(Array);
-//     expect(res.body.data.length).toEqual(totalListingFacitities.total);
-//     expect(expect.arrayContaining(facilities)).toEqual(
-//       res.body.data.map((e: FacilityDto) => e.id)
-//     );
-//   });
-// });
+
+describe("GET /api/v1/users/reservations/:id", () => {
+  it("Should return 400 for invalid param", async () => {
+    const res = await supertest(app)
+      .get("/api/v1/users/reservations/not-a-uuid")
+      .auth(user.token, { type: "bearer" })
+      .expect(400);
+
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.error).toMatch(/validation/i);
+  });
+
+  it("Should return 404", async () => {
+    const res = await supertest(app)
+      .get(`/api/v1/users/reservations/${crypto.randomUUID()}`)
+      .auth(user.token, { type: "bearer" })
+      .expect(404);
+
+    expect(res.body).toHaveProperty("error");
+  });
+
+  it("Should get a listing", async () => {
+    if (!createdReservation) {
+      throw Error("no created reservation");
+    }
+
+    const res = await supertest(app)
+      .get(`/api/v1/users/reservations/${createdReservation.id}`)
+      .auth(user.token, { type: "bearer" })
+      .expect(200);
+
+    expect(res.body.data.id).toEqual(createdReservation.id);
+    expect(res.body.data.code).toEqual(createdReservation.code);
+  });
+});

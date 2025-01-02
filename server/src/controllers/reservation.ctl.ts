@@ -2,14 +2,23 @@ import { Request } from "express";
 import { findListingByIdQuery } from "../db/listing.db";
 import { ctlWrapper } from "../utils/ctl-wrapper";
 import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
-import { BadRequestResponse, SuccessResponse } from "../utils/response";
+import {
+  BadRequestResponse,
+  ForbiddenResponse,
+  NotFoundResponse,
+  SuccessResponse
+} from "../utils/response";
 import {
   createReservationQuery,
   createReservationCodeQuery,
-  findAllReservationByUserIdQuery
+  findAllReservationByUserIdQuery,
+  findReservationByIdAndUserIdQuery
 } from "../db/reservation.db";
 import assert from "assert";
 import { getDayDuration } from "../utils/get-day-duration";
+import { IdDto } from "../dto/util.dto";
+import { ForbiddenError, subject } from "@casl/ability";
+import { Models } from "../types/abilities";
 
 export const createReservationCtl = ctlWrapper(
   async (req: Request<unknown, unknown, CreateReservationDto>, res, next) => {
@@ -72,3 +81,34 @@ export const getAllReservationCtl = ctlWrapper(async (req, res, next) => {
 
   return SuccessResponse(res, reservations);
 });
+
+export const getReservationCtl = ctlWrapper(
+  async (req: Request<IdDto>, res, next) => {
+    assert(req.user);
+    assert(req.userAbility);
+
+    const [reservationError, reservation] = findReservationByIdAndUserIdQuery(
+      req.params.id,
+      req.user.id
+    );
+
+    if (reservationError) {
+      return next(reservationError);
+    }
+
+    if (!reservation) {
+      return NotFoundResponse(res);
+    }
+
+    const cannot = ForbiddenError.from(req.userAbility).unlessCan(
+      "read",
+      subject<keyof Models, ReservationDto>("reservation", reservation)
+    );
+
+    if (cannot) {
+      return ForbiddenResponse(res, cannot.message);
+    }
+
+    return SuccessResponse(res, reservation);
+  }
+);

@@ -52,11 +52,24 @@ export const findAllReservationByUserIdQuery = (
   })();
 };
 
+export const findReservationByIdAndUserIdQuery = (
+  id: string,
+  userId: string
+) => {
+  return fnToResult(() => {
+    const reservationStatement = db.prepare<unknown[], ReservationDto>(
+      "SELECT *  FROM tblReservations WHERE (userId = ?  or listingOwnerId = ?) and (id = ?) LIMIT 1"
+    );
+
+    return reservationStatement.get([userId, userId, id]);
+  })();
+};
+
 const countReservations = () => {
   return fnToResult(() => {
-    const reservationStatement = db.prepare<[], { total: number }>(`
-			SELECT count(*) as total FROM tblReservations
-    `);
+    const reservationStatement = db.prepare<[], { total: number }>(
+      "SELECT count(*) as total FROM tblReservations"
+    );
 
     return reservationStatement.get();
   })();
