@@ -1,13 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="./public/logo.svg" />
-  <title>Shorttie</title>
-  <link rel="stylesheet" href="output.css">
-</head>
-<body>
-  <h1 class="text-3xl font-bold text-center text-red-400">helloe world</h1>
-</body>
+    <title>Shorttie</title>
+    <link rel="stylesheet" href="output.css" />
+  </head>
+  <body>
+    <!-- header -->
+    <header class="shadow-sm relative py-4">
+      <!-- navbar -->
+      <nav
+        class="w-11/12 bg-white mx-auto max-w-screen-2xl flex justify-between items-center"
+      >
+        <!-- logo -->
+        <a href="/" class="flex items-center gap-1">
+          <img
+            src="./public/app-logo.svg"
+            alt="app-logo"
+            class="h-8 w-8 flex-none"
+          />
+          <span class="font-semibold text-base text-shorttiee_primary mt-1"
+            >Shorttiee</span
+          >
+        </a>
+
+        <!-- bar button -->
+        <button class="visible md:invisible" id="navbtn">
+          <img
+            src="./public/bar-button.svg"
+            alt="bar-button"
+            class="h-8 w-8 flex-none"
+          />
+        </button>
+
+        <!-- links and button -->
+
+        <div
+          class="md:flex items-center justify-between flex-1 absolute top-full left-0 md:static w-full h-auto px-10 bg-white invisible md:visible shadow-md md:shadow-none"
+          id="navbar"
+        >
+          <ul
+            class="flex md:items-center md:flex-row flex-col flex-wrap text-md font-medium text-shorttiee_primary text-sm space-x-0 md:space-x-4 space-y-4 md:space-y-0"
+          >
+            <li class="hover:underline">
+              <a href="#">Service</a>
+            </li>
+            <li class="hover:underline">
+              <a href="#">About us</a>
+            </li>
+            <li class="hover:underline">
+              <a href="#">FAQ ?</a>
+            </li>
+          </ul>
+          <div
+            class="flex-none flex flex-col md:flex-row mt-2 md:mt-0 md:space-x-2 space-y-5 md:space-y-0 py-10 md:py-0"
+          >
+            <a
+              href="#"
+              class="bg-shorttiee_primary text-white text-md py-2 px-5 rounded font-medium w-40 text-center md:w-auto"
+              >Become a Host</a
+            >
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <h1 class="text-3xl font-bold text-center text-shorttiee_primary">
+        helloe world
+      </h1>
+    </main>
+
+    <script src="./js/index.js"></script>
+  </body>
 </html>
