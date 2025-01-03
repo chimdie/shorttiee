@@ -21,7 +21,7 @@ beforeAll(() => {
 
   payload = {
     listingId: faker.helpers.arrayElement(helper.getListings()).id,
-    startDate: faker.date.future().toISOString().split("T")[0],
+    startDate: new Date().toISOString().split("T")[0],
     endDate: faker.date.future().toISOString().split("T")[0]
   };
 });

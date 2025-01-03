@@ -14,7 +14,8 @@ export const ReservationDto = z.object({
     .date("Invalid start date!")
     .refine(
       (d) => {
-        return new Date(d) > new Date();
+        const today = new Date().toISOString().split("T")[0];
+        return new Date(d) >= new Date(today + "T00:00:00");
       },
       { message: "Reservation date cannot be in the past" }
     ),
@@ -23,7 +24,8 @@ export const ReservationDto = z.object({
     .date("Invalid end date string!")
     .refine(
       (d) => {
-        return new Date(d) > new Date();
+        const today = new Date().toISOString().split("T")[0];
+        return new Date(d) >= new Date(today + "T00:00:00");
       },
       { message: "Reservation date cannot be in the past" }
     ),
