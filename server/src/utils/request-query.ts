@@ -64,7 +64,8 @@ const interpret = createSqlInterpreter({
 export function queryToSql(
   filter: any[] = [],
   or_filter: any[] = [],
-  shift: boolean = true
+  shift: boolean = true,
+  prefix: boolean = true
 ) {
   if (!filter.length && !or_filter.length) {
     return ["", []];
@@ -90,7 +91,9 @@ export function queryToSql(
     }
   );
 
-  res[0] = "WHERE " + res[0];
+  if (prefix) {
+    res[0] = "WHERE " + res[0];
+  }
   // res[0] = res[0].replace(/`/g, "");
 
   return res;

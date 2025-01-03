@@ -15,7 +15,7 @@ app.use(oapi);
 
 app.use("/api/v1", apiV1router);
 
-app.use("*", (_, res) => {
+app.use((_, res) => {
   return NotFoundResponse(res);
 });
 

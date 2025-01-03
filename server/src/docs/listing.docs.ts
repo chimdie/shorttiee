@@ -88,7 +88,7 @@ oapi.component("schemas", "CreateListingResponse", {
   properties: {
     message: {
       type: "string",
-      example: "Password reset successful"
+      example: "Successful"
     },
     data: {
       $ref: "#/components/schemas/ListingsDto"

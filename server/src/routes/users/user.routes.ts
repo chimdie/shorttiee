@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authenticate } from "../middlewares/authenticate.middleware";
 import {
   getUserProfileCtl,
   updateUserProfileCtl
-} from "../controllers/user.ctl";
-import { validator } from "../middlewares/validator.middleware";
-import { UpdateUserDto } from "../dto/user.dto";
-import { getUserProfileDoc, patchUserProfileDoc } from "../docs/user.docs";
+} from "../../controllers/user.ctl";
+import { getUserProfileDoc, patchUserProfileDoc } from "../../docs/user.docs";
+import { UpdateUserDto } from "../../dto/user.dto";
+import { authenticate } from "../../middlewares/authenticate.middleware";
+import { validator } from "../../middlewares/validator.middleware";
 
 export const userRouter = Router();
 

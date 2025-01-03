@@ -6,12 +6,15 @@ import { categoryRouter } from "./category.routes";
 import { listingsRouter } from "./listing.routes";
 import { filesRouter } from "./files.routes";
 import { facilityRouter } from "./facility.routes";
-import { userRouter } from "./user.routes";
+import { userRouter } from "./users/user.routes";
+import { reservationRouter } from "./users/reservation.routes";
 
 export const apiV1router = Router();
 
 apiV1router.use("/docs", docsRouter);
 apiV1router.use("/auth", authRouter);
+
+apiV1router.use("/users/reservations", reservationRouter);
 apiV1router.use("/users", userRouter);
 
 apiV1router.use("/files", filesRouter);

@@ -7,6 +7,7 @@ import { Merge } from "../types/utils";
 import { FacilityDto } from "../dto/facility.dto";
 import { FacilityListing } from "../db/facility-and-listing.db";
 import { UserDto } from "../dto/user.dto";
+import { ReservationDto } from "../dto/reservation.dto";
 
 function seedUser() {
   const statements = Array.from({ length: 10 }).map(() => {
@@ -219,6 +220,43 @@ function seedListings(
   return listings;
 }
 
+function seedReservation(userIds: string[], listingIds: ListingDto[]) {
+  const statements = Array.from({ length: 30 }).map(() => {
+    const reservationStatement = db.prepare<ReservationDto[]>(`
+      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId, listingOwnerId)
+      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId, @listingOwnerId)
+    `);
+
+    return reservationStatement;
+  });
+
+  const trx = db.transaction(() => {
+    for (const statement of statements) {
+      const listing = faker.helpers.arrayElement(listingIds);
+      const reservation: ReservationDto = {
+        id: faker.string.uuid(),
+        code: faker.commerce.productName(),
+        amount: +faker.commerce.price(),
+        startDate: faker.date.soon().toISOString(),
+        endDate: faker.date.soon().toISOString(),
+
+        userId: faker.helpers.arrayElement(userIds),
+        listingId: listing.id,
+        listingOwnerId: listing.userId
+      };
+
+      statement.run(reservation);
+    }
+  });
+
+  trx();
+
+  const reservations = db
+    .prepare<[], ReservationDto>("SELECT * FROM tblReservations")
+    .all();
+  return reservations;
+}
+
 function skipForeignKeyConstraints<T = void>(fn: (...args: any[]) => T): T {
   db.exec("PRAGMA foreign_keys=OFF;");
   const result = fn();
@@ -234,13 +272,18 @@ async function main() {
 
   const listings = skipForeignKeyConstraints(() => {
     return seedListings(
-      users.map((u) => u.id),
+      users.filter((u) => u.businessName).map((u) => u.id),
       categories.map((c) => c.id),
       facilities.map((f) => f.id)
     );
   });
 
-  return { users, categories, listings };
+  const restrictions = skipForeignKeyConstraints(() => {
+    const userIds = users.filter((u) => !u.businessName).map((u) => u.id);
+    return seedReservation(userIds, listings);
+  });
+
+  return { users, categories, listings, restrictions };
 }
 
 main();
