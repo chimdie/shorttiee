@@ -6,6 +6,16 @@
     <link rel="icon" type="image/svg+xml" href="./public/logo.svg" />
     <title>Shorttie</title>
     <link rel="stylesheet" href="output.css" />
+    <style>
+      /* scrolling text setup */
+      .scrolling {
+        white-space: nowrap;
+        display: flex;
+        gap: 2rem;
+        transform: translateX(100%);
+        transition: transform 0s linear;
+      }
+    </style>
   </head>
   <body>
     <!-- header -->
@@ -66,26 +76,152 @@
       </nav>
     </header>
     <main class="mx-auto">
-
-      <section class="py-12 flex justify-center md:items-center h-[80vh] bg-grey_100">
-        <div class="w-11/12  mx-auto max-w-screen-2xl  flex justify-between  flex-col md:flex-row">
-          <div class="md:w-2/5 space-y-5">
-            <h1 class="text-shorttiee_primary font-semibold text-3xl md:text-5xl">Making Apartment and Shortlet Rentals Effortless</h1>
-            <p class="text-grey_400 text-md">Helping you unlock the potential of your apartment and shortlet rental business with the resources and support to succeed, while connecting you to the best shortlets and apartments in your location.</p>
-            <div class="flex items-center gap-2">
-              <a href="#">
-                <img src="./public/appleStore.svg" alt="appleStore">
-              </a>
-              <a href="#">
-                <img src="./public/googleStore.svg" alt="googleStore">
-              </a>
+      <!-- hero section -->
+      <section class="py-12 bg-grey_100 h-[80vh]">
+        <div class="flex flex-col justify-center md:items-center h-3/4">
+          <div
+            class="w-11/12 mx-auto max-w-screen-2xl flex justify-between flex-col md:flex-row"
+          >
+            <div class="md:w-2/5 space-y-5">
+              <h1
+                class="text-shorttiee_primary font-semibold text-3xl md:text-5xl"
+              >
+                Making Apartment and Shortlet Rentals Effortless
+              </h1>
+              <p class="text-grey_400 text-md">
+                Helping you unlock the potential of your apartment and shortlet
+                rental business with the resources and support to succeed, while
+                connecting you to the best shortlets and apartments in your
+                location.
+              </p>
+              <div class="flex items-center gap-2">
+                <a href="#">
+                  <img src="./public/appleStore.svg" alt="appleStore" />
+                </a>
+                <a href="#">
+                  <img src="./public/googleStore.svg" alt="googleStore" />
+                </a>
+              </div>
             </div>
+            <div>image here</div>
           </div>
-          <div>image here</div>
         </div>
 
+        <div class="w-11/12 mx-auto max-w-screen-2xl py-2">
+          <div class="flex flex-col md:flex-row gap-2 w-full">
+            <div class="md:w-1/5">
+              <p class="text-grey_400 text-md">
+                Trusted by 100+ Hosts and Renters with Apartments and Shortlets
+                Available at different Locations Across the Country
+              </p>
+            </div>
+            <div
+              class="relative overflow-hidden w-full md:w-5/6 flex justify-center items-center"
+            >
+              <div
+                id="scrollingText"
+                class="whitespace-nowrap flex gap-8 translate-x-full transform transition-transform duration-0"
+              >
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Lagos
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Abuja
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Port Harcourt
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Kano
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Ibadan
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Benin City
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Enugu
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Kaduna
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Maiduguri
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Zaria
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Aba
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Jos
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Sokoto
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Warri
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Akure
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italic"
+                >
+                  Calabar
+                </p>
+                <p
+                  class="px-4 text-xl font-medium text-shorttiee_primary italics"
+                >
+                  Uyo
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
-     
+
+      <!-- about us section -->
+
+      <section class="py-24">
+
+        <div class="flex items-center justify-center">
+
+          heheh
+        </div>
+      </section>
     </main>
 
     <script src="./js/index.js"></script>
