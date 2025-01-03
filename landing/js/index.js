@@ -1,5 +1,3 @@
-console.log("leoel");
-
 // navbar toggle
 const navBtn = document.querySelector("#navbtn");
 const navBar = document.querySelector("#navbar");
