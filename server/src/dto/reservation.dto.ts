@@ -25,7 +25,7 @@ export const ReservationDto = z.object({
     .refine(
       (d) => {
         const today = new Date().toISOString().split("T")[0];
-        return new Date(d) >= new Date(today + "T00:00:00");
+        return new Date(d) >= new Date(today + "T23:59:59");
       },
       { message: "Reservation date cannot be in the past" }
     ),
