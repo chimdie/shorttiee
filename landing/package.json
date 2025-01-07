@@ -5,10 +5,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tailwind": "npx tailwindcss -i ./css/index.css -o ./output.css --watch",
-    "serve": "live-server",
-    "dev": "concurrently \"npm run tailwind\" \"npm run serve\""
+    "serve": "npx live-server",
+    "dev": "npx concurrently \"npm run tailwind\" \"npm run serve\""
   },
-  "author": "",
+  "author": "shorttiee",
   "license": "ISC",
   "description": "shorttie landing page",
   "devDependencies": {
