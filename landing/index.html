@@ -7,16 +7,6 @@
     <link rel="icon" type="image/svg+xml" href="./public/logo.svg" />
     <title>Shorttie</title>
     <link rel="stylesheet" href="output.css" />
-    <style>
-      /* scrolling text setup */
-      .scrolling {
-        white-space: nowrap;
-        display: flex;
-        gap: 2rem;
-        transform: translateX(100%);
-        transition: transform 0s linear;
-      }
-    </style>
   </head>
 
   <body>
@@ -64,7 +54,8 @@
       <!-- hero section -->
       <section class="py-12 bg-grey_100">
         <div class="flex flex-col justify-center md:items-center">
-          <div class="w-full mx-auto container flex justify-between items-center flex-col md:flex-row px-2 md:px-4 lg:px-0">
+          <div
+            class="w-full mx-auto container flex justify-between items-center flex-col md:flex-row px-2 md:px-4 lg:px-0">
             <div class="space-y-5">
               <h1 class="text-shorttiee_primary font-semibold text-4xl md:text-6xl">
                 Making Apartment and Shortlet Rentals Effortless
@@ -170,7 +161,8 @@
           </p>
         </div>
 
-        <div class="py-12 px-2 md:px-4 lg:px-0 w-full mx-auto container flex justify-around items-center gap-8 flex-col md:flex-row">
+        <div
+          class="py-12 px-2 md:px-4 lg:px-0 w-full mx-auto container flex justify-around items-center gap-8 flex-col md:flex-row">
           <div class="px-6 py-12 bg-shorttiee_primary rounded-md shadow-md w-full space-y-12">
             <div class="bg-white h-12 w-12 rounded-full flex justify-center items-center">
               <img src="./public/mission.svg" alt="mission" />
@@ -353,8 +345,65 @@
 
         </div>
 
-        <div class="py-8 px-2 md:px-4 lg:px-0 w-full mx-auto container">
-          testimonial carousel
+        <div class="py-12 px-2 md:px-4 lg:px-0 w-full mx-auto container overflow-hidden">
+          <div id="testimonial-carousel" class="flex gap-4 items-center w-full transition-transform duration-500">
+
+            <div
+              class="p-8 bg-shorttiee_primary rounded-xl space-y-12 w-[90%] sm:w-[70%] md:w-[45%] lg:w-[30%] shrink-0 flex flex-col justify-between h-[541px]">
+              <img src="./public/decor.svg" alt="decor" class="w-full h-1/2 object-contain">
+              <p class="text-xl text-white font-medium">“ Finding a shortlet apartment in Lagos used to be stressful,
+                but Shorttiee changed everything. I booked a fully furnished apartment for my business trip, and the
+                process was seamless. The transparency and quality exceeded my expectations! ’’</p>
+              <h4 class="text-xl text-white font-semibold"> ~~ Adebola Olayemi</h4>
+            </div>
+
+
+            <div
+              class="p-8 bg-shorttiee_secondary rounded-xl space-y-12 w-[90%] sm:w-[70%] md:w-[45%] lg:w-[30%] shrink-0 flex flex-col justify-between h-[541px]">
+              <img src="./public/decor.svg" alt="decor" class="w-full h-1/2 object-contain">
+              <p class="text-xl text-white font-medium">“ Hosting my apartment has never been easier. Shorttiee connects
+                me with reliable renters and ensures everything runs smoothly. I’ve been able to maximize my income
+                effortlessly! ’’</p>
+              <h4 class="text-xl text-white font-semibold"> ~~ Ifeoma Nwachukwu</h4>
+            </div>
+
+            <div
+              class="p-8 bg-shorttiee_primary rounded-xl space-y-12 w-[90%] sm:w-[70%] md:w-[45%] lg:w-[30%] shrink-0 flex flex-col justify-between h-[541px]">
+              <img src="./public/decor.svg" alt="decor" class="w-full h-1/2 object-contain">
+              <p class="text-xl text-white font-medium">“ I was amazed by how easy it was to find a perfect place for my
+                vacation. The apartment was exactly as described, and the customer support was top-notch. I’ll
+                definitely be using Shorttiee's service again! ’’</p>
+              <h4 class="text-xl text-white font-semibold"> ~~ Chinonso Okafor</h4>
+            </div>
+
+            <div
+              class="p-8 bg-shorttiee_secondary rounded-xl space-y-12 w-[90%] sm:w-[70%] md:w-[45%] lg:w-[30%] shrink-0 flex flex-col justify-between h-[541px]">
+              <img src="./public/decor.svg" alt="decor" class="w-full h-1/2 object-contain">
+              <p class="text-xl text-white font-medium">“ Listing my property was straightforward, and Shorttiee's
+                support team was always available to assist. I’ve hosted several guests already, and the additional
+                income has been a game-changer for my family! ’’</p>
+              <h4 class="text-xl text-white font-semibold"> ~~ Ahmed Bello</h4>
+            </div>
+
+            <div
+              class="p-8 bg-shorttiee_primary rounded-xl space-y-12 w-[90%] sm:w-[70%] md:w-[45%] lg:w-[30%] shrink-0 flex flex-col justify-between h-[541px]">
+              <img src="./public/decor.svg" alt="decor" class="w-full h-1/2 object-contain">
+              <p class="text-xl text-white font-medium">“ Shorttiee made my relocation to Abuja so smooth. I found an
+                affordable and cozy apartment within minutes. The host was very accommodating, and the experience was
+                hassle-free. Highly recommended! ’’</p>
+              <h4 class="text-xl text-white font-semibold"> ~~ Bola Adebayo</h4>
+            </div>
+
+            <div
+              class="p-8 bg-shorttiee_secondary rounded-xl space-y-12 w-[90%] sm:w-[70%] md:w-[45%] lg:w-[30%] shrink-0 flex flex-col justify-between h-[541px]">
+              <img src="./public/decor.svg" alt="decor" class="w-full h-1/2 object-contain">
+              <p class="text-xl text-white font-medium">“ As a host, I love how organized and professional this platform
+                is. From vetting renters to handling payments, everything is seamless. My apartment has never stayed
+                empty for long! ’’</p>
+              <h4 class="text-xl text-white font-semibold"> ~~ Tosin Adetola</h4>
+            </div>
+          </div>
+
         </div>
 
 

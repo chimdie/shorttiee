@@ -2,7 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-
 html {
   scroll-behavior: smooth;
+}
+
+.scrolling {
+  white-space: nowrap;
+  display: flex;
+  gap: 2rem;
+  transform: translateX(100%);
+  transition: transform 0s linear;
+}
+
+#testimonial-carousel {
+  overflow:hidden;
+  scroll-snap-type: x mandatory;
+}
+
+#testimonial-carousel  > div {
+  scroll-snap-align: center;
 }
