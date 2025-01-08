@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en">  
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="./public/logo.svg" />
     <title>Shorttie</title>
-    <link rel="stylesheet" href="output.css" />
+    <link rel="stylesheet" href="./css/index.css">
+    <!-- <link rel="stylesheet" href="output.css" /> -->
+       <script src="https://cdn.tailwindcss.com"></script>
+       <script src="./js/tailwind.js"></script>
   </head>
 
   <body>
@@ -504,7 +506,7 @@
 
         <div class="relative translate-y-32 top-32">
 
-          <div
+          <!-- <div
             class="py-12 px-2 md:px-4 lg:px-0 w-full mx-auto container bg-shorttiee_primary rounded-3xl flex flex-col justify-center items-center">
             <div class="md:w-2/5 py-4 space-y-3">
               <h3 class="font-semibold text-3xl md:text-5xl text-white text-center">
@@ -527,7 +529,63 @@
                 Become a Host
               </a>
             </div>
-          </div>
+          </div> -->
+
+          <div
+  class="relative py-12 px-2 md:px-4 lg:px-0 w-full mx-auto container bg-shorttiee_primary rounded-3xl flex flex-col justify-center items-center overflow-hidden"
+>
+  <!-- Top Left Corner -->
+  <img
+    src="./public/top-left.svg"
+    alt="top-left-decor"
+    class="absolute top-0 left-0 w-12 h-12 md:w-24 md:h-24"
+  />
+
+  <!-- Top Right Corner -->
+  <img
+    src="./public/top-right.svg"
+    alt="top-right-decor"
+    class="absolute top-0 right-0 w-12 h-12 md:w-24 md:h-24"
+  />
+
+  <!-- Bottom Left Corner -->
+  <img
+    src="./public/bottom-left.svg"
+    alt="bottom-left-decor"
+    class="absolute bottom-0 left-0 w-12 h-12 md:w-24 md:h-24"
+  />
+
+  <!-- Bottom Right Corner -->
+  <img
+    src="./public/bottom-right.svg"
+    alt="bottom-right-decor"
+    class="absolute bottom-0 right-0 w-12 h-12 md:w-24 md:h-24"
+  />
+
+  <!-- Content -->
+  <div class="md:w-2/5 py-4 space-y-3">
+    <h3 class="font-semibold text-3xl md:text-5xl text-white text-center">
+      Let’s Partner for Your Hosting and Rental Success!
+    </h3>
+    <p class="text-base text-grey_300 text-center">
+      Join us in transforming your hosting and rental goals into reality!
+    </p>
+  </div>
+  <div class="flex items-center gap-4 py-4">
+    <a href="#">
+      <img src="./public/appleStore.svg" alt="appleStore" />
+    </a>
+    <a href="#">
+      <img src="./public/googleStore.svg" alt="googleStore" />
+    </a>
+    <a
+      href="#"
+      class="bg-white text-shorttiee_primary text-sm md:text-md md:py-3 px-5 rounded font-semibold text-center md:w-auto hover:opacity-50"
+    >
+      Become a Host
+    </a>
+  </div>
+</div>
         </div>
 
       </section>

@@ -1,6 +1,4 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./*.html"], // Adjust this to match your HTML file paths
+tailwind.config = {
   theme: {
     extend: {
       colors: {
@@ -26,5 +24,4 @@ module.exports = {
       },
     },
   },
-  plugins: [],
 };
