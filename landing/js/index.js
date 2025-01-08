@@ -50,3 +50,6 @@ function autoplayCarousel() {
 }
 
 setInterval(autoplayCarousel, 3000);
+
+
+document.querySelector("#currentYear").textContent = new Date().getFullYear();
