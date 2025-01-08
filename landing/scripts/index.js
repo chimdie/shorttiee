@@ -65,16 +65,16 @@ accordionItems.forEach((item) => {
         const otherContent = otherItem.querySelector(".accordion-content");
         const otherIcon = otherItem.querySelector(".icon");
         otherContent.classList.add("hidden");
-        otherIcon.src = "./public/plus.svg";
+        otherIcon.src = "./assests/icons/plus.svg";
       }
     });
 
     if (content.classList.contains("hidden")) {
       content.classList.remove("hidden");
-      icon.src = "./public/minus.svg";
+      icon.src = "./assests/icons/minus.svg";
     } else {
       content.classList.add("hidden");
-      icon.src = "./public/plus.svg";
+      icon.src = "./assests/icons/plus.svg";
     }
   });
 });
