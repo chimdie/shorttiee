@@ -1,7 +1,6 @@
 const navBtn = document.querySelector("#navbtn");
 const navBar = document.querySelector("#navbar");
 navBtn.addEventListener("click", (e) => {
-  console.log("clicked", e.target);
   navBar.classList.toggle("invisible");
 });
 
@@ -51,5 +50,31 @@ function autoplayCarousel() {
 
 setInterval(autoplayCarousel, 3000);
 
-
 document.querySelector("#currentYear").textContent = new Date().getFullYear();
+
+const accordionItems = document.querySelectorAll(".accordion-item");
+
+accordionItems.forEach((item) => {
+  const header = item.querySelector(".accordion-header");
+  const content = item.querySelector(".accordion-content");
+  const icon = item.querySelector(".icon");
+
+  header.addEventListener("click", () => {
+    accordionItems.forEach((otherItem) => {
+      if (otherItem !== item) {
+        const otherContent = otherItem.querySelector(".accordion-content");
+        const otherIcon = otherItem.querySelector(".icon");
+        otherContent.classList.add("hidden");
+        otherIcon.src = "./public/plus.svg";
+      }
+    });
+
+    if (content.classList.contains("hidden")) {
+      content.classList.remove("hidden");
+      icon.src = "./public/minus.svg";
+    } else {
+      content.classList.add("hidden");
+      icon.src = "./public/plus.svg";
+    }
+  });
+});
