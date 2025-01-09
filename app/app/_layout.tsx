@@ -5,7 +5,6 @@ import {useEffect, useState} from 'react';
 import 'react-native-reanimated';
 import {HomeHashtag} from 'iconsax-react-native';
 import '../global.css';
-
 import {ActivityIndicator, Platform, Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
@@ -97,7 +96,19 @@ export default function RootLayout() {
             />
           ),
         })}
-
+        <Stack.Screen
+          name="reservation-date"
+          options={{
+            headerShown: false,
+            presentation: 'formSheet',
+            gestureDirection: 'vertical',
+            animation: 'slide_from_bottom',
+            sheetGrabberVisible: false,
+            sheetInitialDetentIndex: 0,
+            sheetAllowedDetents: [0.5, 0.9],
+            sheetElevation: 1,
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
     </SafeAreaProvider>
