@@ -4,6 +4,13 @@ navBtn.addEventListener("click", (e) => {
   navBar.classList.toggle("invisible");
 });
 
+document.addEventListener("click", (e) => {
+  if (!navBar.contains(e.target) && !navBtn.contains(e.target)) {
+    navBar.classList.add("invisible");
+  }
+});
+
+
 const scrollingText = document.querySelector("#scrollingText");
 
 let scrollSpeed = 50;
