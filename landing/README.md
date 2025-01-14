@@ -50,9 +50,9 @@ git clone https://github.com/your-username/project-name.git
 cd project-name
 ```
 
-3.  Open the `index.html` file in your browser:
+3.  Start the `taiwindCSS` CLI
 ```bash
-open index.html
+npm run dev
 ```
 
 Or, if you have a live server setup in your editor, run the server and view the project in your browser.
