@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
+    "gen-sdk": "openapi --client axios -i ./src/sdk/openapi.yaml -o ./src/sdk/generated --indent 2 --useUnionTypes",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -52,6 +53,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
+    "openapi-typescript-codegen": "^0.29.0",
     "postcss": "^8.4.47",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.14",

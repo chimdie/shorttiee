@@ -1,0 +1,1179 @@
+openapi: 3.1.3
+info:
+  title: Shorttiee backend
+  version: 1.0.0
+  description: |
+    
+    Shorttiee backend documentation <br><br>
+    Swagger API reference <a href="/api/v1/docs">here</a> <br>
+    Scalar API reference <a href="/api/v1/docs/reference">here</a> <br>
+paths:
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Authentication
+      description: Create an account
+      summary: Create an account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterDto"
+      responses:
+        "201":
+          description: Account registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+  /api/v1/auth/forgot-password:
+    post:
+      tags:
+        - Authentication
+      summary: Forgot password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForgotPasswordResponse"
+  /api/v1/auth/reset-password:
+    post:
+      tags:
+        - Authentication
+      summary: Reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResetPasswordResponse"
+  /api/v1/auth/change-password:
+    post:
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      description: "Change user password. This is used only by authenticated users
+
+
+        By default, changing password will invalidate all previously issued
+        tokens.\ 
+
+        To prevent this behaviour when changing a user password, set `reauth` to
+        `false`
+
+        \  "
+      summary: Change password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChangePasswordResponse"
+  /api/v1/users/reservations/:
+    post:
+      tags:
+        - Reservation
+      operationId: CreateReservation
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReservationDto"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateListingResponse"
+    get:
+      tags:
+        - Reservation
+      parameters:
+        - &a1
+          $ref: "#/components/parameters/FilterQueryDto"
+        - &a2
+          $ref: "#/components/parameters/OrFilterQueryDto"
+        - &a3
+          $ref: "#/components/parameters/ShiftQueryDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAllReservationResponse"
+  /api/v1/users/reservations/{id}:
+    get:
+      tags:
+        - Reservation
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetReservationResponse"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /api/v1/users/profile:
+    get:
+      tags:
+        - User
+      description: Get current user profile
+      summary: Get current user profile
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+    patch:
+      tags:
+        - User
+      description: Update current user profile
+      summary: Update current user profile
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+  /api/v1/files/:
+    post:
+      tags:
+        - File
+      description: Create a File
+      summary: Create a File
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateFileDto"
+      responses:
+        "201":
+          description: File created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateFileResponse"
+  /api/v1/files/{name}:
+    get:
+      tags:
+        - File
+      description: Get all categories
+      summary: Get all categories
+      responses:
+        "200":
+          description: Success
+          content:
+            application/octet-stream: {}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+  /api/v1/facilities/:
+    post:
+      tags:
+        - Facility
+      description: Create a facility
+      summary: Create a facility
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFacilityDto"
+      responses:
+        "201":
+          description: Facility created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateFacilityResponse"
+    get:
+      tags:
+        - Facility
+      description: Get all facilities
+      summary: Get all facilities
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAllFacilityResponse"
+  /api/v1/facilities/{id}:
+    get:
+      tags:
+        - Facility
+      description: Get all facilities
+      summary: Get a facility
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetFacilityResponse"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /api/v1/categories/:
+    post:
+      tags:
+        - Category
+      description: Create a category
+      summary: Create a category
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryDto"
+      responses:
+        "201":
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCategoryResponse"
+    get:
+      tags:
+        - Category
+      description: Get all categories
+      summary: Get all categories
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAllCategoryResponse"
+  /api/v1/listings/:
+    get:
+      tags:
+        - Listing
+      parameters:
+        - *a1
+        - *a2
+        - *a3
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAllListingResponse"
+    post:
+      tags:
+        - Listing
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListingsDto"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateListingResponse"
+  /api/v1/listings/{id}/facilities:
+    get:
+      tags:
+        - Listing
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FacilityDto"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /api/v1/listings/{id}:
+    get:
+      tags:
+        - Listing
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetListingResponse"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+components:
+  schemas:
+    RegisterDto:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+        - mobileNumber
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+        mobileNumber:
+          type: string
+          pattern: ^090\d{8}$
+        businessName:
+          type: string
+        referrerCode:
+          type: string
+        address:
+          type: string
+        gender:
+          type: string
+          enum:
+            - M
+            - F
+          nullable: true
+      additionalProperties: false
+    RegisterResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          allOf:
+            - $ref: "#/components/schemas/UserDto"
+            - type: object
+              additionalProperties: false
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  format: jwt
+                  pattern: ^[\w-]+.[\w-]+.[\w-]+$
+    LoginDto:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+    LoginResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+        data:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/UserDto"
+            - type: object
+              additionalProperties: false
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  format: jwt
+                  pattern: ^[\w-]+.[\w-]+.[\w-]+$
+    ForgotPasswordDto:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+    ForgotPasswordResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+          example: An OTP has been sent to your email
+        data:
+          type: string
+          nullable: true
+          default: null
+    ResetPasswordDto:
+      type: object
+      additionalProperties: false
+      required:
+        - otp
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        otp:
+          type: string
+          pattern: \d{6}
+        password:
+          type: string
+          format: password
+    ResetPasswordResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+          example: Password reset successful
+        data:
+          type: string
+          nullable: true
+          default: null
+    ChangePasswordDto:
+      type: object
+      additionalProperties: false
+      required:
+        - oldPassword
+        - newPassword
+      properties:
+        oldPassword:
+          type: string
+          minLength: 8
+        newPassword:
+          type: string
+          minLength: 8
+        reauth:
+          type: boolean
+    ChangePasswordResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+          example: Password changed successful
+        data:
+          type: string
+          nullable: true
+          default: null
+    NotFound:
+      type: object
+      required:
+        - message
+        - error
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+    ValidationError:
+      type: object
+      required:
+        - message
+        - error
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+    BadRequest:
+      type: object
+      required:
+        - message
+        - error
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+    Forbidden:
+      type: object
+      required:
+        - message
+        - error
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+    Unauthorized:
+      type: object
+      required:
+        - message
+        - error
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+    ServerError:
+      type: object
+      required:
+        - message
+        - error
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+    CategoryDto:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        comment:
+          type: string
+          nullable: true
+    CreateCategoryDto:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        comment:
+          type: string
+          nullable: true
+    CreateCategoryResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          $ref: "#/components/schemas/CategoryDto"
+    GetAllCategoryResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryDto"
+    CreateFileDto:
+      type: object
+      additionalProperties: false
+      required:
+        - files
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+    CreateFileResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          type: array
+          additionalProperties: false
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - path
+              - checksum
+            properties:
+              path:
+                type: string
+                format: uri
+              checksum:
+                type: string
+                pattern: ^\w{64}
+    GetFileResponse:
+      type: string
+      format: binary
+      additionalProperties: false
+    ListingsDto:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - address
+        - type
+        - status
+        - images
+        - userId
+        - categoryId
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        address:
+          type: string
+          format: email
+        type:
+          type: string
+          enum:
+            - SHORTLET
+            - RENTAL
+            - SALE
+        status:
+          type: string
+          enum:
+            - AWAITING_REVIEW
+            - REJECTED
+            - APPROVED
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+          nullable: true
+        rate:
+          type: number
+          nullable: true
+        restrictions:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+            pattern: www\.[a-z]{2,20}\.[a-z]{2,4}
+        userId:
+          type: string
+          format: uuid
+        categoryId:
+          type: string
+          format: uuid
+    CreateListingsDto:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - address
+        - type
+        - images
+        - categoryId
+        - facilities
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+          format: email
+        type:
+          type: string
+          enum:
+            - SHORTLET
+            - RENTAL
+            - SALE
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+          nullable: true
+        rate:
+          type: number
+          nullable: true
+        facilities:
+          type: array
+          items:
+            type: string
+            format: uuid
+        restrictions:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+        categoryId:
+          type: string
+          format: uuid
+    CreateListingResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+          example: Successful
+        data:
+          $ref: "#/components/schemas/ListingsDto"
+    GetAllListingResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListingsDto"
+    GetListingResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/ListingsDto"
+    UserDto:
+      type: object
+      description: User model
+      additionalProperties: false
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - mobileNumber
+        - role
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          uniqueItems: true
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          uniqueItems: true
+        mobileNumber:
+          type: string
+        businessName:
+          type: string
+          nullable: true
+        referrerCode:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        photo:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+        gender:
+          type: string
+          enum:
+            - M
+            - F
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UserProfileResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          $ref: "#/components/schemas/UserDto"
+    UpdateUserDto:
+      type: object
+      description: User model
+      additionalProperties: false
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        mobileNumber:
+          type: string
+        businessName:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        photo:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          enum:
+            - M
+            - F
+          nullable: true
+    FacilityDto:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - icon
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        icon:
+          type: string
+        color:
+          type: string
+          nullable: true
+        comment:
+          type: string
+          nullable: true
+    CreateFacilityDto:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - icon
+      properties:
+        name:
+          type: string
+        icon:
+          type: string
+        color:
+          type: string
+          nullable: true
+        comment:
+          type: string
+          nullable: true
+    CreateFacilityResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          $ref: "#/components/schemas/FacilityDto"
+    GetAllFacilityResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/FacilityDto"
+    GetFacilityResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+        - data
+      properties:
+        message:
+          type: string
+          example: Success
+        data:
+          $ref: "#/components/schemas/FacilityDto"
+    ReservationDto:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - code
+        - amount
+        - startDate
+        - endDate
+        - userId
+        - listingId
+        - listingOwnerId
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        amount:
+          type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        userId:
+          type: string
+          format: uuid
+        listingId:
+          type: string
+          format: uuid
+        listingOwnerId:
+          type: string
+          format: uuid
+    CreateReservationDto:
+      type: object
+      additionalProperties: false
+      required:
+        - startDate
+        - endDate
+        - listingId
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        listingId:
+          type: string
+          format: uuid
+    CreateReservationsResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+          example: Successful
+        data:
+          $ref: "#/components/schemas/ReservationDto"
+    GetAllReservationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReservationDto"
+    GetReservationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/ReservationDto"
+  securitySchemes:
+    BearerAuth:
+      description: JWT authentication
+      type: http
+      scheme: bearer
+  parameters:
+    FilterQueryDto:
+      name: filter
+      in: query
+      schema:
+        type: string
+      description: |
+        
+        Available operators include
+
+        `eq` 
+        `gt`
+        `lt`
+        `gte`
+        `lte`
+        `in`
+        `between`
+        `like`
+        `exists`
+        `ne`
+        `nin`
+        `not between`
+        `not like`
+      example: '[["name", "like", "%villa%"]]'
+    OrFilterQueryDto:
+      name: or_filter
+      in: query
+      schema:
+        type: string
+      description: |
+        
+        Available operators include
+
+        `eq` 
+        `gt`
+        `lt`
+        `gte`
+        `lte`
+        `in`
+        `between`
+        `like`
+        `exists`
+        `ne`
+        `nin`
+        `not between`
+        `not like`
+      example: '[["name", "like", "%villa%"]]'
+    ShiftQueryDto:
+      name: shift
+      in: query
+      schema:
+        type: boolean
+      description: >
+        Shift decides if the `filter` and `or_filter` conditions are join by
+        `or` or `and`
+
+
+        Example
+
+        filter_condition and or_filter_condition
+
+        filter_condition or or_filter_condition
