@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { OtpSchema } from "@/schema/auth.schema";
+import { DashboardRoutes } from "@/types/routes";
+
 
 export default function Otp(): JSX.Element {
   const [timer, setTimer] = useState<number>(60);
   const [, setShowResend] = useState<boolean>(false);
+  const userEmail = localStorage.getItem("userEmail")
+  const navigate = useNavigate()
 
   const form = useForm<OtpSchema>({
     resolver: zodResolver(OtpSchema),
@@ -20,6 +25,7 @@ export default function Otp(): JSX.Element {
 
   const onSubmit = (data: OtpSchema) => {
     console.log(data);
+    navigate(DashboardRoutes.home)
   };
 
   useEffect(() => {
@@ -43,7 +49,7 @@ export default function Otp(): JSX.Element {
         <h3 className="text-xl font-bold text-shorttiee_primary text-center">Verify Account</h3>
         <p className="text-base font-normal text-grey_300">
           Verify your account with the otp we sent to{" "}
-          <span className="text-shorttiee_primary font-bold">name@example.com</span>
+          <span className="text-shorttiee_primary font-bold">{userEmail}</span>
         </p>
       </div>
       <div className="flex flex-col items-center justify-center space-y-6">

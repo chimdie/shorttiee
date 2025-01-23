@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AuthRoutes, DashboardRoutes } from "@/types/routes";
+import { AuthRoutes } from "@/types/routes";
 import { genderData, SignUpSchema } from "@/schema/auth.schema";
 import { ApiSDK } from "@/sdk";
 
@@ -36,9 +36,9 @@ export default function SignUp(): JSX.Element {
       toast({
         description: data.message
       })
-      navigate(DashboardRoutes.home);
+      navigate(AuthRoutes.verifyOtp);
     },
-    onError(error) {
+    onError(error) {      
       console.log({ error });
       toast({
         description: error.message
@@ -47,6 +47,7 @@ export default function SignUp(): JSX.Element {
   })
 
   const onSubmit = (data: SignUpSchema) => {
+    localStorage.setItem("userEmail", data.email)
     signUpMutation.mutate(data)
   };
 
