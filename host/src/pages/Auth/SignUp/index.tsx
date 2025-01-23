@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Button, Checkbox, Input, Select, SelectItem } from "@nextui-org/react";
 import { Building2, Eye, EyeOff, Lock, Mail, MapPin, Phone, UserRound, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthRoutes, DashboardRoutes } from "@/types/routes";
-import { genderData, SignUpSchema } from "@/schema/auth.schema";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -14,10 +14,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { AuthRoutes, DashboardRoutes } from "@/types/routes";
+import { genderData, SignUpSchema } from "@/schema/auth.schema";
+import { ApiSDK } from "@/sdk";
+
 
 export default function SignUp(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { toast } = useToast()
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -25,9 +30,24 @@ export default function SignUp(): JSX.Element {
     resolver: zodResolver(SignUpSchema),
   });
 
+  const signUpMutation = useMutation({
+    mutationFn: (formData: SignUpSchema) => ApiSDK.AuthenticationService.postApiV1AuthRegister(formData),
+    onSuccess(data) {
+      toast({
+        description: data.message
+      })
+      navigate(DashboardRoutes.home);
+    },
+    onError(error) {
+      console.log({ error });
+      toast({
+        description: error.message
+      })
+    }
+  })
+
   const onSubmit = (data: SignUpSchema) => {
-    console.log(data);
-    navigate(DashboardRoutes.home);
+    signUpMutation.mutate(data)
   };
 
   return (
@@ -53,7 +73,7 @@ export default function SignUp(): JSX.Element {
                       {...field}
                       radius="sm"
                       variant="bordered"
-                      placeholder="Last Name"
+                      placeholder="First Name"
                       type="text"
                       startContent={
                         <UserRound size={16} className="pointer-events-none text-grey_400" />
@@ -112,7 +132,7 @@ export default function SignUp(): JSX.Element {
 
           <FormField
             control={form.control}
-            name="phone"
+            name="mobileNumber"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -213,7 +233,7 @@ export default function SignUp(): JSX.Element {
                     {...field}
                     radius="sm"
                     variant="bordered"
-                    placeholder="Business Name (Optional)"
+                    placeholder="Business Name"
                     type="text"
                     startContent={
                       <Building2 size={16} className="pointer-events-none text-grey_400" />
@@ -250,6 +270,8 @@ export default function SignUp(): JSX.Element {
             className="bg-shorttiee_primary text-white font-semibold"
             radius="sm"
             type="submit"
+            isDisabled={signUpMutation.isPending}
+            isLoading={signUpMutation.isPending}
           >
             Create Account
           </Button>
