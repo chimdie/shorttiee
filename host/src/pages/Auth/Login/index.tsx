@@ -30,6 +30,11 @@ export default function Login(): JSX.Element {
         description: data.message
       })
       navigate(DashboardRoutes.home);
+    },
+    onError(error) {
+      toast({
+        description: error.message
+      })
     }
   })
 
