@@ -1,36 +1,14 @@
-import { FromSchema } from "json-schema-to-ts";
-import { OpenAPIV3 } from "openapi-types";
 import { oapi } from "../config/docs.config";
-import { Equals } from "../types/utils";
-import { typeAssert } from "../utils/asserts";
 import { CategoryDto, CreateCategoryDto } from "../dto/category.dto";
+import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
 
-export const CategoryDocSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["id", "name"] as const,
-  properties: {
-    id: { type: "string" },
-    name: { type: "string" },
-    comment: { type: "string", nullable: true }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-oapi.component("schemas", "CategoryDto", CategoryDocSchema);
-typeAssert<Equals<FromSchema<typeof CategoryDocSchema>, CategoryDto>>();
+oapi.component("schemas", "CategoryDto", dtoToJsonSchema(CategoryDto));
 
-export const CreateCategoryDocSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["name"] as const,
-  properties: {
-    name: { type: "string" },
-    comment: { type: "string", nullable: true }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-oapi.component("schemas", "CreateCategoryDto", CreateCategoryDocSchema);
-typeAssert<
-  Equals<FromSchema<typeof CreateCategoryDocSchema>, CreateCategoryDto>
->();
+oapi.component(
+  "schemas",
+  "CreateCategoryDto",
+  dtoToJsonSchema(CreateCategoryDto)
+);
 
 oapi.component("schemas", "CreateCategoryResponse", {
   type: "object",

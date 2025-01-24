@@ -1,26 +1,8 @@
-import { FromSchema } from "json-schema-to-ts";
-import { OpenAPIV3 } from "openapi-types";
 import { oapi } from "../config/docs.config";
-import { Equals } from "../types/utils";
-import { typeAssert } from "../utils/asserts";
-import { CreateFileDocDto } from "../dto/file.dto";
+import { CreateFileDto } from "../dto/file.dto";
+import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
 
-export const CreateFileDocSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["files"] as const,
-  properties: {
-    files: {
-      type: "array",
-      items: {
-        type: "string",
-        format: "binary"
-      }
-    }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-oapi.component("schemas", "CreateFileDto", CreateFileDocSchema);
-typeAssert<Equals<FromSchema<typeof CreateFileDocSchema>, CreateFileDocDto>>();
+oapi.component("schemas", "CreateFileDto", dtoToJsonSchema(CreateFileDto));
 
 oapi.component("schemas", "CreateFileResponse", {
   type: "object",
