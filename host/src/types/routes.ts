@@ -3,7 +3,7 @@ export const AuthRoutes = {
   createAccount: "/create-account",
   verifyOtp: "/otp",
   forgotPassword: "/forgot-password",
-  resetPassword: "/reset-password",
+  changePassword: "/change-password",
 } as const;
 
 export const DashboardRoutes = {
