@@ -1,54 +1,16 @@
-import { FromSchema } from "json-schema-to-ts";
-import { OpenAPIV3 } from "openapi-types";
 import { oapi } from "../config/docs.config";
 import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
-import { Equals } from "../types/utils";
-import { typeAssert } from "../utils/asserts";
 import { BasicQueriesDocs } from "./query.docs";
+import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
 
-export const ReservationDocSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: [
-    "id",
-    "code",
-    "amount",
-    "startDate",
-    "endDate",
-    "userId",
-    "listingId",
-    "listingOwnerId"
-  ] as const,
-  properties: {
-    id: { type: "string", format: "uuid" },
-    code: { type: "string" },
-    amount: { type: "number" },
-    startDate: { type: "string", format: "date" },
-    endDate: { type: "string", format: "date" },
+oapi.component("schemas", "ReservationDto", dtoToJsonSchema(ReservationDto));
 
-    // references
-    userId: { type: "string", format: "uuid" },
-    listingId: { type: "string", format: "uuid" },
-    listingOwnerId: { type: "string", format: "uuid" }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-oapi.component("schemas", "ReservationDto", ReservationDocSchema);
-typeAssert<Equals<FromSchema<typeof ReservationDocSchema>, ReservationDto>>();
+oapi.component(
+  "schemas",
+  "CreateReservationDto",
+  dtoToJsonSchema(CreateReservationDto)
+);
 
-export const CreateReservationDocSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["startDate", "endDate", "listingId"] as const,
-  properties: {
-    startDate: { type: "string", format: "date" },
-    endDate: { type: "string", format: "date" },
-    listingId: { type: "string", format: "uuid" }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-oapi.component("schemas", "CreateReservationDto", CreateReservationDocSchema);
-typeAssert<
-  Equals<FromSchema<typeof CreateReservationDocSchema>, CreateReservationDto>
->();
 oapi.component("schemas", "CreateReservationsResponse", {
   type: "object",
   additionalProperties: false,
