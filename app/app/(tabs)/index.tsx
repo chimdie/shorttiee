@@ -9,6 +9,9 @@ import {ShortletCard} from '@/components/Cards/ShortletCard';
 import {Link} from 'expo-router';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {UnControlledTextInput} from '@/components/TextInput';
+import {QueryKeys} from '@/constants/queryKeys';
+import {APISDK} from '@/sdk';
+import {useQuery} from '@tanstack/react-query';
 
 const statesDATA = [
   {
@@ -48,6 +51,11 @@ const topApartments = Array(5).fill({});
 const shortlets = Array(10).fill({});
 
 export default function HomeScreen() {
+  const {data: user, isLoading: isUserLoading} = useQuery({
+    queryKey: [QueryKeys.user],
+    queryFn: () => APISDK.UserService.getApiV1UsersProfile(),
+  });
+
   return (
     <View className="flex-1 bg-white">
       <SafeAreaView className="bg-pax-white flex-1">
@@ -63,7 +71,9 @@ export default function HomeScreen() {
                 color={getColor('shorttiee-primary')}
               />
               <View className="flex-row items-center gap-1">
-                <Text className="text-black text-lg">Hello Username</Text>
+                <Text className="text-black text-lg">
+                  Hello {isUserLoading ? '' : user?.data.firstName}
+                </Text>
                 <HelloWave />
               </View>
             </View>
