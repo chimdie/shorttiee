@@ -1,4 +1,4 @@
-import {Text, View} from 'react-native';
+import {Pressable, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -9,9 +9,15 @@ import {getColor} from '@/config/theme';
 import {ShorttieeButton} from '@/components/Button';
 import {Link, router} from 'expo-router';
 import {AuthScreenLayout} from '@/layouts/authLayout';
+import {useMutation} from '@tanstack/react-query';
+import {LoginDto} from '@/sdk/generated';
+import {APISDK} from '@/sdk';
+import {storedUserTokenAtom} from '@/atoms/user.atom';
+import {useSetAtom} from 'jotai';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const setStoredToken = useSetAtom(storedUserTokenAtom);
 
   const {
     control,
@@ -20,12 +26,24 @@ export default function Login() {
   } = useForm<LoginSchema>({
     reValidateMode: 'onChange',
     resolver: zodResolver(LoginSchema),
-    defaultValues: {},
+  });
+
+  const loginMutation = useMutation({
+    mutationFn: (payload: LoginDto) =>
+      APISDK.AuthenticationService.postApiV1AuthLogin(payload),
+    onSuccess(data) {
+      if (data) {
+        const {token} = data.data;
+
+        APISDK.OpenAPI.TOKEN = token;
+        setStoredToken(token);
+        router.replace('/(tabs)');
+      }
+    },
   });
 
   const onSubmit = (data: LoginSchema) => {
-    console.log(data);
-    router.navigate(`/(auth)/otp?email=${data.email}`);
+    loginMutation.mutate(data);
   };
 
   return (
@@ -75,14 +93,22 @@ export default function Login() {
         <ShorttieeButton title="Login" onPress={handleSubmit(onSubmit)} />
         <View className="flex-row items-center justify-between">
           <Link
+            asChild
             href="/(auth)/forgot-password"
             className="text-shorttiee-primary">
-            <Text className="font-semibold">Forgot Password</Text>
+            <Pressable hitSlop={20}>
+              <Text className="font-semibold">Forgot Password</Text>
+            </Pressable>
           </Link>
           <View className="flex-row">
             <Text>Do not have an account? </Text>
-            <Link href="/(auth)/signup" className="text-shorttiee-primary">
-              <Text className="underline font-semibold">Signup</Text>
+            <Link
+              asChild
+              href="/(auth)/signup"
+              className="text-shorttiee-primary">
+              <Pressable hitSlop={20}>
+                <Text className="underline font-semibold">Signup</Text>
+              </Pressable>
             </Link>
           </View>
         </View>
