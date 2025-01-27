@@ -17,6 +17,7 @@ import {
 import { AuthRoutes } from "@/types/routes";
 import { genderData, SignUpSchema } from "@/schema/auth.schema";
 import { ApiSDK } from "@/sdk";
+import { RegisterDto } from "@/sdk/generated";
 
 
 export default function SignUp(): JSX.Element {
@@ -31,7 +32,7 @@ export default function SignUp(): JSX.Element {
   });
 
   const signUpMutation = useMutation({
-    mutationFn: (formData: SignUpSchema) => ApiSDK.AuthenticationService.postApiV1AuthRegister(formData),
+    mutationFn: (formData: RegisterDto) => ApiSDK.AuthenticationService.postApiV1AuthRegister(formData),
     onSuccess(data) {
       toast({
         description: data.message

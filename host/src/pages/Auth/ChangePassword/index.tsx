@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import { ChangePasswordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
 import { ApiSDK } from "@/sdk";
+import { ChangePasswordDto } from "@/sdk/generated";
 import { DashboardRoutes } from "@/types/routes";
 
 export default function ChangePassword(): JSX.Element {
@@ -25,7 +26,7 @@ export default function ChangePassword(): JSX.Element {
 
 
   const changePasswordMutation = useMutation({
-    mutationFn: (formData: { oldPassword: string; newPassword: string; reauth: boolean }) => ApiSDK.AuthenticationService.postApiV1AuthChangePassword(formData),
+    mutationFn: (formData: ChangePasswordDto) => ApiSDK.AuthenticationService.postApiV1AuthChangePassword(formData),
     onSuccess(data) {
       toast({
         description: data.message

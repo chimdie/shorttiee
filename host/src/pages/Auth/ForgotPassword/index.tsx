@@ -9,6 +9,7 @@ import { ForgotPassWordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
 import { AuthRoutes } from "@/types/routes";
+import { ForgotPasswordDto } from "@/sdk/generated";
 
 
 export default function ForgotPassword(): JSX.Element {
@@ -20,7 +21,7 @@ export default function ForgotPassword(): JSX.Element {
 
 
   const forgotPasswordMutation = useMutation({
-    mutationFn: (formData: ForgotPassWordSchema) => ApiSDK.AuthenticationService.postApiV1AuthForgotPassword(formData),
+    mutationFn: (formData: ForgotPasswordDto) => ApiSDK.AuthenticationService.postApiV1AuthForgotPassword(formData),
     onSuccess(data) {
       toast({
         description: data.message

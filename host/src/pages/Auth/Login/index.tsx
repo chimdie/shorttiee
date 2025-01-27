@@ -10,6 +10,7 @@ import { LoginSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
+import { LoginDto } from "@/sdk/generated";
 
 
 export default function Login(): JSX.Element {
@@ -24,7 +25,7 @@ export default function Login(): JSX.Element {
   });
 
   const signInMutation = useMutation({
-    mutationFn: (formData: LoginSchema) => ApiSDK.AuthenticationService.postApiV1AuthLogin(formData),
+    mutationFn: (formData: LoginDto) => ApiSDK.AuthenticationService.postApiV1AuthLogin(formData),
     onSuccess(data) {
       toast({
         description: data.message
