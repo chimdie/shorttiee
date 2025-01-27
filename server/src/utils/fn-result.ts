@@ -12,3 +12,18 @@ export function fnToResult<
     }
   };
 }
+
+export function fnToResultAsync<
+  E extends Error,
+  T extends (...arg: any[]) => any,
+  U = Awaited<ReturnType<T>>
+>(fn: T) {
+  return async (...arg: Parameters<T>) => {
+    try {
+      const res: U = await fn(...arg);
+      return [null, res] as const;
+    } catch (error: any) {
+      return [error as E] as const;
+    }
+  };
+}
