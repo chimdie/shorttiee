@@ -8,6 +8,10 @@ import '../global.css';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ActivityIndicator, Platform, Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {APISDK} from '@/sdk';
+import {StoredKeys} from '@/constants/storedKeys';
+import * as SecureStore from 'expo-secure-store';
+import {serializeString} from '@/utils/globalFns';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +23,7 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const [isAppReady, setIsAppReady] = useState<boolean>(false);
+  const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (loaded) {
@@ -27,12 +32,31 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setIsAppReady(true);
-    }, 3000);
+    const restoreState = async () => {
+      try {
+        const savedStateString = await SecureStore.getItemAsync(
+          StoredKeys.token,
+        );
 
-    return () => clearTimeout(timeoutId);
-  }, []);
+        if (Platform.OS !== 'web') {
+          if (savedStateString !== undefined) {
+            const serializedToken = serializeString(
+              savedStateString as unknown as string,
+            );
+
+            APISDK.OpenAPI.TOKEN = serializedToken;
+            setAuthToken(serializedToken);
+          }
+        }
+      } finally {
+        setIsAppReady(true);
+      }
+    };
+
+    if (!isAppReady) {
+      restoreState();
+    }
+  }, [isAppReady]);
 
   if (!loaded || !isAppReady) {
     return (
@@ -55,17 +79,13 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <Stack>
-          <Stack.Screen
-            name="(auth)"
-            options={{
-              headerShown: false,
-            }}
-          />
+        <Stack
+          initialRouteName={authToken ? '(tabs)' : '(auth)'}
+          screenOptions={{headerShown: false}}>
+          <Stack.Screen name="(auth)" redirect={!!authToken} />
           <Stack.Screen
             name="(tabs)"
             options={{
-              headerShown: false,
               animation: 'slide_from_left',
               animationDuration: 0,
               animationTypeForReplace: 'push',
@@ -76,7 +96,6 @@ export default function RootLayout() {
               <Stack.Screen
                 name="search"
                 options={{
-                  headerShown: false,
                   animation: 'slide_from_bottom',
                 }}
               />
@@ -85,7 +104,6 @@ export default function RootLayout() {
               <Stack.Screen
                 name="search"
                 options={{
-                  headerShown: false,
                   presentation: 'modal',
                 }}
               />
@@ -94,7 +112,6 @@ export default function RootLayout() {
               <Stack.Screen
                 name="search"
                 options={{
-                  headerShown: false,
                   animation: 'slide_from_bottom',
                 }}
               />
