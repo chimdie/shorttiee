@@ -3,6 +3,9 @@ import type { EnvDto } from "../dto/env.dto";
 import { WithDBTimestamps } from "./utils";
 import type { Subjects, Actions } from "../config/types/abilities";
 import type { MongoQuery, MongoAbility } from "@casl/ability";
+import type { MongoQuery, MongoAbility } from "@casl/ability";
+import type { Events } from "../config/events";
+import type { EventEmitter } from "events";
 
 declare global {
   namespace NodeJS {
@@ -16,6 +19,7 @@ declare global {
         verifyOtp: (otp: string, hash: string, otpTTL: Date) => boolean;
         hashOtp: (payload: string) => string;
       };
+      event: EventEmitter<Events>;
       domainValidator: (
         domain: string
       ) => Promise<readonly [Error] | readonly [null, string[]]>;
