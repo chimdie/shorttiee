@@ -1,4 +1,4 @@
-import {Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -10,17 +10,20 @@ import {ShorttieeButton} from '@/components/Button';
 import {Link, router} from 'expo-router';
 import {CustomCheckBox} from '@/components/CheckBox';
 import {AuthScreenLayout} from '@/layouts/authLayout';
-import {GenderSelector} from '@/components/GenderSelect';
+import {GenderSelector, GenderT} from '@/components/GenderSelect';
 import {useMutation} from '@tanstack/react-query';
 import {APISDK} from '@/sdk';
 import {RegisterDto} from '@/sdk/generated';
-
-type GenderT = {key: string; label: string};
+import {apiErrorParser} from '@/utils/errorParser';
+import {storedUserTokenAtom} from '@/atoms/user.atom';
+import {useSetAtom} from 'jotai';
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState(false);
   const [selectedGender, setSelectedGender] = useState<GenderT>();
+  const [apiError, setApiError] = useState<string | null>(null);
+  const setStoredToken = useSetAtom(storedUserTokenAtom);
 
   const {
     control,
@@ -34,12 +37,18 @@ export default function Signup() {
   const signupMutation = useMutation({
     mutationFn: (formData: RegisterDto) =>
       APISDK.AuthenticationService.postApiV1AuthRegister(formData),
-    onSuccess(data, variables, context) {
-      console.log(data, variables, context);
-      // router.navigate(`/(auth)/otp?email=${data.email}`);
+    onSuccess(data) {
+      if (data) {
+        const {token} = data.data;
+
+        APISDK.OpenAPI.TOKEN = token;
+        setStoredToken(token);
+        router.replace('/(tabs)');
+      }
     },
     onError(error) {
-      console.log({error});
+      const parsedError = apiErrorParser(error);
+      setApiError(parsedError.message);
     },
   });
 
@@ -48,6 +57,10 @@ export default function Signup() {
       signupMutation.mutate(data);
     }
   };
+
+  if (__DEV__) {
+    apiError && Alert.alert(apiError);
+  }
 
   return (
     <AuthScreenLayout title="Create Account" hasBackbutton>
