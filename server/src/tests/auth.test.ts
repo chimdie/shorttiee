@@ -1,4 +1,4 @@
-import { beforeAll, describe, it } from "@jest/globals";
+import { beforeAll, describe, expect, it } from "@jest/globals";
 import assert from "node:assert";
 import supertest from "supertest";
 import { app } from "../app";
@@ -54,7 +54,7 @@ describe("POST /api/v1/auth/login", () => {
       .expect(200);
 
     assert.ok("data" in res.body);
-    assert.ok(res.body.data.email === payload.email);
+    expect(res.body.data.email).toEqual(payload.email.toLowerCase());
     assert.equal("string", typeof res.body.data.token);
 
     token = res.body.data.token;

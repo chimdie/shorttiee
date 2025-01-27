@@ -1,50 +1,8 @@
-import { FromSchema } from "json-schema-to-ts";
-import { OpenAPIV3 } from "openapi-types";
-import { typeAssert } from "../utils/asserts";
 import { oapi } from "../config/docs.config";
-import { Equals, WithDBTimestamps } from "../types/utils";
 import { UpdateUserDto, UserDto } from "../dto/user.dto";
+import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
 
-const UserDoc = {
-  type: "object",
-  description: "User model",
-  additionalProperties: false,
-  required: [
-    "id",
-    "firstName",
-    "lastName",
-    "email",
-    "mobileNumber",
-    "role",
-    "createdAt",
-    "updatedAt"
-  ] as const,
-  properties: {
-    id: { type: "string", uniqueItems: true, format: "uuid" },
-    firstName: { type: "string" },
-    lastName: { type: "string" },
-    email: { type: "string", uniqueItems: true },
-    mobileNumber: { type: "string" },
-    businessName: { type: "string", nullable: true },
-    referrerCode: { type: "string", nullable: true },
-    address: { type: "string", nullable: true },
-    photo: { type: "string", nullable: true },
-    role: {
-      type: "string",
-      enum: ["USER", "ADMIN"] as const
-    },
-    gender: {
-      type: "string",
-      enum: ["M", "F"] as const,
-      nullable: true
-      // default: null
-    },
-    createdAt: { type: "string", format: "date-time" },
-    updatedAt: { type: "string", format: "date-time" }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-typeAssert<Equals<FromSchema<typeof UserDoc>, WithDBTimestamps<UserDto>>>();
-oapi.component("schemas", "UserDto", UserDoc);
+oapi.component("schemas", "UserDto", dtoToJsonSchema(UserDto));
 
 //
 oapi.component("schemas", "UserProfileResponse", {
@@ -89,27 +47,7 @@ export const getUserProfileDoc = oapi.path({
 
 //
 
-const UpdateUserDoc = {
-  type: "object",
-  description: "User model",
-  additionalProperties: false,
-  properties: {
-    firstName: { type: "string" },
-    lastName: { type: "string" },
-    mobileNumber: { type: "string" },
-    businessName: { type: "string", nullable: true },
-    address: { type: "string", nullable: true },
-    photo: { type: "string", nullable: true },
-    gender: {
-      type: "string",
-      enum: ["M", "F"] as const,
-      nullable: true
-      // default: null
-    }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-typeAssert<Equals<FromSchema<typeof UpdateUserDoc>, UpdateUserDto>>();
-oapi.component("schemas", "UpdateUserDto", UpdateUserDoc);
+oapi.component("schemas", "UpdateUserDto", dtoToJsonSchema(UpdateUserDto));
 
 export const patchUserProfileDoc = oapi.path({
   tags: ["User"],

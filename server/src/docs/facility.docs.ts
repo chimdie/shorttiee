@@ -1,40 +1,13 @@
-import { FromSchema } from "json-schema-to-ts";
-import { OpenAPIV3 } from "openapi-types";
 import { oapi } from "../config/docs.config";
-import { Equals } from "../types/utils";
-import { typeAssert } from "../utils/asserts";
 import { FacilityDto, CreateFacilityDto } from "../dto/facility.dto";
+import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
 
-export const FacilityDocSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["id", "name", "icon"] as const,
-  properties: {
-    id: { type: "string", format: "uuid" },
-    name: { type: "string" },
-    icon: { type: "string" },
-    color: { type: "string", nullable: true },
-    comment: { type: "string", nullable: true }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-oapi.component("schemas", "FacilityDto", FacilityDocSchema);
-typeAssert<Equals<FromSchema<typeof FacilityDocSchema>, FacilityDto>>();
-
-export const CreateFacilityDocSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["name", "icon"] as const,
-  properties: {
-    name: { type: "string" },
-    icon: { type: "string" },
-    color: { type: "string", nullable: true },
-    comment: { type: "string", nullable: true }
-  }
-} satisfies OpenAPIV3.SchemaObject;
-oapi.component("schemas", "CreateFacilityDto", CreateFacilityDocSchema);
-typeAssert<
-  Equals<FromSchema<typeof CreateFacilityDocSchema>, CreateFacilityDto>
->();
+oapi.component("schemas", "FacilityDto", dtoToJsonSchema(FacilityDto));
+oapi.component(
+  "schemas",
+  "CreateFacilityDto",
+  dtoToJsonSchema(CreateFacilityDto)
+);
 
 oapi.component("schemas", "CreateFacilityResponse", {
   type: "object",
