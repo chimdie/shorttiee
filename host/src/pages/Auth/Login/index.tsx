@@ -10,7 +10,7 @@ import { LoginSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
-import { LoginDto } from "@/sdk/generated";
+import { ApiError, LoginDto } from "@/sdk/generated";
 
 
 export default function Login(): JSX.Element {
@@ -33,8 +33,10 @@ export default function Login(): JSX.Element {
       navigate(DashboardRoutes.home);
     },
     onError(error) {
+      const err = error as ApiError
       toast({
-        description: error.message
+        variant: "destructive",
+        description: err.body.message
       })
     }
   })
@@ -65,6 +67,7 @@ export default function Login(): JSX.Element {
                     placeholder="Email"
                     type="email"
                     startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                    isDisabled={signInMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -83,6 +86,7 @@ export default function Login(): JSX.Element {
                     variant="bordered"
                     placeholder="Password"
                     type={isVisible ? "text" : "password"}
+                    isDisabled={signInMutation.isPending}
                     startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
                     endContent={
                       <button

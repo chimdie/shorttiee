@@ -9,7 +9,7 @@ import { ForgotPassWordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
 import { AuthRoutes } from "@/types/routes";
-import { ForgotPasswordDto } from "@/sdk/generated";
+import { ApiError, ForgotPasswordDto } from "@/sdk/generated";
 
 
 export default function ForgotPassword(): JSX.Element {
@@ -29,8 +29,10 @@ export default function ForgotPassword(): JSX.Element {
       navigate(AuthRoutes.verifyOtp)
     },
     onError(error) {
+      const err = error as ApiError
       toast({
-        description: error.message
+        variant: "destructive",
+        description: err.body.message
       })
     }
   })
@@ -61,6 +63,7 @@ export default function ForgotPassword(): JSX.Element {
                     placeholder="Email"
                     type="email"
                     startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                    isDisabled={forgotPasswordMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
