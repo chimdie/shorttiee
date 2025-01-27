@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { Input, Button } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,10 +8,15 @@ import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import { AuthRoutes, DashboardRoutes } from "@/types/routes";
 import { LoginSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { ApiSDK } from "@/sdk";
+import { useToast } from "@/hooks/use-toast";
+import { LoginDto } from "@/sdk/generated";
+
 
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { toast } = useToast()
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -18,9 +24,23 @@ export default function Login(): JSX.Element {
     resolver: zodResolver(LoginSchema),
   });
 
+  const signInMutation = useMutation({
+    mutationFn: (formData: LoginDto) => ApiSDK.AuthenticationService.postApiV1AuthLogin(formData),
+    onSuccess(data) {
+      toast({
+        description: data.message
+      })
+      navigate(DashboardRoutes.home);
+    },
+    onError(error) {
+      toast({
+        description: error.message
+      })
+    }
+  })
+
   const onSubmit = (data: LoginSchema) => {
-    console.log(data);
-    navigate(DashboardRoutes.home);
+    signInMutation.mutate(data)
   };
   return (
     <div className="space-y-12">
@@ -96,6 +116,8 @@ export default function Login(): JSX.Element {
             className="bg-shorttiee_primary text-white font-semibold"
             radius="sm"
             type="submit"
+            isDisabled={signInMutation.isPending}
+            isLoading={signInMutation.isPending}
           >
             Login
           </Button>

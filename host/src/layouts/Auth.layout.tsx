@@ -20,8 +20,8 @@ const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string 
     title: "Forgot Password",
     description: "Enter your email to reset your password.",
   },
-  [AuthRoutes.resetPassword]: {
-    title: "Reset Password",
+  [AuthRoutes.changePassword]: {
+    title: "Change Password",
     description: "Please enter your new password.",
   },
 };

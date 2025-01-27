@@ -24,7 +24,7 @@ const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description
     title: "Settings",
     description: "Configure and set up your profile",
   },
-  [DashboardRoutes.reservation]: {
+  [DashboardRoutes.reservations]: {
     title: "Reservations",
     description: "All your reservations in one place",
   },

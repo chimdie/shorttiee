@@ -1,28 +1,56 @@
 import { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock } from "lucide-react";
-import { ResetPasswordSchema } from "@/schema/auth.schema";
+import { ChangePasswordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { ApiSDK } from "@/sdk";
+import { ChangePasswordDto } from "@/sdk/generated";
+import { DashboardRoutes } from "@/types/routes";
 
-export default function ResetPassword(): JSX.Element {
+export default function ChangePassword(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const form = useForm<ResetPasswordSchema>({
-    resolver: zodResolver(ResetPasswordSchema),
+  const { toast } = useToast()
+  const navigate = useNavigate()
+
+  const form = useForm<ChangePasswordSchema>({
+    resolver: zodResolver(ChangePasswordSchema),
   });
 
-  const onSubmit = (data: ResetPasswordSchema) => {
-    console.log(data);
+
+  const changePasswordMutation = useMutation({
+    mutationFn: (formData: ChangePasswordDto) => ApiSDK.AuthenticationService.postApiV1AuthChangePassword(formData),
+    onSuccess(data) {
+      toast({
+        description: data.message
+      })
+      navigate(DashboardRoutes.home)
+    },
+    onError(error) {
+      toast({
+        description: error.message
+      })
+    }
+  })
+  const onSubmit = (data: ChangePasswordSchema) => {
+    const { oldPassword, newPassword } = data
+    const formData = {
+      oldPassword, newPassword, reauth: false
+    }
+    changePasswordMutation.mutate(formData)
   };
 
   return (
     <div className="space-y-12">
       <div>
-        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Reset Password</h3>
+        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Change  Password</h3>
         <p className="text-base font-normal text-grey_300">
           Securing your account is crucial. Create a strong password to protect your information.{" "}
         </p>
@@ -31,7 +59,7 @@ export default function ResetPassword(): JSX.Element {
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-8">
           <FormField
             control={form.control}
-            name="currentPassword"
+            name="oldPassword"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -135,8 +163,11 @@ export default function ResetPassword(): JSX.Element {
             size="lg"
             radius="sm"
             type="submit"
+            isDisabled={changePasswordMutation.isPending}
+            isLoading={changePasswordMutation.isPending}
+
           >
-            Reset
+            Change
           </Button>
         </form>
       </Form>

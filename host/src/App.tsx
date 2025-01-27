@@ -10,7 +10,7 @@ import Login from "@/pages/Auth/Login";
 import SignUp from "@/pages/Auth/SignUp";
 import ForgotPassword from "@/pages/Auth/ForgotPassword";
 import Otp from "@/pages/Auth/Otp";
-import ResetPassword from "@/pages/Auth/ResetPassword";
+import ChangePassword from "@/pages/Auth/ChangePassword";
 
 // Dashboard pages
 import Home from "@/pages/Dashboard/Home";
@@ -33,7 +33,7 @@ export const rootRouter = createBrowserRouter([
       { path: AuthRoutes.createAccount, element: <SignUp /> },
       { path: AuthRoutes.forgotPassword, element: <ForgotPassword /> },
       { path: AuthRoutes.verifyOtp, element: <Otp /> },
-      { path: AuthRoutes.resetPassword, element: <ResetPassword /> },
+      { path: AuthRoutes.changePassword, element: <ChangePassword /> },
     ],
   },
   {

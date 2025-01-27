@@ -16,7 +16,7 @@ export default function Settings(): JSX.Element {
             </div>
             <div>
               <Button variant="light" className="text-shorttiee_primary font-semibold">
-                <Link to={AuthRoutes.resetPassword}>Change Password</Link>
+                <Link to={AuthRoutes.changePassword}>Change Password</Link>
               </Button>
             </div>
           </div>

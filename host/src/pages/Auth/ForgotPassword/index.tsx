@@ -1,17 +1,41 @@
 import { Button, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { ForgotPassWordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { ApiSDK } from "@/sdk";
+import { AuthRoutes } from "@/types/routes";
+import { ForgotPasswordDto } from "@/sdk/generated";
+
 
 export default function ForgotPassword(): JSX.Element {
+  const { toast } = useToast()
+  const navigate = useNavigate()
   const form = useForm<ForgotPassWordSchema>({
     resolver: zodResolver(ForgotPassWordSchema),
   });
 
+
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (formData: ForgotPasswordDto) => ApiSDK.AuthenticationService.postApiV1AuthForgotPassword(formData),
+    onSuccess(data) {
+      toast({
+        description: data.message
+      })
+      navigate(AuthRoutes.verifyOtp)
+    },
+    onError(error) {
+      toast({
+        description: error.message
+      })
+    }
+  })
   const onSubmit = (data: ForgotPassWordSchema) => {
-    console.log(data);
+    forgotPasswordMutation.mutate(data)
   };
 
   return (
@@ -48,6 +72,8 @@ export default function ForgotPassword(): JSX.Element {
             size="lg"
             radius="sm"
             type="submit"
+            isDisabled={forgotPasswordMutation.isPending}
+            isLoading={forgotPasswordMutation.isPending}
           >
             Send
           </Button>

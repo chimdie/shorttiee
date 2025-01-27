@@ -5,8 +5,8 @@ const passwordValidation = new RegExp(
 );
 
 export const genderData = [
-  { key: "male", label: "Male" },
-  { key: "female", label: "Female" },
+  { key: "M", label: "Male" },
+  { key: "F", label: "Female" },
 ];
 
 export const ForgotPassWordSchema = z.object({
@@ -22,9 +22,9 @@ export const OtpSchema = z.object({
   pin: z.string({ message: "OTP is required" }).min(6, { message: "OTP must be 6 characters." }),
 });
 
-export const ResetPasswordSchema = z
+export const ChangePasswordSchema = z
   .object({
-    currentPassword: z.string({ message: "Current Password is required" }),
+    oldPassword: z.string({ message: "Current Password is required" }),
     newPassword: z
       .string({ message: "New Password is required" })
       .regex(passwordValidation, { message: "Password must Contain at least 8 unique characters" }),
@@ -42,11 +42,11 @@ export const SignUpSchema = z.object({
   lastName: z
     .string({ message: "Last Name is required" })
     .min(2, { message: "Last Name is required" }),
-  gender: z.enum(["male", "female"], { message: "Select your gender" }),
-  phone: z.string({ message: "Phone Number is required" }),
+  gender: z.enum(["M", "F"], { message: "Select your gender" }),
+  mobileNumber: z.string({ message: "Phone Number is required" }),
   email: z.string({ message: "Email is required" }).email({ message: "Incorrect email format" }),
   home: z.string({ message: "Home Address is required" }),
-  bussinessName: z.string().optional(),
+  bussinessName: z.string({ message: "Busines Name is required" }),
   password: z
     .string({ message: "Password is required" })
     .min(6, { message: "Password must not be less than 6 characters" }),
@@ -57,5 +57,5 @@ export const SignUpSchema = z.object({
 export type ForgotPassWordSchema = z.infer<typeof ForgotPassWordSchema>;
 export type LoginSchema = z.infer<typeof LoginSchema>;
 export type OtpSchema = z.infer<typeof OtpSchema>;
-export type ResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
+export type ChangePasswordSchema = z.infer<typeof ChangePasswordSchema>;
 export type SignUpSchema = z.infer<typeof SignUpSchema>;
