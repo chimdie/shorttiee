@@ -5,9 +5,11 @@ import {useEffect, useState} from 'react';
 import 'react-native-reanimated';
 import {HomeHashtag} from 'iconsax-react-native';
 import '../global.css';
-
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ActivityIndicator, Platform, Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+
+const queryClient = new QueryClient();
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -51,55 +53,57 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <Stack>
-        <Stack.Screen
-          name="(auth)"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: false,
-            animation: 'slide_from_left',
-            animationDuration: 0,
-            animationTypeForReplace: 'push',
-          }}
-        />
-        {Platform.select({
-          android: (
-            <Stack.Screen
-              name="search"
-              options={{
-                headerShown: false,
-                animation: 'slide_from_bottom',
-              }}
-            />
-          ),
-          ios: (
-            <Stack.Screen
-              name="search"
-              options={{
-                headerShown: false,
-                presentation: 'modal',
-              }}
-            />
-          ),
-          default: (
-            <Stack.Screen
-              name="search"
-              options={{
-                headerShown: false,
-                animation: 'slide_from_bottom',
-              }}
-            />
-          ),
-        })}
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <Stack>
+          <Stack.Screen
+            name="(auth)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+              animation: 'slide_from_left',
+              animationDuration: 0,
+              animationTypeForReplace: 'push',
+            }}
+          />
+          {Platform.select({
+            android: (
+              <Stack.Screen
+                name="search"
+                options={{
+                  headerShown: false,
+                  animation: 'slide_from_bottom',
+                }}
+              />
+            ),
+            ios: (
+              <Stack.Screen
+                name="search"
+                options={{
+                  headerShown: false,
+                  presentation: 'modal',
+                }}
+              />
+            ),
+            default: (
+              <Stack.Screen
+                name="search"
+                options={{
+                  headerShown: false,
+                  animation: 'slide_from_bottom',
+                }}
+              />
+            ),
+          })}
 
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </SafeAreaProvider>
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </SafeAreaProvider>
+    </QueryClientProvider>
   );
 }

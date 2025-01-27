@@ -11,6 +11,9 @@ import {Link, router} from 'expo-router';
 import {CustomCheckBox} from '@/components/CheckBox';
 import {AuthScreenLayout} from '@/layouts/authLayout';
 import {GenderSelector} from '@/components/GenderSelect';
+import {useMutation} from '@tanstack/react-query';
+import {APISDK} from '@/sdk';
+import {RegisterDto} from '@/sdk/generated';
 
 type GenderT = {key: string; label: string};
 
@@ -28,10 +31,21 @@ export default function Signup() {
     resolver: zodResolver(SignupSchema),
   });
 
+  const signupMutation = useMutation({
+    mutationFn: (formData: RegisterDto) =>
+      APISDK.AuthenticationService.postApiV1AuthRegister(formData),
+    onSuccess(data, variables, context) {
+      console.log(data, variables, context);
+      // router.navigate(`/(auth)/otp?email=${data.email}`);
+    },
+    onError(error) {
+      console.log({error});
+    },
+  });
+
   const onSubmit = (data: SignupSchema) => {
     if (isSelected) {
-      console.log({...data});
-      router.navigate(`/(auth)/otp?email=${data.email}`);
+      signupMutation.mutate(data);
     }
   };
 
@@ -66,9 +80,9 @@ export default function Signup() {
             keyboardType="number-pad"
             textContentType="telephoneNumber"
             autoComplete="tel-national"
-            hasError={!!errors.phone}
-            erroMessage={errors.phone?.message}
-            name="phone"
+            hasError={!!errors.mobileNumber}
+            erroMessage={errors.mobileNumber?.message}
+            name="mobileNumber"
             control={control}
             startContent={
               <Feather
@@ -141,22 +155,6 @@ export default function Signup() {
               />
             }
           />
-          <ControlledTextInput
-            control={control}
-            name="businessName"
-            placeholder="Business Name (Optional)"
-            autoComplete="organization-title"
-            textContentType="organizationName"
-            hasError={!!errors.businessName}
-            erroMessage="Provide your business name"
-            startContent={
-              <Feather
-                size={24}
-                name="briefcase"
-                color={getColor('shorttiee-grey-300')}
-              />
-            }
-          />
           <View className="flex-row items-center gap-2">
             <CustomCheckBox
               isSelected={isSelected}
@@ -168,11 +166,13 @@ export default function Signup() {
             className="w-full"
             title="Signup"
             onPress={handleSubmit(onSubmit)}
+            disabled={!isSelected || signupMutation.isPending}
+            loading={signupMutation.isPending}
           />
         </View>
         <View className="flex flex-row gap-2">
           <Text>Already have an account?</Text>
-          <Link href="/(auth)/" className="text-shorttiee-primary">
+          <Link href="/(auth)" className="text-shorttiee-primary">
             <Text className="underline font-semibold">Login</Text>
           </Link>
         </View>
