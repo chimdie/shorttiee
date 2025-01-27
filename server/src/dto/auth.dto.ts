@@ -2,7 +2,7 @@ import validator from "validator";
 import { z } from "zod";
 
 const MIN_PASSWORD = 8;
-const email = z.string().email().trim();
+const email = z.string().email().toLowerCase().trim();
 const password = z.string().min(MIN_PASSWORD, {
   message: "Password must contain at least 8 character(s)"
 });
@@ -25,12 +25,11 @@ export const RegisterDto = z.object({
     })
     .nullish(),
   password,
-  mobileNumber: z.custom<string>(
-    (data) => validator.isMobilePhone(data, ["en-NG"]),
-    {
+  mobileNumber: z
+    .string()
+    .refine((data) => validator.isMobilePhone(data, ["en-NG"]), {
       message: "Invalid mobile number"
-    }
-  ),
+    }),
   businessName: z.string().optional(),
   referrerCode: z.string().optional(),
   address: z.string().optional()
