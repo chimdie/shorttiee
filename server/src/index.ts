@@ -5,10 +5,12 @@ import { CreateApplicationService } from "./config/services.config";
 import { domainValidator } from "./utils/domain-validator";
 import { OTP } from "./utils/otp";
 import { isAllDBTableMigrated, db } from "./config/db.config";
+import { AppEventEmitter } from "./config/events";
 
 new CreateApplicationService(app)
   .addService("otp", OTP)
   .addService("domainValidator", domainValidator)
+  .addService("event", AppEventEmitter)
   .build();
 
 if (!isAllDBTableMigrated()) {
