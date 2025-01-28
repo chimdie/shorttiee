@@ -11,12 +11,16 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
 import { ApiError, LoginDto } from "@/sdk/generated";
+import { useSetAtom } from "jotai";
+import { loggedinUserAtom, storedAuthTokenAtom } from "@/atoms/user.atom";
 
 
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const navigate = useNavigate();
   const { toast } = useToast()
+  const setStoredToken = useSetAtom(storedAuthTokenAtom)
+  const setLoggedInUser = useSetAtom(loggedinUserAtom)
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -27,10 +31,16 @@ export default function Login(): JSX.Element {
   const signInMutation = useMutation({
     mutationFn: (formData: LoginDto) => ApiSDK.AuthenticationService.postApiV1AuthLogin(formData),
     onSuccess(data) {
-      toast({
-        description: data.message
-      })
-      navigate(DashboardRoutes.home);
+      if (data) {
+        const { token } = data.data
+        ApiSDK.OpenAPI.TOKEN = token
+        setStoredToken(token)
+        setLoggedInUser(data)
+        navigate(DashboardRoutes.home, { replace: true });
+        toast({
+          description: data.message
+        })
+      }
     },
     onError(error) {
       const err = error as ApiError
