@@ -10,6 +10,9 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import HelmetHeader from "@/components/HelmetHeader";
 import { DashboardRoutes } from "@/types/routes";
+import { useAuthRedirect } from "@/hooks/use-auth-redirect";
+import { Spinner } from "@nextui-org/react";
+
 
 const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description: string }> = {
   [DashboardRoutes.home]: {
@@ -32,11 +35,20 @@ const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description
 
 export default function DashboardLayout(): JSX.Element {
   const pathname = useLocation().pathname as DashboardRoutes;
+  const { loggedInUser, authToken } = useAuthRedirect({ requireAuth: true })
 
   const { title, description } = dashboardHelmetTitle[pathname] || {
     title: "Shorttiee",
     description: "Home away from home",
   };
+
+  if (!loggedInUser || !authToken) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Spinner size="lg" color="warning" />
+      </div>
+    )
+  }
   return (
     <>
       <HelmetHeader title={title} description={description} />

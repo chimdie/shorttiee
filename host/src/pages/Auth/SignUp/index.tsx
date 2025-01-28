@@ -114,7 +114,7 @@ export default function SignUp(): JSX.Element {
           <FormField
             control={form.control}
             name="gender"
-            render={({ field }) => (
+            render={({ field }) => (  
               <FormItem>
                 <Select
                   value={field.value}
