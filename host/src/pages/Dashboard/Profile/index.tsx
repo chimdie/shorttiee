@@ -187,7 +187,7 @@ export default function Profile(): JSX.Element {
             <Button
               className="bg-shorttiee_primary text-white font-semibold"
               radius="sm"
-              onClick={() => setIsEdit(!isEdit)}
+              onPress={() => setIsEdit(!isEdit)}
             >
               {isEdit ? "Edit" : "Save"}
             </Button>

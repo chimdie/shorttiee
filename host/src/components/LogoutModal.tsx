@@ -36,7 +36,7 @@ export default function LogoutModal({
         <ModalFooter className="justify-center">
           <div className="flex justify-between gap-6">
             <Button
-              onClick={onClose}
+              onPress={onClose}
               fullWidth
               className="bg-white shadow-sm border text-shorttiee_primary font-medium px-6"
             >

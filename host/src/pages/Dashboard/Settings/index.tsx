@@ -35,7 +35,7 @@ export default function Settings(): JSX.Element {
               <Button
                 variant="light"
                 className="text-shorttiee_red-dark font-semibold"
-                onClick={deleteAcount.onOpen}
+                onPress={deleteAcount.onOpen}
               >
                 Delete
               </Button>
