@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Checkbox, Input, Select, SelectItem } from "@nextui-org/react";
+import { Button, Checkbox, Input, Select, SelectItem } from "@heroui/react";
 import { Building2, Eye, EyeOff, Lock, Mail, MapPin, Phone, UserRound, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";

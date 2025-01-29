@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { EllipsisVertical, Hotel, Search } from "lucide-react";
 import AddShortletModal from "@/components/Shortlet/add-shortlet-modal";
 import TablePagination from "@/components/TablePagination";
@@ -73,7 +73,7 @@ export default function Shortlet(): JSX.Element {
           <div>
             <Button
               className="bg-shorttiee_primary text-white font-medium w-full"
-              onClick={addShortletModal.onOpen}
+              onPress={addShortletModal.onOpen}
             >
               Add a Shortlet
             </Button>
@@ -95,7 +95,7 @@ export default function Shortlet(): JSX.Element {
               </div>
               <Button
                 className="bg-shorttiee_primary text-white font-medium"
-                onClick={addShortletModal.onOpen}
+                  onPress={addShortletModal.onOpen}
               >
                 Add a Shortlet
               </Button>

@@ -1,4 +1,4 @@
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";

@@ -12,7 +12,7 @@ import {
   Select,
   SelectItem,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

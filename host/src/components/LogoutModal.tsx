@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/react";
 import { LogOut } from "lucide-react";
 
 type LogoutModalProps = {
@@ -36,7 +36,7 @@ export default function LogoutModal({
         <ModalFooter className="justify-center">
           <div className="flex justify-between gap-6">
             <Button
-              onClick={onClose}
+              onPress={onClose}
               fullWidth
               className="bg-white shadow-sm border text-shorttiee_primary font-medium px-6"
             >
@@ -45,7 +45,7 @@ export default function LogoutModal({
             <Button
               fullWidth
               className="bg-shorttiee_primary text-white shadow-sm font-medium px-6"
-              onClick={onClose}
+              onPress={onClose}
             >
               Yes, log me out
             </Button>

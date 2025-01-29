@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button, Divider, useDisclosure } from "@nextui-org/react";
+import { Button, Divider, useDisclosure } from "@heroui/react";
 import DeleteAccountModal from "@/components/DeleteAccountModal";
 import { AuthRoutes } from "@/types/routes";
 
@@ -35,7 +35,7 @@ export default function Settings(): JSX.Element {
               <Button
                 variant="light"
                 className="text-shorttiee_red-dark font-semibold"
-                onClick={deleteAcount.onOpen}
+                onPress={deleteAcount.onOpen}
               >
                 Delete
               </Button>

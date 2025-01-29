@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/react";
 import { Trash2 } from "lucide-react";
 
 type DeleteShortletModalProps = {
@@ -38,7 +38,7 @@ export default function DeleteShortletModal({
         <ModalFooter>
           <div className="flex gap-3">
             <Button
-              onClick={onClose}
+              onPress={onClose}
               size="lg"
               fullWidth={true}
               className="bg-white shadow-sm border text-shorttiee_primary font-medium"
@@ -49,7 +49,7 @@ export default function DeleteShortletModal({
               size="lg"
               fullWidth={true}
               className="bg-shorttiee_primary text-white shadow-sm font-medium"
-              onClick={() => {
+              onPress={() => {
                 console.log(id);
                 onClose();
               }}
