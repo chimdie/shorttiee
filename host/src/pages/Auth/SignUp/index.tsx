@@ -17,13 +17,17 @@ import {
 import { AuthRoutes } from "@/types/routes";
 import { genderData, SignUpSchema } from "@/schema/auth.schema";
 import { ApiSDK } from "@/sdk";
-import { RegisterDto } from "@/sdk/generated";
+import { ApiError, RegisterDto } from "@/sdk/generated";
+import { useSetAtom } from "jotai";
+import { loggedinUserAtom, storedAuthTokenAtom } from "@/atoms/user.atom";
 
 
 export default function SignUp(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const navigate = useNavigate();
   const { toast } = useToast()
+  const setStoredToken = useSetAtom(storedAuthTokenAtom)
+  const setLoggedInUser = useSetAtom(loggedinUserAtom)
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -34,15 +38,22 @@ export default function SignUp(): JSX.Element {
   const signUpMutation = useMutation({
     mutationFn: (formData: RegisterDto) => ApiSDK.AuthenticationService.postApiV1AuthRegister(formData),
     onSuccess(data) {
-      toast({
-        description: data.message
-      })
-      navigate(AuthRoutes.verifyOtp);
+      if (data) {
+        const { token } = data.data
+        ApiSDK.OpenAPI.TOKEN = token
+        setStoredToken(token)
+        setLoggedInUser(data)
+        navigate(AuthRoutes.verifyOtp);
+        toast({
+          description: data.message
+        })
+      }
     },
     onError(error) {      
-      console.log({ error });
+      const err = error as ApiError
       toast({
-        description: error.message
+        variant: "destructive",
+        description: err.body.message
       })
     }
   })
@@ -80,6 +91,7 @@ export default function SignUp(): JSX.Element {
                       startContent={
                         <UserRound size={16} className="pointer-events-none text-grey_400" />
                       }
+                      isDisabled={signUpMutation.isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -101,6 +113,7 @@ export default function SignUp(): JSX.Element {
                       startContent={
                         <UserRound size={16} className="pointer-events-none text-grey_400" />
                       }
+                      isDisabled={signUpMutation.isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -111,7 +124,7 @@ export default function SignUp(): JSX.Element {
           <FormField
             control={form.control}
             name="gender"
-            render={({ field }) => (
+            render={({ field }) => (  
               <FormItem>
                 <Select
                   value={field.value}
@@ -122,6 +135,7 @@ export default function SignUp(): JSX.Element {
                   aria-label="gender"
                   startContent={<Users size={16} className="pointer-events-none text-grey_400" />}
                   classNames={{ popoverContent: "rounded-md" }}
+                  isDisabled={signUpMutation.isPending}
                 >
                   {genderData.map((gen) => (
                     <SelectItem key={gen.key}>{gen.label}</SelectItem>
@@ -145,6 +159,7 @@ export default function SignUp(): JSX.Element {
                     placeholder="Phone Number"
                     type="text"
                     startContent={<Phone size={16} className="pointer-events-none text-grey_400" />}
+                    isDisabled={signUpMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -165,6 +180,7 @@ export default function SignUp(): JSX.Element {
                     placeholder="Email"
                     type="email"
                     startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                    isDisabled={signUpMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -198,6 +214,7 @@ export default function SignUp(): JSX.Element {
                         )}
                       </button>
                     }
+                    isDisabled={signUpMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -219,6 +236,7 @@ export default function SignUp(): JSX.Element {
                     startContent={
                       <MapPin size={16} className="pointer-events-none text-grey_400" />
                     }
+                    isDisabled={signUpMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -240,6 +258,7 @@ export default function SignUp(): JSX.Element {
                     startContent={
                       <Building2 size={16} className="pointer-events-none text-grey_400" />
                     }
+                    isDisabled={signUpMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -254,7 +273,7 @@ export default function SignUp(): JSX.Element {
               <FormItem>
                 <div className="flex items-center space-x-2">
                   <FormControl>
-                    <Checkbox radius="sm" checked={field.value} onChange={field.onChange} />
+                    <Checkbox radius="sm" checked={field.value} onChange={field.onChange} isDisabled={signUpMutation.isPending} />
                   </FormControl>
                   <FormLabel className="flex items-center space-x-1">
                     <span>I agree to the</span>

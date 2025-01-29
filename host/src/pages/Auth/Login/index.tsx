@@ -10,13 +10,17 @@ import { LoginSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
-import { LoginDto } from "@/sdk/generated";
+import { ApiError, LoginDto } from "@/sdk/generated";
+import { useSetAtom } from "jotai";
+import { loggedinUserAtom, storedAuthTokenAtom } from "@/atoms/user.atom";
 
 
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const navigate = useNavigate();
   const { toast } = useToast()
+  const setStoredToken = useSetAtom(storedAuthTokenAtom)
+  const setLoggedInUser = useSetAtom(loggedinUserAtom)
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -27,14 +31,22 @@ export default function Login(): JSX.Element {
   const signInMutation = useMutation({
     mutationFn: (formData: LoginDto) => ApiSDK.AuthenticationService.postApiV1AuthLogin(formData),
     onSuccess(data) {
-      toast({
-        description: data.message
-      })
-      navigate(DashboardRoutes.home);
+      if (data) {
+        const { token } = data.data
+        ApiSDK.OpenAPI.TOKEN = token
+        setStoredToken(token)
+        setLoggedInUser(data)
+        navigate(DashboardRoutes.home, { replace: true });
+        toast({
+          description: data.message
+        })
+      }
     },
     onError(error) {
+      const err = error as ApiError
       toast({
-        description: error.message
+        variant: "destructive",
+        description: err.body.message
       })
     }
   })
@@ -65,6 +77,7 @@ export default function Login(): JSX.Element {
                     placeholder="Email"
                     type="email"
                     startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                    isDisabled={signInMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -83,6 +96,7 @@ export default function Login(): JSX.Element {
                     variant="bordered"
                     placeholder="Password"
                     type={isVisible ? "text" : "password"}
+                    isDisabled={signInMutation.isPending}
                     startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
                     endContent={
                       <button

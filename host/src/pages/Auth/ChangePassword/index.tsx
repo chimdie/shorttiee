@@ -9,7 +9,7 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 import { ChangePasswordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
-import { ChangePasswordDto } from "@/sdk/generated";
+import { ApiError, ChangePasswordDto } from "@/sdk/generated";
 import { DashboardRoutes } from "@/types/routes";
 
 export default function ChangePassword(): JSX.Element {
@@ -34,8 +34,10 @@ export default function ChangePassword(): JSX.Element {
       navigate(DashboardRoutes.home)
     },
     onError(error) {
+      const err = error as ApiError
       toast({
-        description: error.message
+        variant: "destructive",
+        description: err.body.message
       })
     }
   })
@@ -84,6 +86,7 @@ export default function ChangePassword(): JSX.Element {
                         )}
                       </button>
                     }
+                    isDisabled={changePasswordMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -118,6 +121,7 @@ export default function ChangePassword(): JSX.Element {
                         )}
                       </button>
                     }
+                    isDisabled={changePasswordMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -151,6 +155,7 @@ export default function ChangePassword(): JSX.Element {
                         )}
                       </button>
                     }
+                    isDisabled={changePasswordMutation.isPending}
                   />
                 </FormControl>
                 <FormMessage />
