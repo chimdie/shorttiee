@@ -6,11 +6,13 @@ import { ChangePasswordDto, LoginDto, RegisterDto } from "../dto/auth.dto";
 import { faker } from "@faker-js/faker";
 import { CreateApplicationService } from "../config/services.config";
 import { OTP } from "../utils/otp";
+import { EventEmitter } from "node:stream";
 
 beforeAll(() => {
   new CreateApplicationService(app)
     .addService("otp", OTP)
     .addService("domainValidator", async (_str: string) => [null, []] as const)
+    .addService("event", new EventEmitter())
     .build();
 });
 
