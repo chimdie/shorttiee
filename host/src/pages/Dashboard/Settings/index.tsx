@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button, Divider, useDisclosure } from "@nextui-org/react";
+import { Button, Divider, useDisclosure } from "@heroui/react";
 import DeleteAccountModal from "@/components/DeleteAccountModal";
 import { AuthRoutes } from "@/types/routes";
 

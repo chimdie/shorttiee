@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/react";
 import { LogOut } from "lucide-react";
 
 type LogoutModalProps = {
@@ -45,7 +45,7 @@ export default function LogoutModal({
             <Button
               fullWidth
               className="bg-shorttiee_primary text-white shadow-sm font-medium px-6"
-              onClick={onClose}
+              onPress={onClose}
             >
               Yes, log me out
             </Button>

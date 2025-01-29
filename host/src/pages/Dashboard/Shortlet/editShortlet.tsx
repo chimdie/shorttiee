@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/react";
+import { BreadcrumbItem, Breadcrumbs } from "@heroui/react";
 import { Link } from "react-router-dom";
 import { DashboardRoutes } from "@/types/routes";
 

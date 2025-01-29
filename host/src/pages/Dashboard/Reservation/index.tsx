@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "@nextui-org/react";
+import { Tab, Tabs } from "@heroui/react";
 import IncomingReservation from "@/components/Reservations/incoming-reservation";
 import ConfirmedReservation from "@/components/Reservations/confirmed-reservation";
 import RejectedReservation from "@/components/Reservations/rejected-reservation";

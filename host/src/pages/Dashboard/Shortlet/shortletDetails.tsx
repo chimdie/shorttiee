@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { BreadcrumbItem, Breadcrumbs, Chip, Image } from "@nextui-org/react";
+import { BreadcrumbItem, Breadcrumbs, Chip, Image } from "@heroui/react";
 import { AirVent, Bath, BedDouble, CookingPot, House, type LucideIcon } from "lucide-react";
 import { DashboardRoutes } from "@/types/routes";
 

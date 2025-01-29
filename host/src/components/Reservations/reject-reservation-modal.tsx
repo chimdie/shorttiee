@@ -7,7 +7,7 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { BrainCircuit, Signature } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";

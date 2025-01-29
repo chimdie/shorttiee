@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
 import { incomingReservations } from "@/dummyData/shortlet";

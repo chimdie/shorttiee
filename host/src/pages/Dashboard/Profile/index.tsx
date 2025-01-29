@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input } from "@nextui-org/react";
+import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input } from "@heroui/react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Link } from "react-router-dom";
 import { DashboardRoutes } from "@/types/routes";
