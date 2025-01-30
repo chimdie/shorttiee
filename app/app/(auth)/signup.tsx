@@ -1,4 +1,4 @@
-import {Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -10,14 +10,20 @@ import {ShorttieeButton} from '@/components/Button';
 import {Link, router} from 'expo-router';
 import {CustomCheckBox} from '@/components/CheckBox';
 import {AuthScreenLayout} from '@/layouts/authLayout';
-import {GenderSelector} from '@/components/GenderSelect';
-
-type GenderT = {key: string; label: string};
+import {GenderSelector, GenderT} from '@/components/GenderSelect';
+import {useMutation} from '@tanstack/react-query';
+import {APISDK} from '@/sdk';
+import {RegisterDto} from '@/sdk/generated';
+import {apiErrorParser} from '@/utils/errorParser';
+import {storedUserTokenAtom} from '@/atoms/user.atom';
+import {useSetAtom} from 'jotai';
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSelected, setIsSelected] = useState(false);
   const [selectedGender, setSelectedGender] = useState<GenderT>();
+  const [apiError, setApiError] = useState<string | null>(null);
+  const setStoredToken = useSetAtom(storedUserTokenAtom);
 
   const {
     control,
@@ -28,12 +34,33 @@ export default function Signup() {
     resolver: zodResolver(SignupSchema),
   });
 
+  const signupMutation = useMutation({
+    mutationFn: (formData: RegisterDto) =>
+      APISDK.AuthenticationService.postApiV1AuthRegister(formData),
+    onSuccess(data) {
+      if (data) {
+        const {token} = data.data;
+
+        APISDK.OpenAPI.TOKEN = token;
+        setStoredToken(token);
+        router.replace('/(tabs)');
+      }
+    },
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+      setApiError(parsedError.message);
+    },
+  });
+
   const onSubmit = (data: SignupSchema) => {
     if (isSelected) {
-      console.log({...data});
-      router.navigate(`/(auth)/otp?email=${data.email}`);
+      signupMutation.mutate(data);
     }
   };
+
+  if (__DEV__) {
+    apiError && Alert.alert(apiError);
+  }
 
   return (
     <AuthScreenLayout title="Create Account" hasBackbutton>
@@ -66,9 +93,9 @@ export default function Signup() {
             keyboardType="number-pad"
             textContentType="telephoneNumber"
             autoComplete="tel-national"
-            hasError={!!errors.phone}
-            erroMessage={errors.phone?.message}
-            name="phone"
+            hasError={!!errors.mobileNumber}
+            erroMessage={errors.mobileNumber?.message}
+            name="mobileNumber"
             control={control}
             startContent={
               <Feather
@@ -141,22 +168,6 @@ export default function Signup() {
               />
             }
           />
-          <ControlledTextInput
-            control={control}
-            name="businessName"
-            placeholder="Business Name (Optional)"
-            autoComplete="organization-title"
-            textContentType="organizationName"
-            hasError={!!errors.businessName}
-            erroMessage="Provide your business name"
-            startContent={
-              <Feather
-                size={24}
-                name="briefcase"
-                color={getColor('shorttiee-grey-300')}
-              />
-            }
-          />
           <View className="flex-row items-center gap-2">
             <CustomCheckBox
               isSelected={isSelected}
@@ -168,11 +179,13 @@ export default function Signup() {
             className="w-full"
             title="Signup"
             onPress={handleSubmit(onSubmit)}
+            disabled={!isSelected || signupMutation.isPending}
+            loading={signupMutation.isPending}
           />
         </View>
         <View className="flex flex-row gap-2">
           <Text>Already have an account?</Text>
-          <Link href="/(auth)/" className="text-shorttiee-primary">
+          <Link href="/(auth)" className="text-shorttiee-primary">
             <Text className="underline font-semibold">Login</Text>
           </Link>
         </View>

@@ -1,6 +1,13 @@
 import {z} from 'zod';
 import validator from 'validator';
 
+export const GenderKey = {
+  male: 'M',
+  female: 'F',
+} as const;
+
+export type GenderKey = (typeof GenderKey)[keyof typeof GenderKey];
+
 export const LoginSchema = z.object({
   email: z
     .string()
@@ -15,15 +22,14 @@ export const SignupSchema = z.object({
   lastName: z.string().min(2).trim(),
   address: z.string(),
   password: z.string().min(8).max(60).trim(),
-  gender: z.enum(['male', 'female']),
+  gender: z.enum([GenderKey.male, GenderKey.female]),
   referralCode: z.string().optional(),
-  businessName: z.string().optional(),
   email: z
     .string()
     .email()
     .trim()
     .transform(val => val.toLowerCase()),
-  phone: z
+  mobileNumber: z
     .string({message: 'Phone number is incorrect'})
     .trim()
     .transform(val => {

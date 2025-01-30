@@ -4,6 +4,7 @@ import {Control, Controller, FieldError, FieldValues} from 'react-hook-form';
 import {Feather} from '@expo/vector-icons';
 import {getColor} from '@/config/theme';
 import tw from 'twrnc';
+import {GenderKey} from '@/schema/auth.schema';
 
 export type GenderT = {
   key: string;
@@ -11,8 +12,8 @@ export type GenderT = {
 };
 
 const genderData: GenderT[] = [
-  {key: 'male', label: 'Male'},
-  {key: 'female', label: 'Female'},
+  {key: GenderKey.male, label: 'Male'},
+  {key: GenderKey.female, label: 'Female'},
 ];
 
 type GenderSelectT<T extends FieldValues> = {
