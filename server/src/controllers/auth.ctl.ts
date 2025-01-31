@@ -116,10 +116,11 @@ export const registerCtl = ctlWrapper(
       return ErrorResponse(res, "An error occured while siging token");
     }
 
-    req.app.locals.event.emit("EVENT::EMAIL::REGISTER", {
+    req.app.locals.event.emit("EVENT::EMAIL", {
       content: "You are welcome",
       title: "Welcome to our place",
-      email: newUser.email
+      email: newUser.email,
+      template: "REGISTER"
     });
 
     const mergeUserAndToken = Object.assign(newUser, { token });
@@ -187,10 +188,11 @@ export const forgetPasswordCtl = ctlWrapper(
       otpTTL: ttl.toISOString()
     });
 
-    req.app.locals.event.emit("EVENT::EMAIL::FORGOT_PASSWORD", {
-      content: ` Your OTP ${otp}`,
+    req.app.locals.event.emit("EVENT::EMAIL", {
+      content: `Your OTP ${otp}`,
       title: "Why you forget your password?",
-      email: user.email
+      email: user.email,
+      template: "FORGOT_PASSWORD"
     });
 
     const msg = "An OTP has been sent to your email";
