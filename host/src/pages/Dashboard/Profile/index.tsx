@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input } from "@heroui/react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Link } from "react-router-dom";
@@ -7,13 +7,111 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileSchema } from "@/schema/profile.schema";
 import { Building2, Camera, Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { ApiSDK } from "@/sdk";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryKeys } from "@/utils/queryKeys";
+import { ApiError, CreateFileDto, UpdateUserDto } from "@/sdk/generated";
+import { useToast } from "@/hooks/use-toast";
+
 
 export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
+  const [image, setImage] = useState<string | null>(null)
+  const [_, setSelectedFile] = useState<CreateFileDto | null>(null)
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   const form = useForm<ProfileSchema>({
     resolver: zodResolver(ProfileSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobileNumber: "",
+      address: "",
+      bussinessName: "",
+    }
   });
+
+  const { data: user } = useQuery({
+    queryKey: [QueryKeys.user],
+    queryFn: () => ApiSDK.UserService.getApiV1UsersProfile(),
+    enabled: true
+  })
+  console.log({ user });
+
+
+  useEffect(() => {
+    if (user?.data) {
+      form.reset({
+        firstName: user.data.firstName || "",
+        lastName: user.data.lastName || "",
+        email: user.data.email || "",
+        mobileNumber: user.data.mobileNumber || "",
+        address: user.data.address || "",
+        bussinessName: user.data.businessName || "",
+      })
+    }
+  }, [form, user?.data])
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const fileDto = { files: [file] }
+      setSelectedFile(fileDto)
+
+      const reader = new FileReader()
+      reader.onload = (event) => setImage(event.target?.result as string)
+      reader.readAsDataURL(file)
+      uploadProfileImgMutation.mutate(fileDto)
+    }
+  }
+
+  const uploadProfileImgMutation = useMutation({
+    mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
+    onSuccess(data) {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.user]
+      })
+      toast({
+        description: data.message
+      })
+    },
+    onError(error) {
+      const err = error as ApiError
+      toast({
+        variant: "destructive",
+        description: err.body.message
+      })
+    }
+  })
+
+
+  const updateUserDataMutation = useMutation({
+    mutationFn: (userData: UpdateUserDto) => ApiSDK.UserService.patchApiV1UsersProfile(userData),
+    onSuccess(data) {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.user]
+      })
+      toast({
+        description: data.message
+      })
+    },
+    onError(error) {
+      const err = error as ApiError
+      toast({
+        variant: "destructive",
+        description: err.body.message
+      })
+    }
+  })
+
+  const onSubmit = (data: ProfileSchema) => {
+    updateUserDataMutation.mutate(data)
+    console.log({ data });
+
+  }
+
 
   return (
     <div className="py-6 space-y-6">
@@ -25,22 +123,27 @@ export default function Profile(): JSX.Element {
       </Breadcrumbs>
 
       <div className="flex flex-col justify-center items-center space-y-6 py-4">
-        <div>
+        <div className="">
+          <input type="file" accept="image/*" className="hidden" id="fileUpload" onChange={handleImageUpload} />
           <Badge
             color="default"
-            content={<Camera className="cursor-pointer size-12 text-shorttiee_primary" />}
+            content={
+              <label htmlFor="fileUpload" className="cursor-pointer">
+                <Camera className="size-6 text-shorttiee_primary" />
+              </label>
+            }
             placement="bottom-right"
             isOneChar
           >
             <Avatar
-              src="https://i.pravatar.cc/150?u=a04258114e29026708c"
-              className="w-40 h-40 text-large"
+              src={image as string || user?.data?.photo as string}
+              className="w-40 h-40 opacity-100 text-shorttiee_primary"
             />
           </Badge>
         </div>
 
         <Form {...form}>
-          <form className="flex flex-col space-y-7">
+          <form className="flex flex-col space-y-7" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 space-x-4">
               <FormField
                 control={form.control}
@@ -52,13 +155,12 @@ export default function Profile(): JSX.Element {
                         {...field}
                         radius="sm"
                         variant="bordered"
-                        placeholder="Last Name"
+                        placeholder="First Name"
                         type="text"
-                        defaultValue="Tunde"
                         startContent={
                           <UserRound size={16} className="pointer-events-none text-grey_400" />
                         }
-                        isDisabled={isEdit}
+                        isDisabled={isEdit || updateUserDataMutation.isPending}
                       />
                     </FormControl>
                     <FormMessage />
@@ -77,11 +179,10 @@ export default function Profile(): JSX.Element {
                         variant="bordered"
                         placeholder="Last Name"
                         type="text"
-                        defaultValue="Musa"
                         startContent={
                           <UserRound size={16} className="pointer-events-none text-grey_400" />
                         }
-                        isDisabled={isEdit}
+                        isDisabled={isEdit || updateUserDataMutation.isPending}
                       />
                     </FormControl>
                     <FormMessage />
@@ -101,11 +202,10 @@ export default function Profile(): JSX.Element {
                       variant="bordered"
                       placeholder="Email"
                       type="email"
-                      defaultValue="tundeeeLargartha@bjorn.ironside"
                       startContent={
                         <Mail size={16} className="pointer-events-none text-grey_400" />
                       }
-                      isDisabled={isEdit}
+                      isDisabled={isEdit || updateUserDataMutation.isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -115,7 +215,7 @@ export default function Profile(): JSX.Element {
 
             <FormField
               control={form.control}
-              name="phone"
+              name="mobileNumber"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -125,11 +225,10 @@ export default function Profile(): JSX.Element {
                       variant="bordered"
                       placeholder="Phone Number"
                       type="text"
-                      defaultValue="90923439993"
                       startContent={
                         <Phone size={16} className="pointer-events-none text-grey_400" />
                       }
-                      isDisabled={isEdit}
+                      isDisabled={isEdit || updateUserDataMutation.isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -139,7 +238,7 @@ export default function Profile(): JSX.Element {
 
             <FormField
               control={form.control}
-              name="home"
+              name="address"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -148,12 +247,11 @@ export default function Profile(): JSX.Element {
                       radius="sm"
                       variant="bordered"
                       placeholder="Your Home Address"
-                      defaultValue="Alausa quaters ikoyi lagos"
                       type="text"
                       startContent={
                         <MapPin size={16} className="pointer-events-none text-grey_400" />
                       }
-                      isDisabled={isEdit}
+                      isDisabled={isEdit || updateUserDataMutation.isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -171,12 +269,12 @@ export default function Profile(): JSX.Element {
                       {...field}
                       radius="sm"
                       variant="bordered"
-                      placeholder="Business Name (Optional)"
+                      placeholder="Business Name"
                       type="text"
                       startContent={
                         <Building2 size={16} className="pointer-events-none text-grey_400" />
                       }
-                      isDisabled={isEdit}
+                      isDisabled={isEdit || updateUserDataMutation.isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -184,13 +282,28 @@ export default function Profile(): JSX.Element {
               )}
             />
 
-            <Button
-              className="bg-shorttiee_primary text-white font-semibold"
-              radius="sm"
-              onPress={() => setIsEdit(!isEdit)}
-            >
-              {isEdit ? "Edit" : "Save"}
-            </Button>
+
+            {isEdit ? (
+              <Button
+                className="bg-shorttiee_primary text-white font-semibold"
+                radius="sm"
+                onPress={() => setIsEdit(!isEdit)}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                className="bg-shorttiee_primary text-white font-semibold"
+                radius="sm"
+                type="submit"
+                isDisabled={updateUserDataMutation.isPending}
+                isLoading={updateUserDataMutation.isPending}
+              >
+                Update
+              </Button>
+            )}
+
+
           </form>
         </Form>
       </div>
