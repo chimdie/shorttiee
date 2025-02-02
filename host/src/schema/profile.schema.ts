@@ -11,6 +11,7 @@ export const ProfileSchema = z.object({
   mobileNumber: z.string({ message: "Phone Number is required" }),
   address: z.string({ message: "Address is required" }),
   bussinessName: z.string({ message: "Business Name is required" }),
+  photo: z.string().optional(),
 });
 
 export type ProfileSchema = z.infer<typeof ProfileSchema>;

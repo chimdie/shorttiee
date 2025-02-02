@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input } from "@heroui/react";
+import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "@heroui/react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Link } from "react-router-dom";
 import { DashboardRoutes } from "@/types/routes";
@@ -18,6 +18,7 @@ export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [image, setImage] = useState<string | null>(null)
   const [_, setSelectedFile] = useState<CreateFileDto | null>(null)
+  const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(null);
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -30,6 +31,7 @@ export default function Profile(): JSX.Element {
       mobileNumber: "",
       address: "",
       bussinessName: "",
+      photo: ""
     }
   });
 
@@ -38,7 +40,6 @@ export default function Profile(): JSX.Element {
     queryFn: () => ApiSDK.UserService.getApiV1UsersProfile(),
     enabled: true
   })
-  console.log({ user });
 
 
   useEffect(() => {
@@ -50,26 +51,19 @@ export default function Profile(): JSX.Element {
         mobileNumber: user.data.mobileNumber || "",
         address: user.data.address || "",
         bussinessName: user.data.businessName || "",
+        photo: user.data.photo || ""
       })
     }
   }, [form, user?.data])
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const fileDto = { files: [file] }
-      setSelectedFile(fileDto)
-
-      const reader = new FileReader()
-      reader.onload = (event) => setImage(event.target?.result as string)
-      reader.readAsDataURL(file)
-      uploadProfileImgMutation.mutate(fileDto)
-    }
-  }
 
   const uploadProfileImgMutation = useMutation({
     mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
     onSuccess(data) {
+
+      const uploadedImgPath = data.data[0].path
+      setUploadedImagePath(uploadedImgPath)
+
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.user]
       })
@@ -85,6 +79,20 @@ export default function Profile(): JSX.Element {
       })
     }
   })
+
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const fileDto = { files: [file] }
+      setSelectedFile(fileDto)
+
+      const reader = new FileReader()
+      reader.onload = (event) => setImage(event.target?.result as string)
+      reader.readAsDataURL(file)
+      uploadProfileImgMutation.mutate(fileDto)
+    }
+  }
 
 
   const updateUserDataMutation = useMutation({
@@ -107,9 +115,11 @@ export default function Profile(): JSX.Element {
   })
 
   const onSubmit = (data: ProfileSchema) => {
-    updateUserDataMutation.mutate(data)
-    console.log({ data });
-
+    const updatedData = {
+      ...data,
+      photo: uploadedImagePath || user?.data?.photo || ""
+    }
+    updateUserDataMutation.mutate(updatedData)
   }
 
 
@@ -123,8 +133,9 @@ export default function Profile(): JSX.Element {
       </Breadcrumbs>
 
       <div className="flex flex-col justify-center items-center space-y-6 py-4">
-        <div className="">
+        <div >
           <input type="file" accept="image/*" className="hidden" id="fileUpload" onChange={handleImageUpload} />
+          {uploadProfileImgMutation.isPending ? (<Spinner size="md" />) : (
           <Badge
             color="default"
             content={
@@ -135,11 +146,12 @@ export default function Profile(): JSX.Element {
             placement="bottom-right"
             isOneChar
           >
-            <Avatar
+              <Avatar
               src={image as string || user?.data?.photo as string}
               className="w-40 h-40 opacity-100 text-shorttiee_primary"
-            />
+              />
           </Badge>
+          )}
         </div>
 
         <Form {...form}>
@@ -302,8 +314,6 @@ export default function Profile(): JSX.Element {
                 Update
               </Button>
             )}
-
-
           </form>
         </Form>
       </div>
