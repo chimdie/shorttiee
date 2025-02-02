@@ -3,7 +3,7 @@ import HelmetHeader from "@/components/HelmetHeader";
 import { HomeHashtag } from "iconsax-react";
 import { AuthRoutes } from "@/types/routes";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/spinner";
 
 
 const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string }> = {

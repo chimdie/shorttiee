@@ -91,3 +91,7 @@
 .scroll::-webkit-scrollbar {
   display: none;
 }
+
+.opacity-0 {
+    opacity: 100;
+}
