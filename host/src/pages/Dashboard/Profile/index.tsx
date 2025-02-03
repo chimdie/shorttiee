@@ -217,7 +217,7 @@ export default function Profile(): JSX.Element {
                       startContent={
                         <Mail size={16} className="pointer-events-none text-grey_400" />
                       }
-                      isDisabled={isEdit || updateUserDataMutation.isPending}
+                      isDisabled
                     />
                   </FormControl>
                   <FormMessage />
