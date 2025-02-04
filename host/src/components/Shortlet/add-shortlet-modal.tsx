@@ -145,6 +145,7 @@ export default function AddShortletModal({
                         startContent={
                           <House size={16} className="pointer-events-none text-grey_400" />
                         }
+                        isDisabled={addShortletMutation.isPending}
                       />
                     </FormControl>
                     <FormMessage />
@@ -168,6 +169,7 @@ export default function AddShortletModal({
                           startContent={
                             <MapPinHouse size={16} className="pointer-events-none text-grey_400" />
                           }
+                          isDisabled={addShortletMutation.isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -190,6 +192,7 @@ export default function AddShortletModal({
                           startContent={
                             <MapPinned size={16} className="pointer-events-none text-grey_400" />
                           }
+                          isDisabled={addShortletMutation.isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -213,6 +216,7 @@ export default function AddShortletModal({
                         startContent={
                           <Users size={16} className="pointer-events-none text-grey_400" />
                         }
+                        isDisabled={addShortletMutation.isPending}
                       />
                     </FormControl>
                     <FormMessage />
@@ -236,6 +240,7 @@ export default function AddShortletModal({
                           startContent={
                             <BedSingle size={16} className="pointer-events-none text-grey_400" />
                           }
+                          isDisabled={addShortletMutation.isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -258,6 +263,7 @@ export default function AddShortletModal({
                           startContent={
                             <Bath size={16} className="pointer-events-none text-grey_400" />
                           }
+                          isDisabled={addShortletMutation.isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -278,6 +284,7 @@ export default function AddShortletModal({
                       startContent={
                         <Speech size={16} className="pointer-events-none text-grey_400 mt-0.5" />
                       }
+                      isDisabled={addShortletMutation.isPending}
                     />
                     <FormMessage />
                   </FormItem>
@@ -300,6 +307,7 @@ export default function AddShortletModal({
                           startContent={
                             <Wallet size={16} className="pointer-events-none text-grey_400" />
                           }
+                          isDisabled={addShortletMutation.isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -322,6 +330,7 @@ export default function AddShortletModal({
                           startContent={
                             <Tickets size={16} className="pointer-events-none text-grey_400" />
                           }
+                          isDisabled={addShortletMutation.isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -347,10 +356,12 @@ export default function AddShortletModal({
                           <Proportions size={16} className="pointer-events-none text-grey_400" />
                         }
                         classNames={{ popoverContent: "rounded-md" }}
+                        isDisabled={addShortletMutation.isPending}
                       >
                         {shortletType.map((type) => (
                           <SelectItem key={type.key}>{type.label}</SelectItem>
                         ))}
+
                       </Select>
                       <FormMessage />
                     </FormItem>
@@ -429,6 +440,7 @@ export default function AddShortletModal({
                           <OctagonMinus size={16} className="pointer-events-none text-grey_400" />
                         }
                         classNames={{ popoverContent: "rounded-md" }}
+                        isDisabled={addShortletMutation.isPending}
                       >
                         {shortletRestrictions.map((restrict) => (
                           <SelectItem key={restrict.key}>{restrict.label}</SelectItem>
@@ -455,6 +467,7 @@ export default function AddShortletModal({
                         startContent={
                           <TriangleAlert size={16} className="pointer-events-none text-grey_400" />
                         }
+                        isDisabled={addShortletMutation.isPending}
                       />
                     </FormControl>
                     <FormMessage />
@@ -576,6 +589,7 @@ export default function AddShortletModal({
                               setLinkInputValue(newArray);
                               field.onChange(newArray);
                             }}
+                            isDisabled={addShortletMutation.isPending}
                           />
                         </div>
                       )}
