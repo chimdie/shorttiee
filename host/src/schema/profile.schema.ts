@@ -12,6 +12,7 @@ export const ProfileSchema = z.object({
   address: z.string({ message: "Address is required" }),
   bussinessName: z.string({ message: "Business Name is required" }),
   photo: z.string().optional(),
+  gender: z.union([z.literal("M"), z.literal("F"), z.null()]).optional(),
 });
 
 export type ProfileSchema = z.infer<typeof ProfileSchema>;

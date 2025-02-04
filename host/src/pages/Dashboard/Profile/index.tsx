@@ -13,6 +13,7 @@ import { QueryKeys } from "@/utils/queryKeys";
 import { ApiError, CreateFileDto, UpdateUserDto } from "@/sdk/generated";
 import { useToast } from "@/hooks/use-toast";
 
+type Gender = "M" | "F";
 
 export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
@@ -31,7 +32,8 @@ export default function Profile(): JSX.Element {
       mobileNumber: "",
       address: "",
       bussinessName: "",
-      photo: ""
+      photo: "",
+      gender: null
     }
   });
 
@@ -51,7 +53,8 @@ export default function Profile(): JSX.Element {
         mobileNumber: user.data.mobileNumber || "",
         address: user.data.address || "",
         bussinessName: user.data.businessName || "",
-        photo: user.data.photo || ""
+        photo: user.data.photo || "",
+        gender: (user.data.gender as Gender) || "M"
       })
     }
   }, [form, user?.data])
@@ -101,11 +104,13 @@ export default function Profile(): JSX.Element {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.user]
       })
+      setIsEdit(true)
       toast({
         description: data.message
       })
     },
     onError(error) {
+      setIsEdit(true)
       const err = error as ApiError
       toast({
         variant: "destructive",
@@ -121,7 +126,6 @@ export default function Profile(): JSX.Element {
     }
     updateUserDataMutation.mutate(updatedData)
   }
-
 
   return (
     <div className="py-6 space-y-6">
@@ -155,6 +159,7 @@ export default function Profile(): JSX.Element {
         </div>
 
         <Form {...form}>
+          <div className="space-y-7">
           <form className="flex flex-col space-y-7" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 space-x-4">
               <FormField
@@ -293,28 +298,29 @@ export default function Profile(): JSX.Element {
                 </FormItem>
               )}
             />
-
-
-            {isEdit ? (
+              {!isEdit && (
+                <Button
+                  className="bg-shorttiee_primary text-white font-semibold"
+                  radius="sm"
+                  type="submit"
+                  isDisabled={updateUserDataMutation.isPending}
+                  isLoading={updateUserDataMutation.isPending}
+                >
+                  Update
+                </Button>
+              )}
+            </form>
+            {isEdit && (
               <Button
-                className="bg-shorttiee_primary text-white font-semibold"
+                className="bg-shorttiee_primary text-white font-semibold w-full"
                 radius="sm"
-                onPress={() => setIsEdit(!isEdit)}
+                type="button"
+                onPress={() => setIsEdit(false)}
               >
                 Edit
               </Button>
-            ) : (
-              <Button
-                className="bg-shorttiee_primary text-white font-semibold"
-                radius="sm"
-                type="submit"
-                isDisabled={updateUserDataMutation.isPending}
-                isLoading={updateUserDataMutation.isPending}
-              >
-                Update
-              </Button>
             )}
-          </form>
+          </div>
         </Form>
       </div>
     </div>
