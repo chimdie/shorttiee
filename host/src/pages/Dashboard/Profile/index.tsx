@@ -13,36 +13,23 @@ import { QueryKeys } from "@/utils/queryKeys";
 import { ApiError, CreateFileDto, UpdateUserDto } from "@/sdk/generated";
 import { useToast } from "@/hooks/use-toast";
 
-type Gender = "M" | "F";
-
 export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
-  const [image, setImage] = useState<string | null>(null)
-  const [_, setSelectedFile] = useState<CreateFileDto | null>(null)
+  const [image, setImage] = useState<string | null>(null);
+  const [_, setSelectedFile] = useState<CreateFileDto | null>(null);
   const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(null);
-  const { toast } = useToast()
-  const queryClient = useQueryClient()
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const form = useForm<ProfileSchema>({
     resolver: zodResolver(ProfileSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      mobileNumber: "",
-      address: "",
-      bussinessName: "",
-      photo: "",
-      gender: null
-    }
   });
 
   const { data: user } = useQuery({
     queryKey: [QueryKeys.user],
     queryFn: () => ApiSDK.UserService.getApiV1UsersProfile(),
-    enabled: true
-  })
-
+    enabled: true,
+  });
 
   useEffect(() => {
     if (user?.data) {
@@ -54,78 +41,74 @@ export default function Profile(): JSX.Element {
         address: user.data.address || "",
         bussinessName: user.data.businessName || "",
         photo: user.data.photo || "",
-        gender: (user.data.gender as Gender) || "M"
-      })
+        gender: user.data.gender as UpdateUserDto["gender"],
+      });
     }
-  }, [form, user?.data])
-
+  }, [form, user?.data]);
 
   const uploadProfileImgMutation = useMutation({
     mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
     onSuccess(data) {
-
-      const uploadedImgPath = data.data[0].path
-      setUploadedImagePath(uploadedImgPath)
+      const uploadedImgPath = data.data[0].path;
+      setUploadedImagePath(uploadedImgPath);
 
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.user]
-      })
+        queryKey: [QueryKeys.user],
+      });
       toast({
-        description: data.message
-      })
+        description: data.message,
+      });
     },
     onError(error) {
-      const err = error as ApiError
+      const err = error as ApiError;
       toast({
         variant: "destructive",
-        description: err.body.message
-      })
-    }
-  })
-
+        description: err.body.message,
+      });
+    },
+  });
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const fileDto = { files: [file] }
-      setSelectedFile(fileDto)
+      const fileDto = { files: [file] };
+      setSelectedFile(fileDto);
 
-      const reader = new FileReader()
-      reader.onload = (event) => setImage(event.target?.result as string)
-      reader.readAsDataURL(file)
-      uploadProfileImgMutation.mutate(fileDto)
+      const reader = new FileReader();
+      reader.onload = (event) => setImage(event.target?.result as string);
+      reader.readAsDataURL(file);
+      uploadProfileImgMutation.mutate(fileDto);
     }
-  }
-
+  };
 
   const updateUserDataMutation = useMutation({
     mutationFn: (userData: UpdateUserDto) => ApiSDK.UserService.patchApiV1UsersProfile(userData),
     onSuccess(data) {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.user]
-      })
-      setIsEdit(true)
+        queryKey: [QueryKeys.user],
+      });
+      setIsEdit(true);
       toast({
-        description: data.message
-      })
+        description: data.message,
+      });
     },
     onError(error) {
-      setIsEdit(true)
-      const err = error as ApiError
+      setIsEdit(true);
+      const err = error as ApiError;
       toast({
         variant: "destructive",
-        description: err.body.message
-      })
-    }
-  })
+        description: err.body.message,
+      });
+    },
+  });
 
   const onSubmit = (data: ProfileSchema) => {
     const updatedData = {
       ...data,
-      photo: uploadedImagePath || user?.data?.photo || ""
-    }
-    updateUserDataMutation.mutate(updatedData)
-  }
+      photo: uploadedImagePath || user?.data?.photo || "",
+    };
+    updateUserDataMutation.mutate(updatedData);
+  };
 
   return (
     <div className="py-6 space-y-6">
@@ -137,9 +120,17 @@ export default function Profile(): JSX.Element {
       </Breadcrumbs>
 
       <div className="flex flex-col justify-center items-center space-y-6 py-4">
-        <div >
-          <input type="file" accept="image/*" className="hidden" id="fileUpload" onChange={handleImageUpload} />
-          {uploadProfileImgMutation.isPending ? (<Spinner size="md" />) : (
+        <div className="relative">
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="fileUpload"
+            onChange={handleImageUpload}
+          />
+          {uploadProfileImgMutation.isPending ? (
+            <Spinner size="md" />
+          ) : (
             <Badge
               color="default"
               content={
@@ -151,65 +142,19 @@ export default function Profile(): JSX.Element {
               isOneChar
             >
               <Avatar
-                src={image as string || user?.data?.photo as string}
-                className="w-40 h-40 opacity-100 text-shorttiee_primary"
+                src={(image as string) || (user?.data?.photo as string)}
+                className="w-40 h-40 opacity-100 text-shorttiee_primary aspect-square rounded-full border-red-500"
               />
             </Badge>
           )}
         </div>
 
         <Form {...form}>
-          <div className="space-y-7">
-            <form className="flex flex-col space-y-7" onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid grid-cols-2 space-x-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          radius="sm"
-                          variant="bordered"
-                          placeholder="First Name"
-                          type="text"
-                          startContent={
-                            <UserRound size={16} className="pointer-events-none text-grey_400" />
-                          }
-                          isDisabled={isEdit || updateUserDataMutation.isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          radius="sm"
-                          variant="bordered"
-                          placeholder="Last Name"
-                          type="text"
-                          startContent={
-                            <UserRound size={16} className="pointer-events-none text-grey_400" />
-                          }
-                          isDisabled={isEdit || updateUserDataMutation.isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+          <form className="flex flex-col space-y-7" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-2 space-x-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -217,33 +162,10 @@ export default function Profile(): JSX.Element {
                         {...field}
                         radius="sm"
                         variant="bordered"
-                        placeholder="Email"
-                        type="email"
-                        startContent={
-                          <Mail size={16} className="pointer-events-none text-grey_400" />
-                        }
-                        isDisabled
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="mobileNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        radius="sm"
-                        variant="bordered"
-                        placeholder="Phone Number"
+                        placeholder="First Name"
                         type="text"
                         startContent={
-                          <Phone size={16} className="pointer-events-none text-grey_400" />
+                          <UserRound size={16} className="pointer-events-none text-grey_400" />
                         }
                         isDisabled={isEdit || updateUserDataMutation.isPending}
                       />
@@ -252,10 +174,9 @@ export default function Profile(): JSX.Element {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
-                name="address"
+                name="lastName"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -263,10 +184,10 @@ export default function Profile(): JSX.Element {
                         {...field}
                         radius="sm"
                         variant="bordered"
-                        placeholder="Your Home Address"
+                        placeholder="Last Name"
                         type="text"
                         startContent={
-                          <MapPin size={16} className="pointer-events-none text-grey_400" />
+                          <UserRound size={16} className="pointer-events-none text-grey_400" />
                         }
                         isDisabled={isEdit || updateUserDataMutation.isPending}
                       />
@@ -275,30 +196,107 @@ export default function Profile(): JSX.Element {
                   </FormItem>
                 )}
               />
+            </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      radius="sm"
+                      variant="bordered"
+                      placeholder="Email"
+                      type="email"
+                      startContent={
+                        <Mail size={16} className="pointer-events-none text-grey_400" />
+                      }
+                      isDisabled
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="bussinessName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        radius="sm"
-                        variant="bordered"
-                        placeholder="Business Name"
-                        type="text"
-                        startContent={
-                          <Building2 size={16} className="pointer-events-none text-grey_400" />
-                        }
-                        isDisabled={isEdit || updateUserDataMutation.isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {!isEdit && (
+            <FormField
+              control={form.control}
+              name="mobileNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      radius="sm"
+                      variant="bordered"
+                      placeholder="Phone Number"
+                      type="text"
+                      startContent={
+                        <Phone size={16} className="pointer-events-none text-grey_400" />
+                      }
+                      isDisabled={isEdit || updateUserDataMutation.isPending}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      radius="sm"
+                      variant="bordered"
+                      placeholder="Your Home Address"
+                      type="text"
+                      startContent={
+                        <MapPin size={16} className="pointer-events-none text-grey_400" />
+                      }
+                      isDisabled={isEdit || updateUserDataMutation.isPending}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="bussinessName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      radius="sm"
+                      variant="bordered"
+                      placeholder="Business Name"
+                      type="text"
+                      startContent={
+                        <Building2 size={16} className="pointer-events-none text-grey_400" />
+                      }
+                      isDisabled={isEdit || updateUserDataMutation.isPending}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {!isEdit ? (
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  onPress={() => setIsEdit(!isEdit)}
+                  isDisabled={updateUserDataMutation.isPending}
+                  isLoading={updateUserDataMutation.isPending}
+                >
+                  Cancel
+                </Button>
                 <Button
                   className="bg-shorttiee_primary text-white font-semibold"
                   radius="sm"
@@ -308,9 +306,8 @@ export default function Profile(): JSX.Element {
                 >
                   Update
                 </Button>
-              )}
-            </form>
-            {isEdit && (
+              </div>
+            ) : (
               <Button
                 className="bg-shorttiee_primary text-white font-semibold w-full"
                 radius="sm"
@@ -320,7 +317,7 @@ export default function Profile(): JSX.Element {
                 Edit
               </Button>
             )}
-          </div>
+          </form>
         </Form>
       </div>
     </div>
