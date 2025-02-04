@@ -42,7 +42,7 @@ export const shortletRestrictions = [
 ];
 
 export const AddShortletSchema = z.object({
-  shortletName: z
+  name: z
     .string({ message: "Shortlet Name is required" })
     .min(2, { message: "Shortlet Name is required" }),
   address: z.string({ message: "Address is required" }),
@@ -70,9 +70,13 @@ export const AddShortletSchema = z.object({
   price: z.string({ message: "Price is required" }),
   rate: z.string({ message: "Rate is required" }),
   type: z.string({ message: "Type is required" }),
-  category: z.string({ message: "Category is required" }),
+  categoryId: z.string({ message: "Category is required" }),
   cautionFee: z.string({ message: "Caution Fee is required" }),
-  facilities: z.string({ message: "Select atleast one facility" }),
+  facilities: z
+    .array(z.string(), {
+      message: "Select at least one facility",
+    })
+    .min(1, "Select at least one facility"),
   restrictions: z.string({ message: "Select atleast one restrictions" }),
 });
 

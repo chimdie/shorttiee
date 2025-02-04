@@ -42,12 +42,19 @@ import {
   Proportions,
   Link,
 } from "lucide-react";
+import { ApiError, CreateListingsDto } from "@/sdk/generated";
+import { useMutation } from "@tanstack/react-query";
+import { ApiSDK } from "@/sdk";
+import { useToast } from "@/hooks/use-toast";
+
 
 type ShortletModalT = {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: () => void;
 };
+
+
 export default function AddShortletModal({
   isOpen,
   onOpenChange,
@@ -57,6 +64,8 @@ export default function AddShortletModal({
   const [images, setImages] = useState<File[]>([]);
   const [isLinkInput, setIsLinkInput] = useState<boolean>(false);
   const [linkInputValue, setLinkInputValue] = useState<string[]>([]);
+
+  const { toast } = useToast()
 
   const form = useForm<AddShortletSchema>({
     resolver: zodResolver(AddShortletSchema),
@@ -85,9 +94,29 @@ export default function AddShortletModal({
     form.setValue("image", updatedImages);
   };
 
+  //TODO:fetch shortlet facilties from server and replace with the static data in the select input
+
+  //TODO: fetch categories data like above
+
+  const addShortletMutation = useMutation({
+    mutationFn: (shortletData: CreateListingsDto) => ApiSDK.ListingService.postApiV1Listings(shortletData),
+    onSuccess(data) {
+      onClose();
+      toast({
+        description: data.message
+      })
+    },
+    onError(error) {
+      const err = error as ApiError
+      toast({
+        variant: "destructive",
+        description: err.body.message
+      })
+    }
+  })
   const onSubmit = (data: AddShortletSchema) => {
+    addShortletMutation.mutate(data)
     console.log(data);
-    onClose();
   };
   return (
     <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
@@ -103,7 +132,7 @@ export default function AddShortletModal({
             <Form {...form}>
               <FormField
                 control={form.control}
-                name="shortletName"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -330,7 +359,7 @@ export default function AddShortletModal({
 
                 <FormField
                   control={form.control}
-                  name="category"
+                  name="categoryId"
                   render={({ field }) => (
                     <FormItem>
                       <Select
