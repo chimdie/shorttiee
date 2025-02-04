@@ -15,13 +15,6 @@ import { getSidebarList } from "./sidebarMenuItem";
 import { Link, useLocation } from "react-router-dom";
 import { HomeHashtag } from "iconsax-react";
 
-const data = {
-  user: {
-    name: "Host Chimdi",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation().pathname;
@@ -67,7 +60,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

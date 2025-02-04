@@ -11,7 +11,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import HelmetHeader from "@/components/HelmetHeader";
 import { DashboardRoutes } from "@/types/routes";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/spinner";
 
 
 const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description: string }> = {
