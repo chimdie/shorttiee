@@ -1,16 +1,15 @@
-import React, {PropsWithChildren} from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, TouchableOpacityProps} from 'react-native';
 import {TickSquare, Stop} from 'iconsax-react-native';
 import {getColor} from '@/config/theme';
 
 type CheckboxT = {
   isSelected: boolean;
   onChange: () => void;
-} & PropsWithChildren;
+} & TouchableOpacityProps;
 
 export function CustomCheckBox(props: CheckboxT) {
   return (
-    <TouchableOpacity onPress={() => props.onChange()} {...props}>
+    <TouchableOpacity hitSlop={40} onPress={() => props.onChange()} {...props}>
       <View className="flex-row items-center space-x-2">
         {props.isSelected ? (
           <TickSquare

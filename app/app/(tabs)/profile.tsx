@@ -16,12 +16,14 @@ import {Link} from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import {ShorttieeButton} from '@/components/Button';
 import {version} from '../../package.json';
+import {useAtomValue} from 'jotai';
+import {savedUserInfo} from '@/atoms/user.atom';
 // import * as ImagePicker from 'expo-image-picker';
 
 export default function Profile() {
   const [referrerCode] = useState('ESC-MmJ60691');
   const [isVisible, setIsVisible] = useState(false);
-  const [image, _setImage] = useState<string | null>(null);
+  const user = useAtomValue(savedUserInfo);
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(referrerCode);
@@ -60,7 +62,11 @@ export default function Profile() {
                 onPress={() => setIsVisible(true)}
                 className="aspect-square rounded-full items-center justify-center">
                 <Avatar
-                  source={{uri: image ? image : 'https://bit.ly/dan-abramov'}}
+                  source={{
+                    uri: user?.photo
+                      ? user.photo
+                      : 'https://bit.ly/dan-abramov',
+                  }}
                   size={100}
                   rounded
                 />
@@ -73,7 +79,7 @@ export default function Profile() {
               </TouchableOpacity>
               <View className="gap-4">
                 <Text className="text-xl font-bold text-gray-800 capitalize">
-                  zammie ugochukwu
+                  {`${user?.firstName} ${user?.lastName}`}
                 </Text>
                 <TouchableOpacity
                   className="flex-row items-center justify-between bg-shorttiee-primary-100 px-4 py-2 rounded-lg"
@@ -118,7 +124,10 @@ export default function Profile() {
                 onPress={() => {
                   Alert.alert('Logout', 'Are you sure you want to logout', [
                     {text: 'No', isPreferred: true, style: 'cancel'},
-                    {text: 'Yes', style: 'destructive'},
+                    {
+                      text: 'Yes',
+                      style: 'destructive',
+                    },
                   ]);
                 }}
               />
