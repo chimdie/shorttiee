@@ -25,7 +25,11 @@ export const EnvDto = z.object({
 
   EMAIL_USER: z.string().email(),
   EMAIL_PASS: z.string(),
-  EMAIL_HOST: z.string()
+  EMAIL_HOST: z.string(),
+
+  /** admin */
+  ADMIN_EMAIL: z.string().email(),
+  ADMIN_PASS: z.string()
 });
 
 export type EnvDto = z.infer<typeof EnvDto>;
