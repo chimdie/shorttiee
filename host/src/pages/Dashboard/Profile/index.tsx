@@ -50,13 +50,15 @@ export default function Profile(): JSX.Element {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => setImage(event.target?.result as string);
+      reader.onload = (event) => {
+        const base64String = event.target?.result as string;
+        setImage(base64String);
+        setUploadedImagePath(base64String);
+      };
       reader.readAsDataURL(file);
     }
-    setUploadedImagePath(file?.name as string)
     setIsEdit(false);
   };
-
 
   const updateUserDataMutation = useMutation({
     mutationFn: (userData: UpdateUserDto) => ApiSDK.UserService.patchApiV1UsersProfile(userData),
@@ -267,7 +269,6 @@ export default function Profile(): JSX.Element {
                 <Button
                   onPress={() => setIsEdit(!isEdit)}
                   isDisabled={updateUserDataMutation.isPending}
-                  isLoading={updateUserDataMutation.isPending}
                 >
                   Cancel
                 </Button>
