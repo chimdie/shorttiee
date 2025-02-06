@@ -111,8 +111,13 @@ export default function AddShortletModal({
     }
   })
   const onSubmit = (data: AddShortletSchema) => {
-    addShortletMutation.mutate(data)  
-    console.log(data);
+    const parsedData = {
+      ...data,
+      price: Number(data.price),
+      rate: Number(data.rate)
+    }
+    addShortletMutation.mutate(parsedData)
+    console.log(parsedData);
   };
   return (
     <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
