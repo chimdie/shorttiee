@@ -61,7 +61,6 @@ export default function HomeScreen() {
     select(data) {
       if (data) setUser(data.data);
     },
-    enabled: !user,
   });
 
   return (
