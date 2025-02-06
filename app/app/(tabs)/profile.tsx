@@ -21,12 +21,11 @@ import {savedUserInfo} from '@/atoms/user.atom';
 // import * as ImagePicker from 'expo-image-picker';
 
 export default function Profile() {
-  const [referrerCode] = useState('ESC-MmJ60691');
   const [isVisible, setIsVisible] = useState(false);
   const user = useAtomValue(savedUserInfo);
 
   const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(referrerCode);
+    await Clipboard.setStringAsync(user?.referrerCode ?? '');
     Alert.alert('Referrral Code', 'Referrral Code copied to clipboard!', [
       {text: 'OK'},
     ]);
@@ -79,18 +78,20 @@ export default function Profile() {
               </TouchableOpacity>
               <View className="gap-4">
                 <Text className="text-xl font-bold text-gray-800 capitalize">
-                  {`${user?.firstName} ${user?.lastName}`}
+                  {`${user?.firstName || ''} ${user?.lastName || ''}`}
                 </Text>
-                <TouchableOpacity
-                  className="flex-row items-center justify-between bg-shorttiee-primary-100 px-4 py-2 rounded-lg"
-                  onPress={copyToClipboard}>
-                  <Text style={tw`text-gray-600`}>{referrerCode}</Text>
-                  <Feather
-                    name="copy"
-                    size={16}
-                    color={getColor('shorttiee-primary')}
-                  />
-                </TouchableOpacity>
+                {user?.referrerCode ? (
+                  <TouchableOpacity
+                    className="flex-row items-center justify-between bg-shorttiee-primary-100 px-4 py-2 rounded-lg"
+                    onPress={copyToClipboard}>
+                    <Text style={tw`text-gray-600`}>{user?.referrerCode}</Text>
+                    <Feather
+                      name="copy"
+                      size={16}
+                      color={getColor('shorttiee-primary')}
+                    />
+                  </TouchableOpacity>
+                ) : null}
               </View>
             </View>
             <View className="gap-2">
