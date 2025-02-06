@@ -12,6 +12,8 @@ import {UnControlledTextInput} from '@/components/TextInput';
 import {QueryKeys} from '@/constants/queryKeys';
 import {APISDK} from '@/sdk';
 import {useQuery} from '@tanstack/react-query';
+import {useAtom} from 'jotai';
+import {savedUserInfo} from '@/atoms/user.atom';
 
 const statesDATA = [
   {
@@ -51,9 +53,14 @@ const topApartments = Array(5).fill({});
 const shortlets = Array(10).fill({});
 
 export default function HomeScreen() {
-  const {data: user, isLoading: isUserLoading} = useQuery({
+  const [user, setUser] = useAtom(savedUserInfo);
+
+  const {isLoading: isUserLoading} = useQuery({
     queryKey: [QueryKeys.user],
     queryFn: () => APISDK.UserService.getApiV1UsersProfile(),
+    select(data) {
+      if (data) setUser(data.data);
+    },
   });
 
   return (
@@ -72,7 +79,7 @@ export default function HomeScreen() {
               />
               <View className="flex-row items-center gap-1">
                 <Text className="text-black text-lg">
-                  Hello {isUserLoading ? '' : user?.data.firstName}
+                  Hello {isUserLoading ? '' : user?.firstName}
                 </Text>
                 <HelloWave />
               </View>
