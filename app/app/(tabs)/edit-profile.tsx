@@ -22,16 +22,18 @@ type EditProfile = Pick<
 >;
 
 export default function Editprofile() {
-  const [user] = useAtom(savedUserInfo);
+  const [user, setUser] = useAtom(savedUserInfo);
   const querClient = useQueryClient();
 
   const updateProfileMutaion = useMutation({
     mutationFn: (formData: UpdateUserDto) => {
       return APISDK.UserService.patchApiV1UsersProfile(formData);
     },
-    onSuccess: () => {
-      // setUser(data.data);
-      querClient.invalidateQueries({queryKey: [QueryKeys.user]});
+    onSuccess: data => {
+      if (data) {
+        setUser(data.data);
+        querClient.invalidateQueries({queryKey: [QueryKeys.user]});
+      }
     },
     onError(error) {
       console.log({error});
@@ -64,7 +66,6 @@ export default function Editprofile() {
         <View className="gap-8">
           <ControlledTextInput
             defaultValue={user?.firstName}
-            // editable={!!updateProfileMutaion.isPending}
             control={control}
             name="firstName"
             placeholder="First Name"
@@ -76,7 +77,6 @@ export default function Editprofile() {
           />
           <ControlledTextInput
             defaultValue={user?.lastName}
-            // editable={!!updateProfileMutaion.isPending}
             control={control}
             name="lastName"
             placeholder="Last Name"
@@ -131,7 +131,6 @@ export default function Editprofile() {
           />
           <ControlledTextInput
             defaultValue={user?.mobileNumber}
-            // editable={!!updateProfileMutaion.isPending}
             placeholder="+2348 06557 1233"
             keyboardType="number-pad"
             textContentType="telephoneNumber"
@@ -154,6 +153,7 @@ export default function Editprofile() {
           title="Update"
           onPress={handleSubmit(onSubmit)}
           loading={updateProfileMutaion.isPending}
+          disabled={updateProfileMutaion.isPending}
         />
       </View>
     </AuthScreenLayout>
