@@ -29,16 +29,11 @@ import {
   House,
   Images,
   MapPinHouse,
-  MapPinned,
   OctagonMinus,
   Speech,
   Tickets,
-  TriangleAlert,
-  Users,
   Wallet,
   X,
-  BedSingle,
-  Bath,
   Proportions,
   Link,
 } from "lucide-react";
@@ -75,23 +70,23 @@ export default function AddShortletModal({
     const files = Array.from(event.target.files || []);
 
     if (files.length + images.length > 8) {
-      form.setError("image", {
+      form.setError("images", {
         type: "manual",
         message: "You can only upload a maximum of 8 images.",
       });
       return;
     }
-    form.clearErrors("image");
+    form.clearErrors("images");
 
     const updatedImageArr = [...images, ...files];
     setImages(updatedImageArr);
-    form.setValue("image", updatedImageArr);
+    form.setValue("images", updatedImageArr);
   };
 
   const handleRemoveImage = (imageUrl: File) => {
     const updatedImages = images.filter((image) => image !== imageUrl);
     setImages(updatedImages);
-    form.setValue("image", updatedImages);
+    form.setValue("images", updatedImages);
   };
 
   //TODO:fetch shortlet facilties from server and replace with the static data in the select input
@@ -101,6 +96,7 @@ export default function AddShortletModal({
   const addShortletMutation = useMutation({
     mutationFn: (shortletData: CreateListingsDto) => ApiSDK.ListingService.postApiV1Listings(shortletData),
     onSuccess(data) {
+
       onClose();
       toast({
         description: data.message
@@ -115,7 +111,7 @@ export default function AddShortletModal({
     }
   })
   const onSubmit = (data: AddShortletSchema) => {
-    addShortletMutation.mutate(data)
+    addShortletMutation.mutate(data)  
     console.log(data);
   };
   return (
@@ -153,7 +149,6 @@ export default function AddShortletModal({
                 )}
               />
 
-              <div className="grid grid-cols-2 space-x-4">
                 <FormField
                   control={form.control}
                   name="address"
@@ -177,100 +172,6 @@ export default function AddShortletModal({
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          radius="sm"
-                          variant="bordered"
-                          placeholder="Shortlet Location"
-                          type="text"
-                          startContent={
-                            <MapPinned size={16} className="pointer-events-none text-grey_400" />
-                          }
-                          isDisabled={addShortletMutation.isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="guests"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        radius="sm"
-                        variant="bordered"
-                        placeholder="Number of Guests"
-                        type="text"
-                        startContent={
-                          <Users size={16} className="pointer-events-none text-grey_400" />
-                        }
-                        isDisabled={addShortletMutation.isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-2 space-x-4">
-                <FormField
-                  control={form.control}
-                  name="bedroom"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          radius="sm"
-                          variant="bordered"
-                          placeholder="Number of Bedrooms"
-                          type="text"
-                          startContent={
-                            <BedSingle size={16} className="pointer-events-none text-grey_400" />
-                          }
-                          isDisabled={addShortletMutation.isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="bathroom"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          radius="sm"
-                          variant="bordered"
-                          placeholder="Number of Bathrooms"
-                          type="text"
-                          startContent={
-                            <Bath size={16} className="pointer-events-none text-grey_400" />
-                          }
-                          isDisabled={addShortletMutation.isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <FormField
                 control={form.control}
                 name="description"
@@ -451,33 +352,9 @@ export default function AddShortletModal({
                   )}
                 />
               </div>
-
               <FormField
                 control={form.control}
-                name="cautionFee"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        radius="sm"
-                        variant="bordered"
-                        placeholder="Shortlet Caution Fee"
-                        type="text"
-                        startContent={
-                          <TriangleAlert size={16} className="pointer-events-none text-grey_400" />
-                        }
-                        isDisabled={addShortletMutation.isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="image"
+                name="images"
                 render={({ field }) => (
                   <FormItem>
                     <>

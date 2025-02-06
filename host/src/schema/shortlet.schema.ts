@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const shortletType = [
-  { key: "shortlet", label: "Shortlet" },
-  { key: "rental", label: "Rental" },
-  { key: "sale", label: "Sale" },
+  { key: "SHORTLET", label: "Shortlet" },
+  { key: "RENTAL", label: "Rental" },
+  { key: "SALE", label: "Sale" },
 ];
 
 export const shortletCategory = [
@@ -46,11 +46,10 @@ export const AddShortletSchema = z.object({
     .string({ message: "Shortlet Name is required" })
     .min(2, { message: "Shortlet Name is required" }),
   address: z.string({ message: "Address is required" }),
-  guests: z.string({ message: "Number of guests is required" }),
-  bedroom: z.string({ message: "Number of bedroom is required" }),
-  bathroom: z.string({ message: "Number of bathroom is required" }),
-  location: z.string({ message: "Location is required" }),
-  image: z
+  type: z.enum(["SHORTLET", "RENTAL", "SALE"], {
+    message: "Type is required and must be either SHORTLET, RENTAL, or SALE",
+  }),
+  images: z
     .union([
       z
         .array(z.instanceof(File))
@@ -69,9 +68,7 @@ export const AddShortletSchema = z.object({
   description: z.string({ message: "Description is required" }),
   price: z.string({ message: "Price is required" }),
   rate: z.string({ message: "Rate is required" }),
-  type: z.string({ message: "Type is required" }),
   categoryId: z.string({ message: "Category is required" }),
-  cautionFee: z.string({ message: "Caution Fee is required" }),
   facilities: z
     .array(z.string(), {
       message: "Select at least one facility",
