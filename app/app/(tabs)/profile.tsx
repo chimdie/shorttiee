@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacityProps,
   Alert,
+  Platform,
 } from 'react-native';
 import React, {forwardRef, useState} from 'react';
 import {Avatar, BottomSheet, Header} from '@rneui/themed';
@@ -18,17 +19,72 @@ import {ShorttieeButton} from '@/components/Button';
 import {version} from '../../package.json';
 import {useAtomValue} from 'jotai';
 import {savedUserInfo} from '@/atoms/user.atom';
-// import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {APISDK} from '@/sdk';
+import {UpdateUserDto} from '@/sdk/generated';
+import {QueryKeys} from '@/constants/queryKeys';
 
 export default function Profile() {
   const [isVisible, setIsVisible] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
   const user = useAtomValue(savedUserInfo);
+  const queryClient = useQueryClient();
+
+  const updateAvatar = useMutation({
+    mutationFn: (photo: Pick<UpdateUserDto, 'photo'>) =>
+      APISDK.UserService.patchApiV1UsersProfile(photo),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.user],
+      });
+    },
+  });
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(user?.referrerCode ?? '');
     Alert.alert('Referrral Code', 'Referrral Code copied to clipboard!', [
       {text: 'OK'},
     ]);
+  };
+
+  const pickImage = async () => {
+    const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!res.canceled) {
+      const uri = Platform.select({
+        ios: res.assets?.[0]?.uri?.replace('file://', ''),
+        default: res.assets?.[0]?.uri,
+      });
+
+      setImage(uri);
+      setIsVisible(false);
+      updateAvatar.mutate({photo: uri});
+    }
+  };
+
+  const cameraImage = async () => {
+    const res = await ImagePicker.launchCameraAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!res.canceled) {
+      const uri = Platform.select({
+        ios: res.assets?.[0]?.uri?.replace('file://', ''),
+        default: res.assets?.[0]?.uri,
+      });
+      setImage(uri);
+      setIsVisible(false);
+      updateAvatar.mutate({photo: uri});
+    }
   };
 
   return (
@@ -59,12 +115,14 @@ export default function Profile() {
             <View className="flex-row items-center gap-4">
               <TouchableOpacity
                 onPress={() => setIsVisible(true)}
-                className="aspect-square rounded-full items-center justify-center">
+                className="aspect-square rounded-full items-center justify-center border border-shorttiee-grey-100">
                 <Avatar
                   source={{
                     uri: user?.photo
                       ? user.photo
-                      : 'https://bit.ly/dan-abramov',
+                      : image
+                        ? image
+                        : 'https://bit.ly/dan-abramov',
                   }}
                   size={100}
                   rounded
@@ -161,8 +219,8 @@ export default function Profile() {
               <Text className="text-center">Select Image</Text>
             </View>
             <View className="gap-4">
-              <ShorttieeButton title="Camera" />
-              <ShorttieeButton title="Gallery" />
+              <ShorttieeButton title="Camera" onPress={cameraImage} />
+              <ShorttieeButton title="Gallery" onPress={pickImage} />
             </View>
           </View>
         </View>
