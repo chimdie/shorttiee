@@ -9,6 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Progress,
   Select,
   SelectItem,
   Textarea,
@@ -37,7 +38,7 @@ import {
   Proportions,
   Link,
 } from "lucide-react";
-import { ApiError, CreateListingsDto } from "@/sdk/generated";
+import { ApiError, CreateFileDto, CreateListingsDto } from "@/sdk/generated";
 import { useMutation } from "@tanstack/react-query";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
@@ -59,12 +60,32 @@ export default function AddShortletModal({
   const [images, setImages] = useState<File[]>([]);
   const [isLinkInput, setIsLinkInput] = useState<boolean>(false);
   const [linkInputValue, setLinkInputValue] = useState<string[]>([]);
-
   const { toast } = useToast()
 
   const form = useForm<AddShortletSchema>({
     resolver: zodResolver(AddShortletSchema),
   });
+
+  const uploadImgMutation = useMutation({
+    mutationFn: (shortletImgs: CreateFileDto) => ApiSDK.FileService.postApiV1Files(shortletImgs),
+    onSuccess(data, variables) {
+      console.log({ data }, variables, "me");
+      const uploadedFiles = variables.files as File[];
+
+      setImages((prevImages) => [...prevImages, ...uploadedFiles]);
+      form.setValue("images", [...images, ...uploadedFiles]);
+      toast({
+        description: data.message
+      })
+    },
+    onError(error) {
+      const err = error as ApiError
+      toast({
+        variant: "destructive",
+        description: err.body.message
+      })
+    }
+  })
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -77,10 +98,8 @@ export default function AddShortletModal({
       return;
     }
     form.clearErrors("images");
+    uploadImgMutation.mutate({ files })
 
-    const updatedImageArr = [...images, ...files];
-    setImages(updatedImageArr);
-    form.setValue("images", updatedImageArr);
   };
 
   const handleRemoveImage = (imageUrl: File) => {
@@ -92,7 +111,7 @@ export default function AddShortletModal({
   //TODO:fetch shortlet facilties from server and replace with the static data in the select input
 
   //TODO: fetch categories data like above
-
+  // TODO: get the images from the textarea and pass to the uploader fucntion
   const addShortletMutation = useMutation({
     mutationFn: (shortletData: CreateListingsDto) => ApiSDK.ListingService.postApiV1Listings(shortletData),
     onSuccess(data) {
@@ -114,7 +133,8 @@ export default function AddShortletModal({
     const parsedData = {
       ...data,
       price: Number(data.price),
-      rate: Number(data.rate)
+      rate: Number(data.rate),
+      // images: data.images as string[]
     }
     addShortletMutation.mutate(parsedData)
     console.log(parsedData);
@@ -390,13 +410,11 @@ export default function AddShortletModal({
                               className="flex flex-col items-center cursor-pointer"
                               onClick={() => {
                                 setIsLinkInput(!isLinkInput);
-                                // setLinkInputValue(field.value || "");
-
                                 setLinkInputValue(
                                   Array.isArray(field.value) &&
                                     field.value.every((item) => typeof item === "string")
                                     ? field.value
-                                    : [], // Provide a default value if it's not a string array
+                                    : [],
                                 );
                               }}
                             >
@@ -408,27 +426,31 @@ export default function AddShortletModal({
                       )}
 
                       {/* image preview and upload */}
-                      {!isLinkInput && images.length > 0 && (
+                      {!isLinkInput && uploadImgMutation.isPending ? (
+                        <Progress isIndeterminate aria-label="Loading..." className="w-full" size="sm" color="primary" />
+                      ) : (
                         <div className="flex  items-center gap-4 w-full space-y-2">
-                          <div
-                            className="border-2 border-grey_200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
-                            onClick={() => fileInputRef.current?.click()}
-                          >
-                            <input
-                              type="file"
-                              accept="image/*"
-                              multiple
-                              className="hidden"
-                              ref={fileInputRef}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                handleImageUpload(e);
-                              }}
-                            />
-                            <Images size={24} className="pointer-events-none text-grey_400" />
-                            <p className="text-grey_400 text-sm py-1">Upload shortlet image</p>
-                          </div>
+                            {images.length > 0 && (
+                              <div
+                                className="border-2 border-grey_200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
+                                onClick={() => fileInputRef.current?.click()}
+                              >
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  className="hidden"
+                                  ref={fileInputRef}
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    handleImageUpload(e);
+                                  }}
+                                />
+                                <Images size={24} className="pointer-events-none text-grey_400" />
+                                <p className="text-grey_400 text-sm py-1">Add Another Image</p>
+                              </div>
 
+                            )}
                           {/* preview */}
 
                           <div className="flex items-center overflow-x-auto gap-2 w-full scroll">
