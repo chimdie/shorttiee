@@ -6,16 +6,6 @@ export const shortletType = [
   { key: "SALE", label: "Sale" },
 ];
 
-export const shortletCategory = [
-  { key: "apartment", label: "Apartment" },
-  { key: "beach villa", label: "Beach Villa" },
-  { key: "vacation home", label: "Vacation Home" },
-  { key: "duplex", label: "Duplex" },
-  { key: "party home", label: "Party Home" },
-  { key: "studio apartment", label: "Studio Apartment" },
-];
-
-
 export const shortletRestrictions = [
   { key: "no kids", label: "No Kids" },
   { key: "no smoking", label: "No Smoking" },
@@ -52,12 +42,13 @@ export const AddShortletSchema = z.object({
   price: z.string({ message: "Price is required" }),
   rate: z.string({ message: "Rate is required" }),
   categoryId: z.string({ message: "Category is required" }),
-  facilities: z
-    .array(z.string(), {
-      message: "Select at least one facility",
-    })
-    .min(1, "Select at least one facility"),
-  restrictions: z.string({ message: "Select atleast one restrictions" }),
+  // facilities: z
+  //   .array(z.string(), {
+  //     message: "Select at least one facility",
+  //   })
+  //   .min(1, "Select at least one facility"),
+  facilities: z.string({ message: "Select at least one facility" }),
+  restrictions: z.string({ message: "Select at least one restrictions" }),
 });
 
 export type AddShortletSchema = z.infer<typeof AddShortletSchema>;

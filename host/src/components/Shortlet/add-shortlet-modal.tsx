@@ -19,7 +19,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   AddShortletSchema,
-  // shortletCategory,
   shortletRestrictions,
   shortletType,
 } from "@/schema/shortlet.schema";
@@ -37,8 +36,8 @@ import {
   Proportions,
   Link,
 } from "lucide-react";
-import { ApiError, CreateFileDto, CreateListingsDto } from "@/sdk/generated";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { ApiError, CreateFileDto, CreateListingsDto } from "@/sdk/generated";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
 import { QueryKeys } from "@/utils/queryKeys";
@@ -61,8 +60,18 @@ export default function AddShortletModal({
   const [isLinkInput, setIsLinkInput] = useState<boolean>(false);
   const [linkInputValue, setLinkInputValue] = useState<string[]>([]);
   const [uploadedImgArray, setUploadedImgArray] = useState<string[]>([]); 
-
   const { toast } = useToast()
+
+  const { data: shortletFacilities } = useQuery({
+    queryKey: [QueryKeys.facilities],
+    queryFn: () => ApiSDK.FacilityService.getApiV1Facilities(),
+  })
+
+
+  const { data: shortletCategory } = useQuery({
+    queryKey: [QueryKeys.categories],
+    queryFn: () => ApiSDK.CategoryService.getApiV1Categories()
+  })
 
   const form = useForm<AddShortletSchema>({
     resolver: zodResolver(AddShortletSchema),
@@ -110,18 +119,9 @@ export default function AddShortletModal({
     form.setValue("images", updatedImages);
   };
 
-  //TODO:fetch shortlet facilties from server and replace with the static data in the select input
-  const { data: shortletFacilities } = useQuery({
-    queryKey: [QueryKeys.facilities],
-    queryFn: () => ApiSDK.FacilityService.getApiV1Facilities(),
-  })
 
-  //TODO: fetch categories data like above
-  const { data: shortletCategory } = useQuery({
-    queryKey: [QueryKeys.categories],
-    queryFn: () => ApiSDK.CategoryService.getApiV1Categories()
-  })
   // TODO: get the images from the textarea and pass to the uploader fucntion
+
   const addShortletMutation = useMutation({
     mutationFn: (shortletData: CreateListingsDto) => ApiSDK.ListingService.postApiV1Listings(shortletData),
     onSuccess(data) {
@@ -143,10 +143,11 @@ export default function AddShortletModal({
       ...data,
       price: Number(data.price),
       rate: Number(data.rate),
-      images: uploadedImgArray
+      images: uploadedImgArray,
+      facilities: data.facilities.split(",")
     }
     addShortletMutation.mutate(parsedData)
-    console.log(parsedData);
+    console.log({ parsedData });
   };
   return (
     <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
@@ -515,7 +516,6 @@ export default function AddShortletModal({
                         </div>
                       )}
                     </>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -523,7 +523,9 @@ export default function AddShortletModal({
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" type="submit">
+            <Button color="primary" type="submit"
+              isLoading={addShortletMutation.isPending}
+              isDisabled={uploadImgMutation.isPending || addShortletMutation.isPending}>
               Add Shortlet
             </Button>
           </ModalFooter>
