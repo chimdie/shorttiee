@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacityProps,
   Alert,
+  Platform,
 } from 'react-native';
 import React, {forwardRef, useState} from 'react';
 import {Avatar, BottomSheet, Header} from '@rneui/themed';
@@ -16,18 +17,74 @@ import {Link} from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import {ShorttieeButton} from '@/components/Button';
 import {version} from '../../package.json';
-// import * as ImagePicker from 'expo-image-picker';
+import {useAtomValue} from 'jotai';
+import {savedUserInfo} from '@/atoms/user.atom';
+import * as ImagePicker from 'expo-image-picker';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {APISDK} from '@/sdk';
+import {UpdateUserDto} from '@/sdk/generated';
+import {QueryKeys} from '@/constants/queryKeys';
 
 export default function Profile() {
-  const [referrerCode] = useState('ESC-MmJ60691');
   const [isVisible, setIsVisible] = useState(false);
-  const [image, _setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const user = useAtomValue(savedUserInfo);
+  const queryClient = useQueryClient();
+
+  const updateAvatar = useMutation({
+    mutationFn: (photo: Pick<UpdateUserDto, 'photo'>) =>
+      APISDK.UserService.patchApiV1UsersProfile(photo),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.user],
+      });
+    },
+  });
 
   const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(referrerCode);
+    await Clipboard.setStringAsync(user?.referrerCode ?? '');
     Alert.alert('Referrral Code', 'Referrral Code copied to clipboard!', [
       {text: 'OK'},
     ]);
+  };
+
+  const pickImage = async () => {
+    const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!res.canceled) {
+      const uri = Platform.select({
+        ios: res.assets?.[0]?.uri?.replace('file://', ''),
+        default: res.assets?.[0]?.uri,
+      });
+
+      setImage(uri);
+      setIsVisible(false);
+      updateAvatar.mutate({photo: uri});
+    }
+  };
+
+  const cameraImage = async () => {
+    const res = await ImagePicker.launchCameraAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!res.canceled) {
+      const uri = Platform.select({
+        ios: res.assets?.[0]?.uri?.replace('file://', ''),
+        default: res.assets?.[0]?.uri,
+      });
+      setImage(uri);
+      setIsVisible(false);
+      updateAvatar.mutate({photo: uri});
+    }
   };
 
   return (
@@ -58,9 +115,15 @@ export default function Profile() {
             <View className="flex-row items-center gap-4">
               <TouchableOpacity
                 onPress={() => setIsVisible(true)}
-                className="aspect-square rounded-full items-center justify-center">
+                className="aspect-square rounded-full items-center justify-center border border-shorttiee-grey-100">
                 <Avatar
-                  source={{uri: image ? image : 'https://bit.ly/dan-abramov'}}
+                  source={{
+                    uri: user?.photo
+                      ? user.photo
+                      : image
+                        ? image
+                        : 'https://bit.ly/dan-abramov',
+                  }}
                   size={100}
                   rounded
                 />
@@ -73,18 +136,20 @@ export default function Profile() {
               </TouchableOpacity>
               <View className="gap-4">
                 <Text className="text-xl font-bold text-gray-800 capitalize">
-                  zammie ugochukwu
+                  {`${user?.firstName || ''} ${user?.lastName || ''}`}
                 </Text>
-                <TouchableOpacity
-                  className="flex-row items-center justify-between bg-shorttiee-primary-100 px-4 py-2 rounded-lg"
-                  onPress={copyToClipboard}>
-                  <Text style={tw`text-gray-600`}>{referrerCode}</Text>
-                  <Feather
-                    name="copy"
-                    size={16}
-                    color={getColor('shorttiee-primary')}
-                  />
-                </TouchableOpacity>
+                {user?.referrerCode ? (
+                  <TouchableOpacity
+                    className="flex-row items-center justify-between bg-shorttiee-primary-100 px-4 py-2 rounded-lg"
+                    onPress={copyToClipboard}>
+                    <Text style={tw`text-gray-600`}>{user?.referrerCode}</Text>
+                    <Feather
+                      name="copy"
+                      size={16}
+                      color={getColor('shorttiee-primary')}
+                    />
+                  </TouchableOpacity>
+                ) : null}
               </View>
             </View>
             <View className="gap-2">
@@ -118,7 +183,10 @@ export default function Profile() {
                 onPress={() => {
                   Alert.alert('Logout', 'Are you sure you want to logout', [
                     {text: 'No', isPreferred: true, style: 'cancel'},
-                    {text: 'Yes', style: 'destructive'},
+                    {
+                      text: 'Yes',
+                      style: 'destructive',
+                    },
                   ]);
                 }}
               />
@@ -151,8 +219,8 @@ export default function Profile() {
               <Text className="text-center">Select Image</Text>
             </View>
             <View className="gap-4">
-              <ShorttieeButton title="Camera" />
-              <ShorttieeButton title="Gallery" />
+              <ShorttieeButton title="Camera" onPress={cameraImage} />
+              <ShorttieeButton title="Gallery" onPress={pickImage} />
             </View>
           </View>
         </View>

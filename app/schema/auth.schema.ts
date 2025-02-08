@@ -25,8 +25,8 @@ export const SignupSchema = z.object({
   gender: z.enum([GenderKey.male, GenderKey.female]),
   referralCode: z.string().optional(),
   email: z
-    .string()
-    .email()
+    .string({message: 'Email is required'})
+    .email({message: 'Incorrect email format'})
     .trim()
     .transform(val => val.toLowerCase()),
   mobileNumber: z
@@ -53,33 +53,15 @@ export const ForgotPasswordSchema = z.object({
     .email({message: 'Incorrect email format'}),
 });
 
+export const EditProfileSchema = SignupSchema.pick({
+  firstName: true,
+  lastName: true,
+  gender: true,
+  email: true,
+  mobileNumber: true,
+});
+
 export type LoginSchema = z.infer<typeof LoginSchema>;
 export type SignupSchema = z.infer<typeof SignupSchema>;
 export type ForgotPasswordSchema = z.infer<typeof ForgotPasswordSchema>;
-
-export const EditProfileSchema = z.object({
-  firstName: z.string().min(2).trim(),
-  lastName: z.string().min(2).trim(),
-  gender: z.enum(['male', 'female']),
-  email: z
-    .string({message: 'Email is required'})
-    .email({message: 'Incorrect email format'}),
-  phone: z
-    .string({message: 'Phone number is incorrect'})
-    .trim()
-    .transform(val => {
-      const countryCode = '+234';
-      if (val.startsWith('0')) {
-        return countryCode + val.substring(1);
-      }
-
-      if (val.length < 11) {
-        return countryCode + val;
-      }
-
-      return val;
-    })
-    .refine(data => validator.isMobilePhone(data, 'en-NG')),
-});
-
 export type EditProfileSchema = z.infer<typeof EditProfileSchema>;
