@@ -19,8 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   AddShortletSchema,
-  shortletCategory,
-  shortletFacilities,
+  // shortletCategory,
   shortletRestrictions,
   shortletType,
 } from "@/schema/shortlet.schema";
@@ -39,9 +38,10 @@ import {
   Link,
 } from "lucide-react";
 import { ApiError, CreateFileDto, CreateListingsDto } from "@/sdk/generated";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
+import { QueryKeys } from "@/utils/queryKeys";
 
 
 type ShortletModalT = {
@@ -60,6 +60,8 @@ export default function AddShortletModal({
   const [images, setImages] = useState<File[]>([]);
   const [isLinkInput, setIsLinkInput] = useState<boolean>(false);
   const [linkInputValue, setLinkInputValue] = useState<string[]>([]);
+  const [uploadedImgArray, setUploadedImgArray] = useState<string[]>([]); 
+
   const { toast } = useToast()
 
   const form = useForm<AddShortletSchema>({
@@ -69,11 +71,11 @@ export default function AddShortletModal({
   const uploadImgMutation = useMutation({
     mutationFn: (shortletImgs: CreateFileDto) => ApiSDK.FileService.postApiV1Files(shortletImgs),
     onSuccess(data, variables) {
-      console.log({ data }, variables, "me");
+      const uploadedPaths = data.data.map((file: { path: string }) => file.path);
       const uploadedFiles = variables.files as File[];
-
       setImages((prevImages) => [...prevImages, ...uploadedFiles]);
       form.setValue("images", [...images, ...uploadedFiles]);
+      setUploadedImgArray(uploadedPaths);
       toast({
         description: data.message
       })
@@ -109,13 +111,20 @@ export default function AddShortletModal({
   };
 
   //TODO:fetch shortlet facilties from server and replace with the static data in the select input
+  const { data: shortletFacilities } = useQuery({
+    queryKey: [QueryKeys.facilities],
+    queryFn: () => ApiSDK.FacilityService.getApiV1Facilities(),
+  })
 
   //TODO: fetch categories data like above
+  const { data: shortletCategory } = useQuery({
+    queryKey: [QueryKeys.categories],
+    queryFn: () => ApiSDK.CategoryService.getApiV1Categories()
+  })
   // TODO: get the images from the textarea and pass to the uploader fucntion
   const addShortletMutation = useMutation({
     mutationFn: (shortletData: CreateListingsDto) => ApiSDK.ListingService.postApiV1Listings(shortletData),
     onSuccess(data) {
-
       onClose();
       toast({
         description: data.message
@@ -134,7 +143,7 @@ export default function AddShortletModal({
       ...data,
       price: Number(data.price),
       rate: Number(data.rate),
-      // images: data.images as string[]
+      images: uploadedImgArray
     }
     addShortletMutation.mutate(parsedData)
     console.log(parsedData);
@@ -311,9 +320,13 @@ export default function AddShortletModal({
                         }
                         classNames={{ popoverContent: "rounded-md" }}
                       >
-                        {shortletCategory.map((cat) => (
-                          <SelectItem key={cat.key}>{cat.label}</SelectItem>
-                        ))}
+                        {shortletCategory?.data?.length ? (
+                          shortletCategory.data.map((category) => (
+                            <SelectItem key={category.id}>{category.name}</SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem isDisabled>No category available</SelectItem>
+                        )}
                       </Select>
                       <FormMessage />
                     </FormItem>
@@ -340,9 +353,13 @@ export default function AddShortletModal({
                         }
                         classNames={{ popoverContent: "rounded-md" }}
                       >
-                        {shortletFacilities.map((fac) => (
-                          <SelectItem key={fac.key}>{fac.label}</SelectItem>
-                        ))}
+                        {shortletFacilities?.data?.length ? (
+                          shortletFacilities.data.map((facilities) => (
+                            <SelectItem key={facilities.id}>{facilities.name}</SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem isDisabled>No facilities available</SelectItem>
+                        )}
                       </Select>
                       <FormMessage />
                     </FormItem>

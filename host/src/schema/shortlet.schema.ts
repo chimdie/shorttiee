@@ -15,30 +15,13 @@ export const shortletCategory = [
   { key: "studio apartment", label: "Studio Apartment" },
 ];
 
-export const shortletFacilities = [
-  { key: "cook", label: "Cook/Chef" },
-  { key: "driver", label: "Driver" },
-  { key: "ac", label: "Air Conditioner" },
-  { key: "ps5", label: "PS5" },
-  { key: "swimming pool", label: "Swimming Pool" },
-  { key: "power supply", label: "Power Supply" },
-  { key: "gym", label: "Gym" },
-  { key: "elevator", label: "Elevator" },
-  { key: "wifi", label: "WiFi" },
-  { key: "parking", label: "Parking" },
-  { key: "meeting room", label: "Meeting Room" },
-  { key: "Resturant", label: "Resturant" },
-  { key: "cleaner", label: "Cleaner" },
-  { key: "spa", label: "SPA Servive" },
-  { key: "laundry", label: "Laundry" },
-];
 
 export const shortletRestrictions = [
-  { key: "kids", label: "No Kids" },
-  { key: "smoking", label: "No Smoking" },
-  { key: "filming", label: "No Filming" },
-  { key: "parites", label: "No Parties" },
-  { key: "pets", label: "No Pets" },
+  { key: "no kids", label: "No Kids" },
+  { key: "no smoking", label: "No Smoking" },
+  { key: "no filming", label: "No Filming" },
+  { key: "no parites", label: "No Parties" },
+  { key: "no pets", label: "No Pets" },
 ];
 
 export const AddShortletSchema = z.object({
