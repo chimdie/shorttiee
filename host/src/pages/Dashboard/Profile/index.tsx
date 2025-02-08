@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input } from "@heroui/react";
+import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "@heroui/react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Link } from "react-router-dom";
-import { DashboardRoutes } from "@/types/routes";
+import { Building2, Camera, Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileSchema } from "@/schema/profile.schema";
-import { Building2, Camera, Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { DashboardRoutes } from "@/types/routes";
 import { ApiSDK } from "@/sdk";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "@/utils/queryKeys";
-import { ApiError, UpdateUserDto } from "@/sdk/generated";
+import { ApiError, CreateFileDto, UpdateUserDto } from "@/sdk/generated";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Profile(): JSX.Element {
@@ -46,18 +46,44 @@ export default function Profile(): JSX.Element {
   }, [form, user?.data]);
 
 
+  const uploadProfileImgMutation = useMutation({
+    mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
+    onSuccess(data) {
+      console.log(data);
+      const uploadedImgPath = data.data[0].path
+      setUploadedImagePath(uploadedImgPath)
+      setIsEdit(false);
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.user]
+      })
+      toast({
+        description: data.message
+      })
+
+    },
+    onError(error) {
+      const err = error as ApiError;
+      toast({
+        variant: "destructive",
+        description: err.body.message
+      })
+    }
+  })
+
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const fileDto = { files: [file] };
       const reader = new FileReader();
+      reader.onload = (event) => setImage(event.target?.result as string);
       reader.onload = (event) => {
         const base64String = event.target?.result as string;
         setImage(base64String);
-        setUploadedImagePath(base64String);
       };
       reader.readAsDataURL(file);
+      uploadProfileImgMutation.mutate(fileDto);
     }
-    setIsEdit(false);
   };
 
   const updateUserDataMutation = useMutation({
@@ -107,7 +133,9 @@ export default function Profile(): JSX.Element {
             id="fileUpload"
             onChange={handleImageUpload}
           />
-
+          {uploadProfileImgMutation.isPending ? (
+            <Spinner size="md" />
+          ) : (
             <Badge
               color="default"
               content={
@@ -123,6 +151,7 @@ export default function Profile(): JSX.Element {
                 className="w-40 h-40 opacity-100 text-shorttiee_primary aspect-square rounded-full border-red-500"
               />
           </Badge>
+          )}
         </div>
 
         <Form {...form}>
