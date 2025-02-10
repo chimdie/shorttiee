@@ -36,7 +36,7 @@ import {
   Proportions,
   Link,
 } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError, CreateFileDto, CreateListingsDto } from "@/sdk/generated";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
@@ -56,18 +56,18 @@ export default function AddShortletModal({
   onClose,
 }: ShortletModalT): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<string[]>([]);
   const [isLinkInput, setIsLinkInput] = useState<boolean>(false);
   const [linkInputValue, setLinkInputValue] = useState<string[]>([]);
   const [uploadedImgArray, setUploadedImgArray] = useState<string[]>([]); 
   const { toast } = useToast()
 
+  const queryClient = useQueryClient()
 
   const { data: shortletFacilities } = useQuery({
     queryKey: [QueryKeys.facilities],
     queryFn: () => ApiSDK.FacilityService.getApiV1Facilities(),
   })
-
 
   const { data: shortletCategory } = useQuery({
     queryKey: [QueryKeys.categories],
@@ -80,11 +80,17 @@ export default function AddShortletModal({
 
   const uploadImgMutation = useMutation({
     mutationFn: (shortletImgs: CreateFileDto) => ApiSDK.FileService.postApiV1Files(shortletImgs),
-    onSuccess(data, variables) {
-      const uploadedPaths = data.data.map((file: { path: string }) => file.path);
-      const uploadedFiles = variables.files as File[];
-      setImages((prevImages) => [...prevImages, ...uploadedFiles]);
-      form.setValue("images", [...images, ...uploadedFiles]);
+    onSuccess(data) {
+      let uploadedPaths = data.data.map((file: { path: string }) => file.path);
+
+      uploadedPaths = uploadedPaths.map((e) => {
+        const url = new URL(e, ApiSDK.OpenAPI.BASE);
+        e = url.toString();
+        return e
+      });
+
+      setImages((prevImages) => [...prevImages, ...uploadedPaths]);
+      form.setValue("images", [...images, ...uploadedPaths]);
       setUploadedImgArray(uploadedPaths);
       toast({
         description: data.message
@@ -114,7 +120,7 @@ export default function AddShortletModal({
 
   };
 
-  const handleRemoveImage = (imageUrl: File) => {
+  const handleRemoveImage = (imageUrl: string) => {
     const updatedImages = images.filter((image) => image !== imageUrl);
     setImages(updatedImages);
     form.setValue("images", updatedImages);
@@ -125,6 +131,11 @@ export default function AddShortletModal({
     mutationFn: (shortletData: CreateListingsDto) => ApiSDK.ListingService.postApiV1Listings(shortletData),
     onSuccess(data) {
       onClose();
+      form.reset()
+      form.setValue("images", []);
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.shortlets]
+      })
       toast({
         description: data.message
       })
@@ -137,8 +148,10 @@ export default function AddShortletModal({
       })
     }
   })
+
   const onSubmit = (data: AddShortletSchema) => {
     const images = uploadedImgArray?.length > 0 ? uploadedImgArray : linkInputValue
+
     const parsedData = {
       ...data,
       price: Number(data.price),
@@ -148,6 +161,7 @@ export default function AddShortletModal({
     }
     addShortletMutation.mutate(parsedData)
   };
+
   return (
     <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
       <form className="flex flex-col space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
@@ -403,7 +417,7 @@ export default function AddShortletModal({
                                   className="cursor-pointer p-1.5 bg-white"
                                 >
                                   <Image
-                                    src={URL.createObjectURL(image)}
+                                    src={image}
                                     alt={`shortletImage ${index + 1}`}
                                     className="rounded-xl w-20 h-20 object-cover"
                                   />
