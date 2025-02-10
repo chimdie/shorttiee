@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacityProps,
   Alert,
-  Platform,
 } from 'react-native';
 import React, {forwardRef, useState} from 'react';
 import {Avatar, BottomSheet, Header} from '@rneui/themed';
@@ -19,15 +18,14 @@ import {ShorttieeButton} from '@/components/Button';
 import {version} from '../../package.json';
 import {useAtomValue} from 'jotai';
 import {savedUserInfo} from '@/atoms/user.atom';
-import * as ImagePicker from 'expo-image-picker';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {APISDK} from '@/sdk';
-import {UpdateUserDto} from '@/sdk/generated';
+import {UpdateUserDto, CreateFileResponse} from '@/sdk/generated';
 import {QueryKeys} from '@/constants/queryKeys';
+import {cameraPickImage, pickImage} from '@/config/imagePicker';
 
 export default function Profile() {
   const [isVisible, setIsVisible] = useState(false);
-  const [image, setImage] = useState<string | null>(null);
   const user = useAtomValue(savedUserInfo);
   const queryClient = useQueryClient();
 
@@ -39,6 +37,25 @@ export default function Profile() {
         queryKey: [QueryKeys.user],
       });
     },
+    onError(error) {
+      console.error(error);
+    },
+  });
+
+  const fileUpload = useMutation({
+    mutationFn: (photo: string) => {
+      return APISDK.FixFileService.postApiMethodUploadFile(photo);
+    },
+    onSuccess(data) {
+      const result = data as unknown as CreateFileResponse;
+
+      if (result.data[0].path) {
+        updateAvatar.mutate({photo: result?.data[0]?.path});
+      }
+    },
+    onError(error) {
+      console.error(error);
+    },
   });
 
   const copyToClipboard = async () => {
@@ -48,43 +65,18 @@ export default function Profile() {
     ]);
   };
 
-  const pickImage = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  const uploadImage = async () => {
+    const img = await pickImage();
 
-    if (!res.canceled) {
-      const uri = Platform.select({
-        ios: res.assets?.[0]?.uri?.replace('file://', ''),
-        default: res.assets?.[0]?.uri,
-      });
-
-      setImage(uri);
-      setIsVisible(false);
-      updateAvatar.mutate({photo: uri});
-    }
+    if (img === undefined) return;
+    fileUpload.mutate(img[1]);
   };
 
-  const cameraImage = async () => {
-    const res = await ImagePicker.launchCameraAsync({
-      mediaTypes: 'images',
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  const cameraUpload = async () => {
+    const img = await cameraPickImage();
 
-    if (!res.canceled) {
-      const uri = Platform.select({
-        ios: res.assets?.[0]?.uri?.replace('file://', ''),
-        default: res.assets?.[0]?.uri,
-      });
-      setImage(uri);
-      setIsVisible(false);
-      updateAvatar.mutate({photo: uri});
-    }
+    if (img === undefined) return;
+    fileUpload.mutate(img[1]);
   };
 
   return (
@@ -120,9 +112,7 @@ export default function Profile() {
                   source={{
                     uri: user?.photo
                       ? user.photo
-                      : image
-                        ? image
-                        : 'https://bit.ly/dan-abramov',
+                      : 'https://bit.ly/dan-abramov',
                   }}
                   size={100}
                   rounded
@@ -219,8 +209,8 @@ export default function Profile() {
               <Text className="text-center">Select Image</Text>
             </View>
             <View className="gap-4">
-              <ShorttieeButton title="Camera" onPress={cameraImage} />
-              <ShorttieeButton title="Gallery" onPress={pickImage} />
+              <ShorttieeButton title="Camera" onPress={cameraUpload} />
+              <ShorttieeButton title="Gallery" onPress={uploadImage} />
             </View>
           </View>
         </View>
