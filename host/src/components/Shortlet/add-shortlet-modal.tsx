@@ -62,6 +62,7 @@ export default function AddShortletModal({
   const [uploadedImgArray, setUploadedImgArray] = useState<string[]>([]); 
   const { toast } = useToast()
 
+
   const { data: shortletFacilities } = useQuery({
     queryKey: [QueryKeys.facilities],
     queryFn: () => ApiSDK.FacilityService.getApiV1Facilities(),
@@ -120,8 +121,6 @@ export default function AddShortletModal({
   };
 
 
-  // TODO: get the images from the textarea and pass to the uploader fucntion
-
   const addShortletMutation = useMutation({
     mutationFn: (shortletData: CreateListingsDto) => ApiSDK.ListingService.postApiV1Listings(shortletData),
     onSuccess(data) {
@@ -139,15 +138,15 @@ export default function AddShortletModal({
     }
   })
   const onSubmit = (data: AddShortletSchema) => {
+    const images = uploadedImgArray?.length > 0 ? uploadedImgArray : linkInputValue
     const parsedData = {
       ...data,
       price: Number(data.price),
       rate: Number(data.rate),
-      images: uploadedImgArray,
-      facilities: data.facilities.split(",")
+      facilities: data.facilities.split(","),
+      images,
     }
     addShortletMutation.mutate(parsedData)
-    console.log({ parsedData });
   };
   return (
     <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
@@ -207,25 +206,7 @@ export default function AddShortletModal({
                   )}
                 />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <Textarea
-                      {...field}
-                      radius="sm"
-                      variant="bordered"
-                      placeholder="Shortlet Description"
-                      startContent={
-                        <Speech size={16} className="pointer-events-none text-grey_400 mt-0.5" />
-                      }
-                      isDisabled={addShortletMutation.isPending}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
 
               <div className="grid grid-cols-2 space-x-4">
                 <FormField
@@ -335,66 +316,7 @@ export default function AddShortletModal({
                 />
               </div>
 
-              <div className="grid grid-cols-2 space-x-4">
-                <FormField
-                  control={form.control}
-                  name="facilities"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        value={field.value}
-                        onChange={field.onChange}
-                        radius="sm"
-                        variant="bordered"
-                        placeholder="Shortlet Facilities"
-                        aria-label="facilities"
-                        selectionMode="multiple"
-                        startContent={
-                          <Factory size={16} className="pointer-events-none text-grey_400" />
-                        }
-                        classNames={{ popoverContent: "rounded-md" }}
-                      >
-                        {shortletFacilities?.data?.length ? (
-                          shortletFacilities.data.map((facilities) => (
-                            <SelectItem key={facilities.id}>{facilities.name}</SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem isDisabled>No facilities available</SelectItem>
-                        )}
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
-                <FormField
-                  control={form.control}
-                  name="restrictions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        value={field.value}
-                        onChange={field.onChange}
-                        radius="sm"
-                        variant="bordered"
-                        placeholder="Shortlet Restrictions"
-                        aria-label="restrictions"
-                        selectionMode="multiple"
-                        startContent={
-                          <OctagonMinus size={16} className="pointer-events-none text-grey_400" />
-                        }
-                        classNames={{ popoverContent: "rounded-md" }}
-                        isDisabled={addShortletMutation.isPending}
-                      >
-                        {shortletRestrictions.map((restrict) => (
-                          <SelectItem key={restrict.key}>{restrict.label}</SelectItem>
-                        ))}
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <FormField
                 control={form.control}
                 name="images"
@@ -516,6 +438,88 @@ export default function AddShortletModal({
                         </div>
                       )}
                     </>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 space-x-4">
+                <FormField
+                  control={form.control}
+                  name="facilities"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        value={field.value}
+                        onChange={field.onChange}
+                        radius="sm"
+                        variant="bordered"
+                        placeholder="Shortlet Facilities"
+                        aria-label="facilities"
+                        selectionMode="multiple"
+                        startContent={
+                          <Factory size={16} className="pointer-events-none text-grey_400" />
+                        }
+                        classNames={{ popoverContent: "rounded-md" }}
+                      >
+                        {shortletFacilities?.data?.length ? (
+                          shortletFacilities.data.map((facilities) => (
+                            <SelectItem key={facilities.id}>{facilities.name}</SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem isDisabled>No facilities available</SelectItem>
+                        )}
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="restrictions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        value={field.value}
+                        onChange={field.onChange}
+                        radius="sm"
+                        variant="bordered"
+                        placeholder="Shortlet Restrictions"
+                        aria-label="restrictions"
+                        selectionMode="multiple"
+                        startContent={
+                          <OctagonMinus size={16} className="pointer-events-none text-grey_400" />
+                        }
+                        classNames={{ popoverContent: "rounded-md" }}
+                        isDisabled={addShortletMutation.isPending}
+                      >
+                        {shortletRestrictions.map((restrict) => (
+                          <SelectItem key={restrict.key}>{restrict.label}</SelectItem>
+                        ))}
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <Textarea
+                      {...field}
+                      radius="sm"
+                      variant="bordered"
+                      placeholder="Shortlet Description"
+                      startContent={
+                        <Speech size={16} className="pointer-events-none text-grey_400 mt-0.5" />
+                      }
+                      isDisabled={addShortletMutation.isPending}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
