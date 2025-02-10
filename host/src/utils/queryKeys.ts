@@ -3,4 +3,5 @@ export const QueryKeys = {
   facilities: "facilities",
   categories: "categories",
   shortlets: "shortlets",
+  shortletDetail: "shortletDetail",
 } as const;
