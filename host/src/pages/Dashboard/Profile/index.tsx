@@ -16,7 +16,6 @@ import { useToast } from "@/hooks/use-toast";
 export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [image, setImage] = useState<string | null>(null);
-  const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -27,7 +26,6 @@ export default function Profile(): JSX.Element {
   const { data: user } = useQuery({
     queryKey: [QueryKeys.user],
     queryFn: () => ApiSDK.UserService.getApiV1UsersProfile(),
-    enabled: true,
   });
 
   useEffect(() => {
@@ -44,50 +42,6 @@ export default function Profile(): JSX.Element {
       });
     }
   }, [form, user?.data]);
-
-
-  const uploadProfileImgMutation = useMutation({
-    mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
-    onSuccess(data) {
-      console.log(data);
-      if (data.data[0].path) {
-        let uploadedImgPath = data.data[0].path
-        uploadedImgPath = new URL(uploadedImgPath, ApiSDK.OpenAPI.BASE).toString()
-        setUploadedImagePath(uploadedImgPath)
-      }
-      setIsEdit(false);
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.user]
-      })
-      toast({
-        description: data.message
-      })
-
-    },
-    onError(error) {
-      const err = error as ApiError;
-      toast({
-        variant: "destructive",
-        description: err.body.message
-      })
-    }
-  })
-
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const fileDto = { files: [file] };
-      const reader = new FileReader();
-      reader.onload = (event) => setImage(event.target?.result as string);
-      reader.onload = (event) => {
-        const base64String = event.target?.result as string;
-        setImage(base64String);
-      };
-      reader.readAsDataURL(file);
-      uploadProfileImgMutation.mutate(fileDto);
-    }
-  };
 
   const updateUserDataMutation = useMutation({
     mutationFn: (userData: UpdateUserDto) => ApiSDK.UserService.patchApiV1UsersProfile(userData),
@@ -110,12 +64,51 @@ export default function Profile(): JSX.Element {
     },
   });
 
+  const fileUploadMutation = useMutation({
+    mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
+    onSuccess(data) {
+      if (data.data[0].path) {
+        let uploadedImgPath = data.data[0].path;
+
+        uploadedImgPath = new URL(uploadedImgPath, ApiSDK.OpenAPI.BASE).toString();
+        updateUserDataMutation.mutate({ photo: uploadedImgPath });
+      }
+      setIsEdit(false);
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.user],
+      });
+      toast({
+        description: data.message,
+      });
+    },
+    onError(error) {
+      const err = error as ApiError;
+      toast({
+        variant: "destructive",
+        description: err.body.message,
+      });
+    },
+  });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const fileDto = { files: [file] };
+      const reader = new FileReader();
+
+      reader.onload = (event) => setImage(event.target?.result as string);
+      reader.onload = (event) => {
+        const base64String = event.target?.result as string;
+        setImage(base64String);
+      };
+      reader.readAsDataURL(file);
+      fileUploadMutation.mutate(fileDto);
+    }
+  };
+
   const onSubmit = (data: ProfileSchema) => {
-    const updatedData = {
-      ...data,
-      photo: uploadedImagePath || user?.data?.photo || "",
-    };
-    updateUserDataMutation.mutate(updatedData);
+    updateUserDataMutation.mutate(data);
   };
 
   return (
@@ -136,7 +129,7 @@ export default function Profile(): JSX.Element {
             id="fileUpload"
             onChange={handleImageUpload}
           />
-          {uploadProfileImgMutation.isPending ? (
+          {fileUploadMutation.isPending ? (
             <Spinner size="md" />
           ) : (
             <Badge
@@ -153,7 +146,7 @@ export default function Profile(): JSX.Element {
                 src={(image as string) || (user?.data?.photo as string)}
                 className="w-40 h-40 opacity-100 text-shorttiee_primary aspect-square rounded-full border-red-500"
               />
-          </Badge>
+            </Badge>
           )}
         </div>
 
