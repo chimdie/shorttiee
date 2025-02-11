@@ -50,8 +50,11 @@ export default function Profile(): JSX.Element {
     mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
     onSuccess(data) {
       console.log(data);
-      const uploadedImgPath = data.data[0].path
-      setUploadedImagePath(uploadedImgPath)
+      if (data.data[0].path) {
+        let uploadedImgPath = data.data[0].path
+        uploadedImgPath = new URL(uploadedImgPath, ApiSDK.OpenAPI.BASE).toString()
+        setUploadedImagePath(uploadedImgPath)
+      }
       setIsEdit(false);
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.user]
