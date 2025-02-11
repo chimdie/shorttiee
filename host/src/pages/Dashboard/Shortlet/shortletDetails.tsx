@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { BreadcrumbItem, Breadcrumbs, Chip, Image } from "@heroui/react";
+import { BreadcrumbItem, Breadcrumbs, Chip, Image, Spinner } from "@heroui/react";
 import { DashboardRoutes } from "@/types/routes";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "@/utils/queryKeys";
@@ -16,7 +16,7 @@ import { ApiSDK } from "@/sdk";
 export default function ShortletDetails() {
   const { id } = useParams()
 
-  const { data: shortletDetail } = useQuery({
+  const { data: shortletDetail, isLoading } = useQuery({
     queryKey: [QueryKeys.shortletDetail],
     queryFn: () => ApiSDK.ListingService.getApiV1Listings1(id as string)
   })
@@ -29,8 +29,11 @@ export default function ShortletDetails() {
         <BreadcrumbItem>
           <Link to={DashboardRoutes.shortlets}>Shortlets</Link>
         </BreadcrumbItem>
-        <BreadcrumbItem>{shortletDetail?.data?.name}</BreadcrumbItem>
+        <BreadcrumbItem>{shortletDetail?.data?.name || ""}</BreadcrumbItem>
       </Breadcrumbs>
+      {isLoading ? (
+        <Spinner size="md" />
+      ) : (
       <div className="space-y-4">
         <div className="space-y-2">
           <h2 className="text-shorttiee_primary text-lg font-bold">{shortletDetail?.data?.name}</h2>
@@ -107,6 +110,7 @@ export default function ShortletDetails() {
           </ul>
         </div>
       </div>
+      )}
     </div>
   );
 }
