@@ -26,6 +26,9 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "@/utils/queryKeys";
 import { ApiSDK } from "@/sdk";
 import { ListingsDto } from "@/sdk/generated";
+import { useAtomValue } from "jotai";
+import { loggedinUserAtom } from "@/atoms/user.atom";
+
 
 const statusTheme = {
   active: "text-shorttiee_green-dark bg-shorttiee_green-light",
@@ -38,6 +41,10 @@ export default function Shortlet(): JSX.Element {
   const [isShortlet] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [shortletId, setShortletId] = useState<string | null>(null);
+  const user = useAtomValue(loggedinUserAtom)
+
+  console.log(user);
+
 
   const addShortletModal = useDisclosure();
   const deleteShortletModal = useDisclosure();
@@ -46,7 +53,17 @@ export default function Shortlet(): JSX.Element {
 
   const { data: shortletData, isLoading } = useQuery({
     queryKey: [QueryKeys.shortlets],
-    queryFn: () => ApiSDK.ListingService.getApiV1Listings(),
+    //   queryFn: () => ApiSDK.ListingService.getApiV1Listings(`filter=${encodeURIComponent(JSON.stringify([["userId", "eq", "5802bb26-f58e-47c6-a630-1072be823cab"]])))
+    // }`),
+    //   queryFn: () =>
+    //     ApiSDK.ListingService.getApiV1Listings(`filter=${encodeURIComponent(JSON.stringify([["userId", "eq", "5802bb26-f58e-47c6-a630-1072be823cab"]])))
+    // }`)
+    // queryFn: () => ApiSDK.ListingService.getApiV1Listings({
+    //   filter: JSON.stringify([["userId", "eq", "5802bb26-f58e-47c6-a630-1072be823cab"]])
+    // }),
+    queryFn: () => ApiSDK.ListingService.getApiV1Listings(
+      `filter=${encodeURIComponent(JSON.stringify([["userId", "eq", user?.data?.id]]))}`
+    ),
     refetchOnMount: false,
   })
 
