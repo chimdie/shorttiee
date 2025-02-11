@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Avatar, Badge, BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "@heroui/react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Link } from "react-router-dom";
-import { DashboardRoutes } from "@/types/routes";
+import { Building2, Camera, Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileSchema } from "@/schema/profile.schema";
-import { Building2, Camera, Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { DashboardRoutes } from "@/types/routes";
 import { ApiSDK } from "@/sdk";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "@/utils/queryKeys";
 import { ApiError, CreateFileDto, UpdateUserDto } from "@/sdk/generated";
 import { useToast } from "@/hooks/use-toast";
@@ -16,8 +16,6 @@ import { useToast } from "@/hooks/use-toast";
 export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [image, setImage] = useState<string | null>(null);
-  const [_, setSelectedFile] = useState<CreateFileDto | null>(null);
-  const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -28,7 +26,6 @@ export default function Profile(): JSX.Element {
   const { data: user } = useQuery({
     queryKey: [QueryKeys.user],
     queryFn: () => ApiSDK.UserService.getApiV1UsersProfile(),
-    enabled: true,
   });
 
   useEffect(() => {
@@ -45,41 +42,6 @@ export default function Profile(): JSX.Element {
       });
     }
   }, [form, user?.data]);
-
-  const uploadProfileImgMutation = useMutation({
-    mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
-    onSuccess(data) {
-      const uploadedImgPath = data.data[0].path;
-      setUploadedImagePath(uploadedImgPath);
-
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.user],
-      });
-      toast({
-        description: data.message,
-      });
-    },
-    onError(error) {
-      const err = error as ApiError;
-      toast({
-        variant: "destructive",
-        description: err.body.message,
-      });
-    },
-  });
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const fileDto = { files: [file] };
-      setSelectedFile(fileDto);
-
-      const reader = new FileReader();
-      reader.onload = (event) => setImage(event.target?.result as string);
-      reader.readAsDataURL(file);
-      uploadProfileImgMutation.mutate(fileDto);
-    }
-  };
 
   const updateUserDataMutation = useMutation({
     mutationFn: (userData: UpdateUserDto) => ApiSDK.UserService.patchApiV1UsersProfile(userData),
@@ -102,12 +64,51 @@ export default function Profile(): JSX.Element {
     },
   });
 
+  const fileUploadMutation = useMutation({
+    mutationFn: (profileImg: CreateFileDto) => ApiSDK.FileService.postApiV1Files(profileImg),
+    onSuccess(data) {
+      if (data.data[0].path) {
+        let uploadedImgPath = data.data[0].path;
+
+        uploadedImgPath = new URL(uploadedImgPath, ApiSDK.OpenAPI.BASE).toString();
+        updateUserDataMutation.mutate({ photo: uploadedImgPath });
+      }
+      setIsEdit(false);
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.user],
+      });
+      toast({
+        description: data.message,
+      });
+    },
+    onError(error) {
+      const err = error as ApiError;
+      toast({
+        variant: "destructive",
+        description: err.body.message,
+      });
+    },
+  });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const fileDto = { files: [file] };
+      const reader = new FileReader();
+
+      reader.onload = (event) => setImage(event.target?.result as string);
+      reader.onload = (event) => {
+        const base64String = event.target?.result as string;
+        setImage(base64String);
+      };
+      reader.readAsDataURL(file);
+      fileUploadMutation.mutate(fileDto);
+    }
+  };
+
   const onSubmit = (data: ProfileSchema) => {
-    const updatedData = {
-      ...data,
-      photo: uploadedImagePath || user?.data?.photo || "",
-    };
-    updateUserDataMutation.mutate(updatedData);
+    updateUserDataMutation.mutate(data);
   };
 
   return (
@@ -128,7 +129,7 @@ export default function Profile(): JSX.Element {
             id="fileUpload"
             onChange={handleImageUpload}
           />
-          {uploadProfileImgMutation.isPending ? (
+          {fileUploadMutation.isPending ? (
             <Spinner size="md" />
           ) : (
             <Badge
@@ -293,7 +294,6 @@ export default function Profile(): JSX.Element {
                 <Button
                   onPress={() => setIsEdit(!isEdit)}
                   isDisabled={updateUserDataMutation.isPending}
-                  isLoading={updateUserDataMutation.isPending}
                 >
                   Cancel
                 </Button>
