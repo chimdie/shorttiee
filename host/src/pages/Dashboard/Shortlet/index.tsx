@@ -42,9 +42,7 @@ export default function Shortlet(): JSX.Element {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [shortletId, setShortletId] = useState<string | null>(null);
   const user = useAtomValue(loggedinUserAtom)
-
-  console.log(user);
-
+  const userId = user?.data?.id
 
   const addShortletModal = useDisclosure();
   const deleteShortletModal = useDisclosure();
@@ -52,18 +50,8 @@ export default function Shortlet(): JSX.Element {
   const navigate = useNavigate();
 
   const { data: shortletData, isLoading } = useQuery({
-    queryKey: [QueryKeys.shortlets],
-    //   queryFn: () => ApiSDK.ListingService.getApiV1Listings(`filter=${encodeURIComponent(JSON.stringify([["userId", "eq", "5802bb26-f58e-47c6-a630-1072be823cab"]])))
-    // }`),
-    //   queryFn: () =>
-    //     ApiSDK.ListingService.getApiV1Listings(`filter=${encodeURIComponent(JSON.stringify([["userId", "eq", "5802bb26-f58e-47c6-a630-1072be823cab"]])))
-    // }`)
-    // queryFn: () => ApiSDK.ListingService.getApiV1Listings({
-    //   filter: JSON.stringify([["userId", "eq", "5802bb26-f58e-47c6-a630-1072be823cab"]])
-    // }),
-    queryFn: () => ApiSDK.ListingService.getApiV1Listings(
-      `filter=${encodeURIComponent(JSON.stringify([["userId", "eq", user?.data?.id]]))}`
-    ),
+    queryKey: [QueryKeys.shortlets, userId],
+    queryFn: () => ApiSDK.ListingService.getApiV1Listings(JSON.stringify([["userId", "eq", userId]])),
     refetchOnMount: false,
   })
 
