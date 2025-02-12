@@ -33,6 +33,7 @@ export default function Profile() {
     mutationFn: (photo: Pick<UpdateUserDto, 'photo'>) =>
       APISDK.UserService.patchApiV1UsersProfile(photo),
     onSuccess() {
+      setIsVisible(false);
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.user],
       });
@@ -49,7 +50,7 @@ export default function Profile() {
     onSuccess(data) {
       const result = data as unknown as CreateFileResponse;
 
-      if (result.data[0].path) {
+      if (result?.data) {
         updateAvatar.mutate({photo: result?.data[0]?.path});
       }
     },
