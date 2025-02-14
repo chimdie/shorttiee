@@ -13,14 +13,14 @@ import Otp from "@/pages/Auth/Otp";
 import ChangePassword from "@/pages/Auth/ChangePassword";
 
 // Dashboard pages
-import Home from "@/pages/Dashboard/Home";
-import Shortlet from "@/pages/Dashboard/Shortlet";
-import Settings from "@/pages/Dashboard/Settings/index";
-import ShortletDetails from "@/pages/Dashboard/Shortlet/shortletDetails";
-import EditShortlet from "@/pages/Dashboard/Shortlet/editShortlet";
-import Profile from "@/pages/Dashboard/Profile";
-import Notification from "@/pages/Dashboard/Notification";
-import Reservation from "@/pages/Dashboard/Reservation";
+import Home from "@/pages/Home";
+import Shortlet from "@/pages/Shortlet";
+import Settings from "@/pages/Settings/index";
+import ShortletDetails from "@/pages/Shortlet/shortletDetails";
+import EditShortlet from "@/pages/Shortlet/editShortlet";
+import Profile from "@/pages/Profile";
+import Notification from "@/pages/Notification";
+import Reservation from "@/pages/Reservation";
 
 import NotFound from "@/components/NotFound";
 
