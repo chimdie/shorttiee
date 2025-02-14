@@ -381,7 +381,7 @@ export default function AddShortletModal({
                         <div className="flex  items-center gap-4 w-full space-y-2">
                           {images.length > 0 && (
                             <div
-                                className="border-2 border-grey-200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
+                              className="border-2 border-grey-200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
                               onClick={() => fileInputRef.current?.click()}
                             >
                               <input
@@ -395,8 +395,8 @@ export default function AddShortletModal({
                                   handleImageUpload(e);
                                 }}
                               />
-                                <Images size={24} className="pointer-events-none text-grey-400" />
-                                <p className="text-grey-400 text-sm py-1">Add Another Image</p>
+                              <Images size={24} className="pointer-events-none text-grey-400" />
+                              <p className="text-grey-400 text-sm py-1">Add Another Image</p>
                             </div>
                           )}
                           {/* preview */}

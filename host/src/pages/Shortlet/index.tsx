@@ -102,14 +102,14 @@ export default function Shortlet(): JSX.Element {
                 <Input
                   radius="sm"
                   variant="bordered"
-                    startContent={<Search size={16} className="pointer-events-none text-grey-400" />}
+                  startContent={<Search size={16} className="pointer-events-none text-grey-400" />}
                   placeholder="Search shortlets by name,type or location"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <Button
-                  className="bg-shorttiee-primary text-white font-medium"
+                className="bg-shorttiee-primary text-white font-medium"
                 onPress={addShortletModal.onOpen}
               >
                 Add a Shortlet

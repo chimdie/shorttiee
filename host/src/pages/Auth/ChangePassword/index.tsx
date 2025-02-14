@@ -84,7 +84,7 @@ export default function ChangePassword(): JSX.Element {
                         {isVisible ? (
                           <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                            <Eye size={16} className="text-grey-400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }
@@ -119,7 +119,7 @@ export default function ChangePassword(): JSX.Element {
                         {isVisible ? (
                           <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                            <Eye size={16} className="text-grey-400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }
@@ -153,7 +153,7 @@ export default function ChangePassword(): JSX.Element {
                         {isVisible ? (
                           <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                            <Eye size={16} className="text-grey-400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }

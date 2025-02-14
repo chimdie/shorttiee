@@ -144,7 +144,7 @@ export default function Profile(): JSX.Element {
             >
               <Avatar
                 src={(image as string) || (user?.data?.photo as string)}
-                  className="w-40 h-40 opacity-100 text-shorttiee-primary aspect-square rounded-full border-red-500"
+                className="w-40 h-40 opacity-100 text-shorttiee-primary aspect-square rounded-full border-red-500"
               />
             </Badge>
           )}
@@ -309,7 +309,7 @@ export default function Profile(): JSX.Element {
               </div>
             ) : (
               <Button
-                  className="bg-shorttiee-primary text-white font-semibold w-full"
+                className="bg-shorttiee-primary text-white font-semibold w-full"
                 radius="sm"
                 type="button"
                 onPress={() => setIsEdit(false)}
