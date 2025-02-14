@@ -17,42 +17,44 @@ export default function ChangePassword(): JSX.Element {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const { toast } = useToast()
-  const navigate = useNavigate()
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const form = useForm<ChangePasswordSchema>({
     resolver: zodResolver(ChangePasswordSchema),
   });
 
-
   const changePasswordMutation = useMutation({
-    mutationFn: (formData: ChangePasswordDto) => ApiSDK.AuthenticationService.postApiV1AuthChangePassword(formData),
+    mutationFn: (formData: ChangePasswordDto) =>
+      ApiSDK.AuthenticationService.postApiV1AuthChangePassword(formData),
     onSuccess(data) {
       toast({
-        description: data.message
-      })
-      navigate(DashboardRoutes.home)
+        description: data.message,
+      });
+      navigate(DashboardRoutes.home);
     },
     onError(error) {
-      const err = error as ApiError
+      const err = error as ApiError;
       toast({
         variant: "destructive",
-        description: err.body.message
-      })
-    }
-  })
+        description: err.body.message,
+      });
+    },
+  });
   const onSubmit = (data: ChangePasswordSchema) => {
-    const { oldPassword, newPassword } = data
+    const { oldPassword, newPassword } = data;
     const formData = {
-      oldPassword, newPassword, reauth: false
-    }
-    changePasswordMutation.mutate(formData)
+      oldPassword,
+      newPassword,
+      reauth: false,
+    };
+    changePasswordMutation.mutate(formData);
   };
 
   return (
     <div className="space-y-12">
       <div>
-        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Change  Password</h3>
+        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Change Password</h3>
         <p className="text-base font-normal text-grey_300">
           Securing your account is crucial. Create a strong password to protect your information.{" "}
         </p>
@@ -170,7 +172,6 @@ export default function ChangePassword(): JSX.Element {
             type="submit"
             isDisabled={changePasswordMutation.isPending}
             isLoading={changePasswordMutation.isPending}
-
           >
             Change
           </Button>

@@ -15,7 +15,6 @@ import { getSidebarList } from "./sidebarMenuItem";
 import { Link, useLocation } from "react-router-dom";
 import { HomeHashtag } from "iconsax-react";
 
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation().pathname;
   const items = getSidebarList(pathname);

@@ -14,13 +14,12 @@ import { ApiError, LoginDto } from "@/sdk/generated";
 import { useSetAtom } from "jotai";
 import { loggedinUserAtom, storedAuthTokenAtom } from "@/atoms/user.atom";
 
-
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { toast } = useToast()
-  const setStoredToken = useSetAtom(storedAuthTokenAtom)
-  const setLoggedInUser = useSetAtom(loggedinUserAtom)
+  const { toast } = useToast();
+  const setStoredToken = useSetAtom(storedAuthTokenAtom);
+  const setLoggedInUser = useSetAtom(loggedinUserAtom);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -32,27 +31,27 @@ export default function Login(): JSX.Element {
     mutationFn: (formData: LoginDto) => ApiSDK.AuthenticationService.postApiV1AuthLogin(formData),
     onSuccess(data) {
       if (data) {
-        const { token } = data.data
-        ApiSDK.OpenAPI.TOKEN = token
-        setStoredToken(token)
-        setLoggedInUser(data)
+        const { token } = data.data;
+        ApiSDK.OpenAPI.TOKEN = token;
+        setStoredToken(token);
+        setLoggedInUser(data);
         navigate(DashboardRoutes.home, { replace: true });
         toast({
-          description: data.message
-        })
+          description: data.message,
+        });
       }
     },
     onError(error) {
-      const err = error as ApiError
+      const err = error as ApiError;
       toast({
         variant: "destructive",
-        description: err.body.message
-      })
-    }
-  })
+        description: err.body.message,
+      });
+    },
+  });
 
   const onSubmit = (data: LoginSchema) => {
-    signInMutation.mutate(data)
+    signInMutation.mutate(data);
   };
   return (
     <div className="space-y-12">

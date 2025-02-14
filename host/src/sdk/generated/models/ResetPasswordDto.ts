@@ -7,4 +7,3 @@ export type ResetPasswordDto = {
   otp: string;
   password: string;
 };
-

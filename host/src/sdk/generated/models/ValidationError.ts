@@ -6,4 +6,3 @@ export type ValidationError = {
   message: string;
   error: string;
 };
-

@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +22,12 @@ import AddShortletModal from "@/components/Shortlet/add-shortlet-modal";
 import TablePagination from "@/components/TablePagination";
 import DeleteShortletModal from "@/components/Shortlet/delete-shortlet-modal";
 import { DashboardRoutes } from "@/types/routes";
-import { shortletData } from "@/dummyData/shortlet";
+import { useQuery } from "@tanstack/react-query";
+import { QueryKeys } from "@/utils/queryKeys";
+import { ApiSDK } from "@/sdk";
+import { ListingsDto } from "@/sdk/generated";
+import { useAtomValue } from "jotai";
+import { loggedinUserAtom } from "@/atoms/user.atom";
 
 const statusTheme = {
   active: "text-shorttiee_green-dark bg-shorttiee_green-light",
@@ -34,24 +40,33 @@ export default function Shortlet(): JSX.Element {
   const [isShortlet] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [shortletId, setShortletId] = useState<string | null>(null);
-
+  const user = useAtomValue(loggedinUserAtom);
+  const userId = user?.data?.id;
   const addShortletModal = useDisclosure();
   const deleteShortletModal = useDisclosure();
-
   const navigate = useNavigate();
 
-  const filteredShortlets = shortletData.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.location.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const { data: shortletData, isLoading } = useQuery({
+    queryKey: [QueryKeys.shortlets, userId],
+    queryFn: () =>
+      ApiSDK.ListingService.getApiV1Listings(JSON.stringify([["userId", "eq", userId]])),
+    refetchOnMount: false,
+  });
+
+  const filteredShortlets =
+    shortletData?.data.filter(
+      (item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.address.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) || [];
 
   const getStatusClass = (status: string) => {
     return Object.keys(statusTheme).find((key) => status.includes(key))
       ? statusTheme[status as keyof typeof statusTheme]
       : statusTheme.terminated;
   };
+
   return (
     <>
       {isShortlet ? (
@@ -95,7 +110,7 @@ export default function Shortlet(): JSX.Element {
               </div>
               <Button
                 className="bg-shorttiee_primary text-white font-medium"
-                  onPress={addShortletModal.onOpen}
+                onPress={addShortletModal.onOpen}
               >
                 Add a Shortlet
               </Button>
@@ -119,16 +134,18 @@ export default function Shortlet(): JSX.Element {
                   <TableColumn>Status</TableColumn>
                   <TableColumn>Actions</TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={"No shortlet to display."}>
-                  {filteredShortlets.map((item) => (
+                <TableBody
+                  emptyContent={isLoading ? <Spinner size="md" /> : "No shortlet to display."}
+                >
+                  {filteredShortlets?.map((item: ListingsDto) => (
                     <TableRow
                       className="bg-white border-y-5 border-grey_100  cursor-pointer"
-                      key={item._id}
-                      onClick={() => navigate(`${DashboardRoutes.shortlets}/${item._id}`)}
+                      key={item.id}
+                      onClick={() => navigate(`${DashboardRoutes.shortlets}/${item.id}`)}
                     >
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.type}</TableCell>
-                      <TableCell>{item.location}</TableCell>
+                      <TableCell>{item.address}</TableCell>
                       <TableCell>{item.price}</TableCell>
                       <TableCell>
                         <Chip
@@ -146,7 +163,7 @@ export default function Shortlet(): JSX.Element {
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Shortlet Table Actions">
                               <DropdownItem key="edit">
-                                <Link to={`${DashboardRoutes.shortlets}/edit/${item._id}`}>
+                                <Link to={`${DashboardRoutes.shortlets}/edit/${item.id}`}>
                                   Edit Shortlet
                                 </Link>
                               </DropdownItem>
@@ -154,9 +171,9 @@ export default function Shortlet(): JSX.Element {
                                 key="delete"
                                 className="text-danger"
                                 color="danger"
-                                onClick={() => {
-                                  if (item._id) {
-                                    setShortletId(item._id);
+                                onPress={() => {
+                                  if (item.id) {
+                                    setShortletId(item.id);
                                     deleteShortletModal.onOpen();
                                   }
                                 }}

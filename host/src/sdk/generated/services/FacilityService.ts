@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreateFacilityDto } from '../models/CreateFacilityDto';
-import type { CreateFacilityResponse } from '../models/CreateFacilityResponse';
-import type { GetAllFacilityResponse } from '../models/GetAllFacilityResponse';
-import type { GetFacilityResponse } from '../models/GetFacilityResponse';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { CreateFacilityDto } from "../models/CreateFacilityDto";
+import type { CreateFacilityResponse } from "../models/CreateFacilityResponse";
+import type { GetAllFacilityResponse } from "../models/GetAllFacilityResponse";
+import type { GetFacilityResponse } from "../models/GetFacilityResponse";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class FacilityService {
   /**
    * Create a facility
@@ -21,10 +21,10 @@ export class FacilityService {
     requestBody?: CreateFacilityDto,
   ): CancelablePromise<CreateFacilityResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/facilities/',
+      method: "POST",
+      url: "/api/v1/facilities/",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
     });
   }
   /**
@@ -35,8 +35,8 @@ export class FacilityService {
    */
   public static getApiV1Facilities(): CancelablePromise<GetAllFacilityResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/facilities/',
+      method: "GET",
+      url: "/api/v1/facilities/",
     });
   }
   /**
@@ -46,14 +46,12 @@ export class FacilityService {
    * @returns GetFacilityResponse Success
    * @throws ApiError
    */
-  public static getApiV1Facilities1(
-    id: string,
-  ): CancelablePromise<GetFacilityResponse> {
+  public static getApiV1Facilities1(id: string): CancelablePromise<GetFacilityResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/facilities/{id}',
+      method: "GET",
+      url: "/api/v1/facilities/{id}",
       path: {
-        'id': id,
+        id: id,
       },
     });
   }

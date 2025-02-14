@@ -7,4 +7,3 @@ export type CreateReservationDto = {
   endDate: string;
   listingId: string;
 };
-

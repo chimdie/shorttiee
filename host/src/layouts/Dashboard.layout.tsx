@@ -13,7 +13,6 @@ import { DashboardRoutes } from "@/types/routes";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Spinner } from "@heroui/spinner";
 
-
 const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description: string }> = {
   [DashboardRoutes.home]: {
     title: "Home",
@@ -35,7 +34,7 @@ const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description
 
 export default function DashboardLayout(): JSX.Element {
   const pathname = useLocation().pathname as DashboardRoutes;
-  const { loggedInUser, authToken } = useAuthRedirect({ requireAuth: true })
+  const { loggedInUser, authToken } = useAuthRedirect({ requireAuth: true });
 
   const { title, description } = dashboardHelmetTitle[pathname] || {
     title: "Shorttiee",
@@ -47,7 +46,7 @@ export default function DashboardLayout(): JSX.Element {
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" color="warning" />
       </div>
-    )
+    );
   }
   return (
     <>
