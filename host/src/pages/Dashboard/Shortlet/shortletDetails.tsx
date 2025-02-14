@@ -35,13 +35,13 @@ export default function ShortletDetails() {
       ) : (
         <div className="space-y-4">
           <div className="space-y-2">
-            <h2 className="text-shorttiee_primary text-lg font-bold">
+              <h2 className="text-shorttiee-primary text-lg font-bold">
               {shortletDetail?.data?.name}
             </h2>
             <div className="flex gap-4">
-              <p className="text-shorttiee_primary font-semibold">{shortletDetail?.data?.type}</p>
+                <p className="text-shorttiee-primary font-semibold">{shortletDetail?.data?.type}</p>
               <p className="text-sm">
-                <span className="text-base text-shorttiee_green-dark font-semibold">
+                  <span className="text-base text-shorttiee-green-dark font-semibold">
                   #{shortletDetail?.data?.price}
                 </span>{" "}
                 /night
@@ -49,7 +49,7 @@ export default function ShortletDetails() {
               <Chip
                 radius="sm"
                 size="sm"
-                className="text-shorttiee_yellow-dark bg-shorttiee_yellow-light text-xs font-bold capitalize"
+                  className="text-shorttiee-yellow-dark bg-shorttiee-yellow-light text-xs font-bold capitalize"
               >
                 {shortletDetail?.data?.status}
               </Chip>
@@ -83,25 +83,25 @@ export default function ShortletDetails() {
 
           <div className="py-6 space-y-3">
             <div>
-              <h3 className="text-shorttiee_primary text-md font-bold">Address</h3>
-              <p className="text-grey_400">{shortletDetail?.data?.address}</p>
+                <h3 className="text-shorttiee-primary text-md font-bold">Address</h3>
+                <p className="text-grey-400">{shortletDetail?.data?.address}</p>
             </div>
             <div>
-              <h3 className="text-shorttiee_primary text-md font-bold">Rate</h3>
-              <p className="text-grey_400">{shortletDetail?.data?.rate}</p>
+                <h3 className="text-shorttiee-primary text-md font-bold">Rate</h3>
+                <p className="text-grey-400">{shortletDetail?.data?.rate}</p>
             </div>
             <div>
-              <h3 className="text-shorttiee_primary text-md font-bold">Description</h3>
+                <h3 className="text-shorttiee-primary text-md font-bold">Description</h3>
               <div className="w-3/4 space-y-2">
-                <p className="text-grey_400">{shortletDetail?.data?.description}</p>
+                  <p className="text-grey-400">{shortletDetail?.data?.description}</p>
               </div>
             </div>
           </div>
           <div className="space-y-3">
-            <h3 className="text-shorttiee_primary text-md font-bold">Restrictions</h3>
+              <h3 className="text-shorttiee-primary text-md font-bold">Restrictions</h3>
             <ul className="flex flex-wrap  p-0  list-disc list-inside w-2/6">
               {restrictionList?.map((restriction, index) => (
-                <li key={index} className="w-1/2 p-1 text-grey_400">
+                <li key={index} className="w-1/2 p-1 text-grey-400">
                   {restriction}
                 </li>
               ))}

@@ -13,7 +13,7 @@ export default function NotFound(): JSX.Element {
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="flex items-center  gap-1">
         <HomeHashtag size="32" color="#1F253F" />
-        <h3 className="text-2xl text-shorttiee_primary font-medium">Shorttie</h3>
+        <h3 className="text-2xl text-shorttiee-primary font-medium">Shorttie</h3>
       </div>
 
       <div className="py-8 space-y-6">
@@ -37,7 +37,7 @@ export default function NotFound(): JSX.Element {
 
         <p className="text-gray-400 mb-6 text-center">The page you're looking for doesn't exist.</p>
         <Button
-          className="bg-shorttiee_primary text-white font-medium w-full"
+          className="bg-shorttiee-primary text-white font-medium w-full"
           onClick={handleRedirect}
         >
           Return Home

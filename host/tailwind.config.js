@@ -33,25 +33,25 @@ export default {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
-        shorttiee_primary: "#1F253F",
-        shorttiee_secondary: "#1D3D3A",
-        shorttiee_purple: "#3F1F3A",
-        shorttiee_yellow: {
+        "shorttiee-primary": "#1F253F",
+        "shorttiee-secondary": "#1D3D3A",
+        "shorttiee-purple": "#3F1F3A",
+        "shorttiee-yellow": {
           dark: "#B1AD4E",
           light: "#EAE68B",
         },
-        shorttiee_green: {
+        "shorttiee-green": {
           dark: "#1DBF73",
           light: "#EAFFF5",
         },
-        shorttiee_red: {
+        "shorttiee-red": {
           dark: "#F0171D",
           light: "#FFEAEB",
         },
-        grey_100: "#F7F6F2",
-        grey_200: "#EBEBEB",
-        grey_300: "#A1A3B0",
-        grey_400: "#6B7280",
+        "grey-100": "#F7F6F2",
+        "grey-200": "#EBEBEB",
+        "grey-300": "#A1A3B0",
+        "grey-400": "#6B7280",
         white: "#FFFFFF",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

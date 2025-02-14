@@ -136,7 +136,7 @@ export default function Profile(): JSX.Element {
               color="default"
               content={
                 <label htmlFor="fileUpload" className="cursor-pointer">
-                  <Camera className="size-6 text-shorttiee_primary" />
+                  <Camera className="size-6 text-shorttiee-primary" />
                 </label>
               }
               placement="bottom-right"
@@ -144,7 +144,7 @@ export default function Profile(): JSX.Element {
             >
               <Avatar
                 src={(image as string) || (user?.data?.photo as string)}
-                className="w-40 h-40 opacity-100 text-shorttiee_primary aspect-square rounded-full border-red-500"
+                  className="w-40 h-40 opacity-100 text-shorttiee-primary aspect-square rounded-full border-red-500"
               />
             </Badge>
           )}
@@ -166,7 +166,7 @@ export default function Profile(): JSX.Element {
                         placeholder="First Name"
                         type="text"
                         startContent={
-                          <UserRound size={16} className="pointer-events-none text-grey_400" />
+                          <UserRound size={16} className="pointer-events-none text-grey-400" />
                         }
                         isDisabled={isEdit || updateUserDataMutation.isPending}
                       />
@@ -188,7 +188,7 @@ export default function Profile(): JSX.Element {
                         placeholder="Last Name"
                         type="text"
                         startContent={
-                          <UserRound size={16} className="pointer-events-none text-grey_400" />
+                          <UserRound size={16} className="pointer-events-none text-grey-400" />
                         }
                         isDisabled={isEdit || updateUserDataMutation.isPending}
                       />
@@ -211,7 +211,7 @@ export default function Profile(): JSX.Element {
                       placeholder="Email"
                       type="email"
                       startContent={
-                        <Mail size={16} className="pointer-events-none text-grey_400" />
+                        <Mail size={16} className="pointer-events-none text-grey-400" />
                       }
                       isDisabled
                     />
@@ -234,7 +234,7 @@ export default function Profile(): JSX.Element {
                       placeholder="Phone Number"
                       type="text"
                       startContent={
-                        <Phone size={16} className="pointer-events-none text-grey_400" />
+                        <Phone size={16} className="pointer-events-none text-grey-400" />
                       }
                       isDisabled={isEdit || updateUserDataMutation.isPending}
                     />
@@ -257,7 +257,7 @@ export default function Profile(): JSX.Element {
                       placeholder="Your Home Address"
                       type="text"
                       startContent={
-                        <MapPin size={16} className="pointer-events-none text-grey_400" />
+                        <MapPin size={16} className="pointer-events-none text-grey-400" />
                       }
                       isDisabled={isEdit || updateUserDataMutation.isPending}
                     />
@@ -280,7 +280,7 @@ export default function Profile(): JSX.Element {
                       placeholder="Business Name"
                       type="text"
                       startContent={
-                        <Building2 size={16} className="pointer-events-none text-grey_400" />
+                        <Building2 size={16} className="pointer-events-none text-grey-400" />
                       }
                       isDisabled={isEdit || updateUserDataMutation.isPending}
                     />
@@ -298,7 +298,7 @@ export default function Profile(): JSX.Element {
                   Cancel
                 </Button>
                 <Button
-                  className="bg-shorttiee_primary text-white font-semibold"
+                  className="bg-shorttiee-primary text-white font-semibold"
                   radius="sm"
                   type="submit"
                   isDisabled={updateUserDataMutation.isPending}
@@ -309,7 +309,7 @@ export default function Profile(): JSX.Element {
               </div>
             ) : (
               <Button
-                className="bg-shorttiee_primary text-white font-semibold w-full"
+                  className="bg-shorttiee-primary text-white font-semibold w-full"
                 radius="sm"
                 type="button"
                 onPress={() => setIsEdit(false)}

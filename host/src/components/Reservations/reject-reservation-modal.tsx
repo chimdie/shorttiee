@@ -42,7 +42,7 @@ export default function RejectReservationModal({
   return (
     <Modal size="md" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1 text-shorttiee_primary">
+        <ModalHeader className="flex flex-col gap-1 text-shorttiee-primary">
           Reject Reservation
         </ModalHeader>
         <ModalBody>
@@ -63,7 +63,7 @@ export default function RejectReservationModal({
                         value={id}
                         type="text"
                         startContent={
-                          <Signature size={16} className="pointer-events-none text-grey_400" />
+                          <Signature size={16} className="pointer-events-none text-grey-400" />
                         }
                       />
                     </FormControl>
@@ -85,7 +85,7 @@ export default function RejectReservationModal({
                       placeholder="Reason for Rejection"
                       aria-label="type"
                       startContent={
-                        <BrainCircuit size={16} className="pointer-events-none text-grey_400" />
+                        <BrainCircuit size={16} className="pointer-events-none text-grey-400" />
                       }
                       classNames={{ popoverContent: "rounded-md" }}
                     >
@@ -103,14 +103,14 @@ export default function RejectReservationModal({
                   onPress={onClose}
                   size="md"
                   fullWidth={true}
-                  className="bg-white shadow-sm border text-shorttiee_primary font-medium"
+                  className="bg-white shadow-sm border text-shorttiee-primary font-medium"
                 >
                   Cancel
                 </Button>
                 <Button
                   size="md"
                   fullWidth={true}
-                  className="bg-shorttiee_primary text-white shadow-sm font-medium"
+                  className="bg-shorttiee-primary text-white shadow-sm font-medium"
                   type="submit"
                 >
                   Done

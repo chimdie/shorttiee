@@ -41,7 +41,7 @@ export default function AcceptReservationModal({
   return (
     <Modal size="md" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1 text-shorttiee_primary">
+        <ModalHeader className="flex flex-col gap-1 text-shorttiee-primary">
           Accept Reservation
         </ModalHeader>
         <ModalBody>
@@ -62,7 +62,7 @@ export default function AcceptReservationModal({
                         value={id}
                         type="text"
                         startContent={
-                          <Signature size={16} className="pointer-events-none text-grey_400" />
+                          <Signature size={16} className="pointer-events-none text-grey-400" />
                         }
                       />
                     </FormControl>
@@ -84,7 +84,7 @@ export default function AcceptReservationModal({
                         placeholder="Payment Account"
                         type="text"
                         startContent={
-                          <HandCoins size={16} className="pointer-events-none text-grey_400" />
+                          <HandCoins size={16} className="pointer-events-none text-grey-400" />
                         }
                       />
                     </FormControl>
@@ -106,7 +106,7 @@ export default function AcceptReservationModal({
                         placeholder="Account Name"
                         type="text"
                         startContent={
-                          <AtSign size={16} className="pointer-events-none text-grey_400" />
+                          <AtSign size={16} className="pointer-events-none text-grey-400" />
                         }
                       />
                     </FormControl>
@@ -128,7 +128,7 @@ export default function AcceptReservationModal({
                         placeholder="Bank Name"
                         type="text"
                         startContent={
-                          <Landmark size={16} className="pointer-events-none text-grey_400" />
+                          <Landmark size={16} className="pointer-events-none text-grey-400" />
                         }
                       />
                     </FormControl>
@@ -149,7 +149,7 @@ export default function AcceptReservationModal({
                         variant="bordered"
                         placeholder="Additional Information(Optional)"
                         startContent={
-                          <Info size={16} className="pointer-events-none text-grey_400 mt-0.5" />
+                          <Info size={16} className="pointer-events-none text-grey-400 mt-0.5" />
                         }
                       />
                     </FormControl>
@@ -163,14 +163,14 @@ export default function AcceptReservationModal({
                   onPress={onClose}
                   size="md"
                   fullWidth={true}
-                  className="bg-white shadow-sm border text-shorttiee_primary font-medium"
+                  className="bg-white shadow-sm border text-shorttiee-primary font-medium"
                 >
                   Cancel
                 </Button>
                 <Button
                   size="md"
                   fullWidth={true}
-                  className="bg-shorttiee_primary text-white shadow-sm font-medium"
+                  className="bg-shorttiee-primary text-white shadow-sm font-medium"
                   type="submit"
                 >
                   Accept

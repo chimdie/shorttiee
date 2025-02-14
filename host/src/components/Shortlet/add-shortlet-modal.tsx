@@ -162,7 +162,7 @@ export default function AddShortletModal({
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
               Add a Shortlet
-              <span className="text-sm text-grey_400">
+              <span className="text-sm text-grey-400">
                 Fill out the form to get your building listed on Shorttiee
               </span>
             </ModalHeader>
@@ -180,7 +180,7 @@ export default function AddShortletModal({
                         placeholder="Shortlet Name"
                         type="text"
                         startContent={
-                          <House size={16} className="pointer-events-none text-grey_400" />
+                          <House size={16} className="pointer-events-none text-grey-400" />
                         }
                         isDisabled={addShortletMutation.isPending}
                       />
@@ -203,7 +203,7 @@ export default function AddShortletModal({
                         placeholder="Shortlet Address"
                         type="text"
                         startContent={
-                          <MapPinHouse size={16} className="pointer-events-none text-grey_400" />
+                          <MapPinHouse size={16} className="pointer-events-none text-grey-400" />
                         }
                         isDisabled={addShortletMutation.isPending}
                       />
@@ -227,7 +227,7 @@ export default function AddShortletModal({
                           placeholder="Shortlet Price"
                           type="text"
                           startContent={
-                            <Wallet size={16} className="pointer-events-none text-grey_400" />
+                            <Wallet size={16} className="pointer-events-none text-grey-400" />
                           }
                           isDisabled={addShortletMutation.isPending}
                         />
@@ -250,7 +250,7 @@ export default function AddShortletModal({
                           placeholder="Shortlet Rate"
                           type="text"
                           startContent={
-                            <Tickets size={16} className="pointer-events-none text-grey_400" />
+                            <Tickets size={16} className="pointer-events-none text-grey-400" />
                           }
                           isDisabled={addShortletMutation.isPending}
                         />
@@ -275,7 +275,7 @@ export default function AddShortletModal({
                         placeholder="Shortlet Type"
                         aria-label="type"
                         startContent={
-                          <Proportions size={16} className="pointer-events-none text-grey_400" />
+                          <Proportions size={16} className="pointer-events-none text-grey-400" />
                         }
                         classNames={{ popoverContent: "rounded-md" }}
                         isDisabled={addShortletMutation.isPending}
@@ -302,7 +302,7 @@ export default function AddShortletModal({
                         placeholder="Shortlet Category"
                         aria-label="category"
                         startContent={
-                          <Tag size={16} className="pointer-events-none text-grey_400" />
+                          <Tag size={16} className="pointer-events-none text-grey-400" />
                         }
                         classNames={{ popoverContent: "rounded-md" }}
                       >
@@ -328,7 +328,7 @@ export default function AddShortletModal({
                     <>
                       {/* empty uploader */}
                       {!isLinkInput && images.length === 0 && (
-                        <div className="border-2 border-grey_200 rounded-xl py-8 flex flex-col justify-center items-center w-full">
+                        <div className="border-2 border-grey-200 rounded-xl py-8 flex flex-col justify-center items-center w-full">
                           <input
                             type="file"
                             accept="image/*"
@@ -345,8 +345,8 @@ export default function AddShortletModal({
                               className="flex flex-col items-center cursor-pointer"
                               onClick={() => fileInputRef?.current?.click()}
                             >
-                              <Images size={24} className="pointer-events-none text-grey_400" />
-                              <p className="text-grey_400 text-sm py-1">Add shortlet image</p>
+                              <Images size={24} className="pointer-events-none text-grey-400" />
+                              <p className="text-grey-400 text-sm py-1">Add shortlet image</p>
                             </div>
 
                             <div
@@ -361,8 +361,8 @@ export default function AddShortletModal({
                                 );
                               }}
                             >
-                              <Link size={24} className="pointer-events-none text-grey_400" />
-                              <p className="text-grey_400 text-sm py-1">Add shortlet image link</p>
+                              <Link size={24} className="pointer-events-none text-grey-400" />
+                              <p className="text-grey-400 text-sm py-1">Add shortlet image link</p>
                             </div>
                           </div>
                         </div>
@@ -381,7 +381,7 @@ export default function AddShortletModal({
                         <div className="flex  items-center gap-4 w-full space-y-2">
                           {images.length > 0 && (
                             <div
-                              className="border-2 border-grey_200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
+                                className="border-2 border-grey-200 rounded-xl p-4 flex flex-col justify-center items-center cursor-pointer w-20 h-20"
                               onClick={() => fileInputRef.current?.click()}
                             >
                               <input
@@ -395,8 +395,8 @@ export default function AddShortletModal({
                                   handleImageUpload(e);
                                 }}
                               />
-                              <Images size={24} className="pointer-events-none text-grey_400" />
-                              <p className="text-grey_400 text-sm py-1">Add Another Image</p>
+                                <Images size={24} className="pointer-events-none text-grey-400" />
+                                <p className="text-grey-400 text-sm py-1">Add Another Image</p>
                             </div>
                           )}
                           {/* preview */}
@@ -432,7 +432,7 @@ export default function AddShortletModal({
                             startContent={
                               <Link
                                 size={16}
-                                className="pointer-events-none text-grey_400 mt-0.5"
+                                className="pointer-events-none text-grey-400 mt-0.5"
                               />
                             }
                             onChange={(e) => {
@@ -466,7 +466,7 @@ export default function AddShortletModal({
                         aria-label="facilities"
                         selectionMode="multiple"
                         startContent={
-                          <Factory size={16} className="pointer-events-none text-grey_400" />
+                          <Factory size={16} className="pointer-events-none text-grey-400" />
                         }
                         classNames={{ popoverContent: "rounded-md" }}
                       >
@@ -497,7 +497,7 @@ export default function AddShortletModal({
                         aria-label="restrictions"
                         selectionMode="multiple"
                         startContent={
-                          <OctagonMinus size={16} className="pointer-events-none text-grey_400" />
+                          <OctagonMinus size={16} className="pointer-events-none text-grey-400" />
                         }
                         classNames={{ popoverContent: "rounded-md" }}
                         isDisabled={addShortletMutation.isPending}
@@ -523,7 +523,7 @@ export default function AddShortletModal({
                       variant="bordered"
                       placeholder="Shortlet Description"
                       startContent={
-                        <Speech size={16} className="pointer-events-none text-grey_400 mt-0.5" />
+                        <Speech size={16} className="pointer-events-none text-grey-400 mt-0.5" />
                       }
                       isDisabled={addShortletMutation.isPending}
                     />

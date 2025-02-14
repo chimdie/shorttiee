@@ -45,10 +45,10 @@ export default function Otp(): JSX.Element {
   return (
     <div className="space-y-12">
       <div>
-        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Verify Account</h3>
-        <p className="text-base font-normal text-grey_300">
+        <h3 className="text-xl font-bold text-shorttiee-primary text-center">Verify Account</h3>
+        <p className="text-base font-normal text-grey-300">
           Verify your account with the otp we sent to{" "}
-          <span className="text-shorttiee_primary font-bold">{userEmail}</span>
+          <span className="text-shorttiee-primary font-bold">{userEmail}</span>
         </p>
       </div>
       <div className="flex flex-col items-center justify-center space-y-6">
@@ -77,7 +77,7 @@ export default function Otp(): JSX.Element {
             />
             <div className="mt-8">
               <Button
-                className="bg-shorttiee_primary text-white font-semibold w-full"
+                className="bg-shorttiee-primary text-white font-semibold w-full"
                 size="lg"
                 radius="sm"
                 type="submit"
@@ -90,14 +90,14 @@ export default function Otp(): JSX.Element {
       </div>
 
       <div className="flex items-center justify-between w-full">
-        <p className="text-grey_300 text-base font-medium">
+        <p className="text-grey-300 text-base font-medium">
           Didn't receive OTP?{" "}
           {timer > 0 ? (
-            <span className="text-shorttiee_primary cursor-pointer font-semibold">Resend</span>
+            <span className="text-shorttiee-primary cursor-pointer font-semibold">Resend</span>
           ) : null}
         </p>
 
-        <p className="text-grey_300 text-base">{formatCountDown(timer)} secs</p>
+        <p className="text-grey-300 text-base">{formatCountDown(timer)} secs</p>
       </div>
     </div>
   );

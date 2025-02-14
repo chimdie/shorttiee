@@ -63,10 +63,10 @@ export default function DashboardLayout(): JSX.Element {
                   <BreadcrumbItem>
                     <BreadcrumbLink
                       href="#"
-                      className="text-base text-shorttiee_primary font-medium"
+                      className="text-base text-shorttiee-primary font-medium"
                     >
                       {title}
-                      <p className="text-xs text-grey_300">{description}</p>
+                      <p className="text-xs text-grey-300">{description}</p>
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                 </BreadcrumbList>
