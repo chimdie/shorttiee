@@ -11,33 +11,32 @@ import { ApiSDK } from "@/sdk";
 import { AuthRoutes } from "@/types/routes";
 import { ApiError, ForgotPasswordDto } from "@/sdk/generated";
 
-
 export default function ForgotPassword(): JSX.Element {
-  const { toast } = useToast()
-  const navigate = useNavigate()
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const form = useForm<ForgotPassWordSchema>({
     resolver: zodResolver(ForgotPassWordSchema),
   });
 
-
   const forgotPasswordMutation = useMutation({
-    mutationFn: (formData: ForgotPasswordDto) => ApiSDK.AuthenticationService.postApiV1AuthForgotPassword(formData),
+    mutationFn: (formData: ForgotPasswordDto) =>
+      ApiSDK.AuthenticationService.postApiV1AuthForgotPassword(formData),
     onSuccess(data) {
       toast({
-        description: data.message
-      })
-      navigate(AuthRoutes.verifyOtp)
+        description: data.message,
+      });
+      navigate(AuthRoutes.verifyOtp);
     },
     onError(error) {
-      const err = error as ApiError
+      const err = error as ApiError;
       toast({
         variant: "destructive",
-        description: err.body.message
-      })
-    }
-  })
+        description: err.body.message,
+      });
+    },
+  });
   const onSubmit = (data: ForgotPassWordSchema) => {
-    forgotPasswordMutation.mutate(data)
+    forgotPasswordMutation.mutate(data);
   };
 
   return (

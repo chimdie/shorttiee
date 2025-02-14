@@ -12,4 +12,3 @@ export type ReservationDto = {
   listingId: string;
   listingOwnerId: string;
 };
-

@@ -11,6 +11,5 @@ export type RegisterDto = {
   businessName?: string;
   referrerCode?: string;
   address?: string;
-  gender?: 'M' | 'F' | null;
+  gender?: "M" | "F" | null;
 };
-

@@ -5,7 +5,6 @@ import { AuthRoutes } from "@/types/routes";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Spinner } from "@heroui/spinner";
 
-
 const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string }> = {
   [AuthRoutes.login]: {
     title: "Login",
@@ -31,7 +30,7 @@ const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string 
 
 export default function AuthLayout(): JSX.Element {
   const currentPath = useLocation().pathname as AuthRoutes;
-  const { loggedInUser, authToken } = useAuthRedirect({ requireAuth: false })
+  const { loggedInUser, authToken } = useAuthRedirect({ requireAuth: false });
 
   const { title, description } = routeHelmetTitle[currentPath] || {
     title: "Shorttie",
@@ -43,7 +42,7 @@ export default function AuthLayout(): JSX.Element {
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" color="warning" />
       </div>
-    )
+    );
   }
   return (
     <>

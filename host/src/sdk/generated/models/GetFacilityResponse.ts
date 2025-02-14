@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FacilityDto } from './FacilityDto';
+import type { FacilityDto } from "./FacilityDto";
 export type GetFacilityResponse = {
   message: string;
   data: FacilityDto;
 };
-

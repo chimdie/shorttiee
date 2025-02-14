@@ -15,9 +15,8 @@ export type UserDto = {
   referrerCode?: string | null;
   address?: string | null;
   photo?: string | null;
-  role: 'USER' | 'ADMIN';
-  gender?: 'M' | 'F' | null;
+  role: "USER" | "ADMIN";
+  gender?: "M" | "F" | null;
   createdAt: string;
   updatedAt: string;
 };
-

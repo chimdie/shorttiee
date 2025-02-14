@@ -7,4 +7,3 @@ export type CategoryDto = {
   name: string;
   comment?: string | null;
 };
-

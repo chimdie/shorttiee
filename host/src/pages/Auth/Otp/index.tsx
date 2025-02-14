@@ -9,12 +9,11 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { OtpSchema } from "@/schema/auth.schema";
 import { DashboardRoutes } from "@/types/routes";
 
-
 export default function Otp(): JSX.Element {
   const [timer, setTimer] = useState<number>(60);
   const [, setShowResend] = useState<boolean>(false);
-  const userEmail = localStorage.getItem("userEmail")
-  const navigate = useNavigate()
+  const userEmail = localStorage.getItem("userEmail");
+  const navigate = useNavigate();
 
   const form = useForm<OtpSchema>({
     resolver: zodResolver(OtpSchema),
@@ -25,7 +24,7 @@ export default function Otp(): JSX.Element {
 
   const onSubmit = (data: OtpSchema) => {
     console.log(data);
-    navigate(DashboardRoutes.home)
+    navigate(DashboardRoutes.home);
   };
 
   useEffect(() => {

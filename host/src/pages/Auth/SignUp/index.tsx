@@ -21,13 +21,12 @@ import { ApiError, RegisterDto } from "@/sdk/generated";
 import { useSetAtom } from "jotai";
 import { loggedinUserAtom, storedAuthTokenAtom } from "@/atoms/user.atom";
 
-
 export default function SignUp(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { toast } = useToast()
-  const setStoredToken = useSetAtom(storedAuthTokenAtom)
-  const setLoggedInUser = useSetAtom(loggedinUserAtom)
+  const { toast } = useToast();
+  const setStoredToken = useSetAtom(storedAuthTokenAtom);
+  const setLoggedInUser = useSetAtom(loggedinUserAtom);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -36,31 +35,32 @@ export default function SignUp(): JSX.Element {
   });
 
   const signUpMutation = useMutation({
-    mutationFn: (formData: RegisterDto) => ApiSDK.AuthenticationService.postApiV1AuthRegister(formData),
+    mutationFn: (formData: RegisterDto) =>
+      ApiSDK.AuthenticationService.postApiV1AuthRegister(formData),
     onSuccess(data) {
       if (data) {
-        const { token } = data.data
-        ApiSDK.OpenAPI.TOKEN = token
-        setStoredToken(token)
-        setLoggedInUser(data)
+        const { token } = data.data;
+        ApiSDK.OpenAPI.TOKEN = token;
+        setStoredToken(token);
+        setLoggedInUser(data);
         navigate(AuthRoutes.verifyOtp);
         toast({
-          description: data.message
-        })
+          description: data.message,
+        });
       }
     },
-    onError(error) {      
-      const err = error as ApiError
+    onError(error) {
+      const err = error as ApiError;
       toast({
         variant: "destructive",
-        description: err.body.message
-      })
-    }
-  })
+        description: err.body.message,
+      });
+    },
+  });
 
   const onSubmit = (data: SignUpSchema) => {
-    localStorage.setItem("userEmail", data.email)
-    signUpMutation.mutate(data)
+    localStorage.setItem("userEmail", data.email);
+    signUpMutation.mutate(data);
   };
 
   return (
@@ -124,7 +124,7 @@ export default function SignUp(): JSX.Element {
           <FormField
             control={form.control}
             name="gender"
-            render={({ field }) => (  
+            render={({ field }) => (
               <FormItem>
                 <Select
                   value={field.value}
@@ -273,7 +273,12 @@ export default function SignUp(): JSX.Element {
               <FormItem>
                 <div className="flex items-center space-x-2">
                   <FormControl>
-                    <Checkbox radius="sm" checked={field.value} onChange={field.onChange} isDisabled={signUpMutation.isPending} />
+                    <Checkbox
+                      radius="sm"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      isDisabled={signUpMutation.isPending}
+                    />
                   </FormControl>
                   <FormLabel className="flex items-center space-x-1">
                     <span>I agree to the</span>

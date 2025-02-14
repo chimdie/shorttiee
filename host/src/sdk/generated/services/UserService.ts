@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UpdateUserDto } from '../models/UpdateUserDto';
-import type { UserProfileResponse } from '../models/UserProfileResponse';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { UpdateUserDto } from "../models/UpdateUserDto";
+import type { UserProfileResponse } from "../models/UserProfileResponse";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class UserService {
   /**
    * Get current user profile
@@ -16,8 +16,8 @@ export class UserService {
    */
   public static getApiV1UsersProfile(): CancelablePromise<UserProfileResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/users/profile',
+      method: "GET",
+      url: "/api/v1/users/profile",
     });
   }
   /**
@@ -31,10 +31,10 @@ export class UserService {
     requestBody?: UpdateUserDto,
   ): CancelablePromise<UserProfileResponse> {
     return __request(OpenAPI, {
-      method: 'PATCH',
-      url: '/api/v1/users/profile',
+      method: "PATCH",
+      url: "/api/v1/users/profile",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
     });
   }
 }

@@ -9,4 +9,3 @@ export type FacilityDto = {
   color?: string | null;
   comment?: string | null;
 };
-
