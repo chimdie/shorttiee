@@ -19,9 +19,9 @@ export const EnvDto = z.object({
 
   /**
    * @description files size limit in bytes
-   * @default 1MiB
+   * @default 5MiB
    */
-  FILE_SIZE_LIMIT: z.coerce.number().default((2 ** 10) ** 2),
+  FILE_SIZE_LIMIT: z.coerce.number().default((2 ** 10) ** 2 * 5),
 
   EMAIL_USER: z.string().email(),
   EMAIL_PASS: z.string(),
