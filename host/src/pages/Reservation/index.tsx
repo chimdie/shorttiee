@@ -11,9 +11,9 @@ export default function Reservation(): JSX.Element {
           aria-label="reservations"
           classNames={{
             tabList: "gap-12 w-full relative rounded-none p-0 border-b border-divider",
-            cursor: "w-full bg-shorttiee_primary",
+            cursor: "w-full bg-shorttiee-primary",
             tab: "max-w-fit px-0 h-12",
-            tabContent: "group-data-[selected=true]:text-black text-grey_400 font-bold",
+            tabContent: "group-data-[selected=true]:text-black text-grey-400 font-bold",
           }}
           variant="underlined"
         >

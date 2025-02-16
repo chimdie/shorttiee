@@ -56,8 +56,8 @@ export default function Login(): JSX.Element {
   return (
     <div className="space-y-12">
       <div>
-        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Login</h3>
-        <p className="text-base font-normal text-grey_300">
+        <h3 className="text-xl font-bold text-shorttiee-primary text-center">Login</h3>
+        <p className="text-base font-normal text-grey-300">
           Log in to access your account and continue where you left off.
         </p>
       </div>
@@ -75,7 +75,7 @@ export default function Login(): JSX.Element {
                     variant="bordered"
                     placeholder="Email"
                     type="email"
-                    startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Mail size={16} className="pointer-events-none text-grey-400" />}
                     isDisabled={signInMutation.isPending}
                   />
                 </FormControl>
@@ -96,7 +96,7 @@ export default function Login(): JSX.Element {
                     placeholder="Password"
                     type={isVisible ? "text" : "password"}
                     isDisabled={signInMutation.isPending}
-                    startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Lock size={16} className="pointer-events-none text-grey-400" />}
                     endContent={
                       <button
                         className="focus:outline-none"
@@ -105,9 +105,9 @@ export default function Login(): JSX.Element {
                         aria-label="toggle password visibility"
                       >
                         {isVisible ? (
-                          <EyeOff size={16} className="text-grey_400 pointer-events-none" />
+                          <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                          <Eye size={16} className="text-grey_400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }
@@ -120,13 +120,13 @@ export default function Login(): JSX.Element {
 
           <Link
             to={AuthRoutes.forgotPassword}
-            className="text-sm text-shorttiee_secondary font-medium underline"
+            className="text-sm text-shorttiee-secondary font-medium underline"
           >
             Forgot Password?
           </Link>
 
           <Button
-            className="bg-shorttiee_primary text-white font-semibold"
+            className="bg-shorttiee-primary text-white font-semibold"
             radius="sm"
             type="submit"
             isDisabled={signInMutation.isPending}
@@ -138,9 +138,9 @@ export default function Login(): JSX.Element {
       </Form>
 
       <div>
-        <p className="text-center text-grey_300">
+        <p className="text-center text-grey-300">
           Don't have an account?{" "}
-          <Link to={AuthRoutes.createAccount} className="font-medium text-shorttiee_secondary">
+          <Link to={AuthRoutes.createAccount} className="font-medium text-shorttiee-secondary">
             Create Account
           </Link>
         </p>

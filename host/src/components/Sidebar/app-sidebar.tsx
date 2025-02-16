@@ -27,7 +27,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-shorttiee_primary text-sidebar-primary-foreground">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-shorttiee-primary text-sidebar-primary-foreground">
                 <HomeHashtag className="size-5" />
               </div>
               <div className="grid flex-1 text-left text-base leading-tight">
@@ -46,7 +46,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   tooltip={item.title}
                   asChild
                   data-active={item.isActive}
-                  className={`py-6 px-4 font-medium hover:bg-gray-200 hover:text-gray-900 data-[active=true]:bg-shorttiee_primary data-[active=true]:text-white`}
+                  className={`py-6 px-4 font-medium hover:bg-gray-200 hover:text-gray-900 data-[active=true]:bg-shorttiee-primary data-[active=true]:text-white`}
                 >
                   <Link to={item.url}>
                     {item.icon && <item.icon />}

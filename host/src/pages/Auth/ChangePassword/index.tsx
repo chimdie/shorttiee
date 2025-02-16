@@ -54,8 +54,8 @@ export default function ChangePassword(): JSX.Element {
   return (
     <div className="space-y-12">
       <div>
-        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Change Password</h3>
-        <p className="text-base font-normal text-grey_300">
+        <h3 className="text-xl font-bold text-shorttiee-primary text-center">Change Password</h3>
+        <p className="text-base font-normal text-grey-300">
           Securing your account is crucial. Create a strong password to protect your information.{" "}
         </p>
       </div>
@@ -73,7 +73,7 @@ export default function ChangePassword(): JSX.Element {
                     variant="bordered"
                     placeholder="Current Password"
                     type={isVisible ? "text" : "password"}
-                    startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Lock size={16} className="pointer-events-none text-grey-400" />}
                     endContent={
                       <button
                         className="focus:outline-none"
@@ -82,9 +82,9 @@ export default function ChangePassword(): JSX.Element {
                         aria-label="toggle password visibility"
                       >
                         {isVisible ? (
-                          <EyeOff size={16} className="text-grey_400 pointer-events-none" />
+                          <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                          <Eye size={16} className="text-grey_400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }
@@ -108,7 +108,7 @@ export default function ChangePassword(): JSX.Element {
                     variant="bordered"
                     placeholder="New Password"
                     type={isVisible ? "text" : "password"}
-                    startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Lock size={16} className="pointer-events-none text-grey-400" />}
                     endContent={
                       <button
                         className="focus:outline-none"
@@ -117,9 +117,9 @@ export default function ChangePassword(): JSX.Element {
                         aria-label="toggle password visibility"
                       >
                         {isVisible ? (
-                          <EyeOff size={16} className="text-grey_400 pointer-events-none" />
+                          <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                          <Eye size={16} className="text-grey_400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }
@@ -142,7 +142,7 @@ export default function ChangePassword(): JSX.Element {
                     variant="bordered"
                     placeholder="Confirm Password"
                     type={isVisible ? "text" : "password"}
-                    startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Lock size={16} className="pointer-events-none text-grey-400" />}
                     endContent={
                       <button
                         className="focus:outline-none"
@@ -151,9 +151,9 @@ export default function ChangePassword(): JSX.Element {
                         aria-label="toggle password visibility"
                       >
                         {isVisible ? (
-                          <EyeOff size={16} className="text-grey_400 pointer-events-none" />
+                          <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                          <Eye size={16} className="text-grey_400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }
@@ -166,7 +166,7 @@ export default function ChangePassword(): JSX.Element {
           />
 
           <Button
-            className="bg-shorttiee_primary text-white font-semibold"
+            className="bg-shorttiee-primary text-white font-semibold"
             size="lg"
             radius="sm"
             type="submit"

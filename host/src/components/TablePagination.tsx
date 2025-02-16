@@ -8,7 +8,7 @@ export default function TablePagination() {
       total={10}
       initialPage={1}
       classNames={{
-        cursor: "border-1 bg-transparent text-shorttiee_primary",
+        cursor: "border-1 bg-transparent text-shorttiee-primary",
         item: "bg-transparent shadow-none",
       }}
     />

@@ -30,10 +30,10 @@ import { useAtomValue } from "jotai";
 import { loggedinUserAtom } from "@/atoms/user.atom";
 
 const statusTheme = {
-  active: "text-shorttiee_green-dark bg-shorttiee_green-light",
-  pending: "text-shorttiee_yellow-dark bg-shorttiee_yellow-light",
-  rejected: "text-shorttiee_red-dark bg-shorttiee_red-light",
-  terminated: "text-grey_300 bg-grey_200",
+  active: "text-shorttiee-green-dark bg-shorttiee-green-light",
+  pending: "text-shorttiee-yellow-dark bg-shorttiee-yellow-light",
+  rejected: "text-shorttiee-red-dark bg-shorttiee-red-light",
+  terminated: "text-grey-300 bg-grey-200",
 };
 
 export default function Shortlet(): JSX.Element {
@@ -76,10 +76,10 @@ export default function Shortlet(): JSX.Element {
           </div>
           <div className="py-8 md:w-1/2">
             <div className="space-y-4">
-              <h3 className="text-shorttiee_primary text-lg md:text-xl font-medium text-center">
+              <h3 className="text-shorttiee-primary text-lg md:text-xl font-medium text-center">
                 You currently dont have any Shortlets Listed
               </h3>
-              <p className="text-grey_300 text-sm md:text-base text-center">
+              <p className="text-grey-300 text-sm md:text-base text-center">
                 Looks like you haven't added any shortlets yet.This area will light up with your
                 shortlets once you list or add them{" "}
               </p>
@@ -87,7 +87,7 @@ export default function Shortlet(): JSX.Element {
           </div>
           <div>
             <Button
-              className="bg-shorttiee_primary text-white font-medium w-full"
+              className="bg-shorttiee-primary text-white font-medium w-full"
               onPress={addShortletModal.onOpen}
             >
               Add a Shortlet
@@ -102,14 +102,14 @@ export default function Shortlet(): JSX.Element {
                 <Input
                   radius="sm"
                   variant="bordered"
-                  startContent={<Search size={16} className="pointer-events-none text-grey_400" />}
+                  startContent={<Search size={16} className="pointer-events-none text-grey-400" />}
                   placeholder="Search shortlets by name,type or location"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <Button
-                className="bg-shorttiee_primary text-white font-medium"
+                className="bg-shorttiee-primary text-white font-medium"
                 onPress={addShortletModal.onOpen}
               >
                 Add a Shortlet

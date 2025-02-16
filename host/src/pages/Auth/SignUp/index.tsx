@@ -66,10 +66,10 @@ export default function SignUp(): JSX.Element {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-xl font-bold text-shorttiee_primary text-center">
+        <h3 className="text-xl font-bold text-shorttiee-primary text-center">
           Create Host Account
         </h3>
-        <p className="text-base font-normal text-grey_300 text-center">
+        <p className="text-base font-normal text-grey-300 text-center">
           Please make sure you enter your correct and valid details
         </p>
       </div>
@@ -89,7 +89,7 @@ export default function SignUp(): JSX.Element {
                       placeholder="First Name"
                       type="text"
                       startContent={
-                        <UserRound size={16} className="pointer-events-none text-grey_400" />
+                        <UserRound size={16} className="pointer-events-none text-grey-400" />
                       }
                       isDisabled={signUpMutation.isPending}
                     />
@@ -111,7 +111,7 @@ export default function SignUp(): JSX.Element {
                       placeholder="Last Name"
                       type="text"
                       startContent={
-                        <UserRound size={16} className="pointer-events-none text-grey_400" />
+                        <UserRound size={16} className="pointer-events-none text-grey-400" />
                       }
                       isDisabled={signUpMutation.isPending}
                     />
@@ -133,7 +133,7 @@ export default function SignUp(): JSX.Element {
                   variant="bordered"
                   placeholder="Gender"
                   aria-label="gender"
-                  startContent={<Users size={16} className="pointer-events-none text-grey_400" />}
+                  startContent={<Users size={16} className="pointer-events-none text-grey-400" />}
                   classNames={{ popoverContent: "rounded-md" }}
                   isDisabled={signUpMutation.isPending}
                 >
@@ -158,7 +158,7 @@ export default function SignUp(): JSX.Element {
                     variant="bordered"
                     placeholder="Phone Number"
                     type="text"
-                    startContent={<Phone size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Phone size={16} className="pointer-events-none text-grey-400" />}
                     isDisabled={signUpMutation.isPending}
                   />
                 </FormControl>
@@ -179,7 +179,7 @@ export default function SignUp(): JSX.Element {
                     variant="bordered"
                     placeholder="Email"
                     type="email"
-                    startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Mail size={16} className="pointer-events-none text-grey-400" />}
                     isDisabled={signUpMutation.isPending}
                   />
                 </FormControl>
@@ -199,7 +199,7 @@ export default function SignUp(): JSX.Element {
                     variant="bordered"
                     placeholder="Password"
                     type={isVisible ? "text" : "password"}
-                    startContent={<Lock size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Lock size={16} className="pointer-events-none text-grey-400" />}
                     endContent={
                       <button
                         className="focus:outline-none"
@@ -208,9 +208,9 @@ export default function SignUp(): JSX.Element {
                         aria-label="toggle password visibility"
                       >
                         {isVisible ? (
-                          <EyeOff size={16} className="text-grey_400 pointer-events-none" />
+                          <EyeOff size={16} className="text-grey-400 pointer-events-none" />
                         ) : (
-                          <Eye size={16} className="text-grey_400 pointer-events-none" />
+                          <Eye size={16} className="text-grey-400 pointer-events-none" />
                         )}
                       </button>
                     }
@@ -234,7 +234,7 @@ export default function SignUp(): JSX.Element {
                     placeholder="Your Home Address"
                     type="text"
                     startContent={
-                      <MapPin size={16} className="pointer-events-none text-grey_400" />
+                      <MapPin size={16} className="pointer-events-none text-grey-400" />
                     }
                     isDisabled={signUpMutation.isPending}
                   />
@@ -256,7 +256,7 @@ export default function SignUp(): JSX.Element {
                     placeholder="Business Name"
                     type="text"
                     startContent={
-                      <Building2 size={16} className="pointer-events-none text-grey_400" />
+                      <Building2 size={16} className="pointer-events-none text-grey-400" />
                     }
                     isDisabled={signUpMutation.isPending}
                   />
@@ -282,9 +282,9 @@ export default function SignUp(): JSX.Element {
                   </FormControl>
                   <FormLabel className="flex items-center space-x-1">
                     <span>I agree to the</span>
-                    <span className="text-shorttiee_primary underline">Terms of Service </span>{" "}
+                    <span className="text-shorttiee-primary underline">Terms of Service </span>{" "}
                     <span>and</span>
-                    <span className="text-shorttiee_primary underline">Privacy Policy</span>
+                    <span className="text-shorttiee-primary underline">Privacy Policy</span>
                   </FormLabel>
                 </div>
                 <FormMessage />
@@ -293,7 +293,7 @@ export default function SignUp(): JSX.Element {
           />
 
           <Button
-            className="bg-shorttiee_primary text-white font-semibold"
+            className="bg-shorttiee-primary text-white font-semibold"
             radius="sm"
             type="submit"
             isDisabled={signUpMutation.isPending}
@@ -304,9 +304,9 @@ export default function SignUp(): JSX.Element {
         </form>
       </Form>
 
-      <p className="text-center text-grey_300">
+      <p className="text-center text-grey-300">
         Already have an account?{" "}
-        <Link to={AuthRoutes.login} className="font-medium text-shorttiee_secondary">
+        <Link to={AuthRoutes.login} className="font-medium text-shorttiee-secondary">
           Login
         </Link>
       </p>

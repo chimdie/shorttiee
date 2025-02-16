@@ -42,8 +42,8 @@ export default function ForgotPassword(): JSX.Element {
   return (
     <div className="space-y-12">
       <div>
-        <h3 className="text-xl font-bold text-shorttiee_primary text-center">Forgot Password</h3>
-        <p className="text-base font-normal text-grey_300">
+        <h3 className="text-xl font-bold text-shorttiee-primary text-center">Forgot Password</h3>
+        <p className="text-base font-normal text-grey-300">
           Enter your email and we will send you a link to reset your password
         </p>
       </div>
@@ -61,7 +61,7 @@ export default function ForgotPassword(): JSX.Element {
                     variant="bordered"
                     placeholder="Email"
                     type="email"
-                    startContent={<Mail size={16} className="pointer-events-none text-grey_400" />}
+                    startContent={<Mail size={16} className="pointer-events-none text-grey-400" />}
                     isDisabled={forgotPasswordMutation.isPending}
                   />
                 </FormControl>
@@ -70,7 +70,7 @@ export default function ForgotPassword(): JSX.Element {
             )}
           />
           <Button
-            className="bg-shorttiee_primary text-white font-semibold"
+            className="bg-shorttiee-primary text-white font-semibold"
             size="lg"
             radius="sm"
             type="submit"

@@ -11,11 +11,11 @@ export default function Settings(): JSX.Element {
         <div className="space-y-4">
           <div className="flex justify-between items-center ">
             <div>
-              <h3 className="text-lg text-shorttiee_primary font-medium">Password</h3>
-              <p className="text-md text-grey_300">Set a unique password to protect your account</p>
+              <h3 className="text-lg text-shorttiee-primary font-medium">Password</h3>
+              <p className="text-md text-grey-300">Set a unique password to protect your account</p>
             </div>
             <div>
-              <Button variant="light" className="text-shorttiee_primary font-semibold">
+              <Button variant="light" className="text-shorttiee-primary font-semibold">
                 <Link to={AuthRoutes.changePassword}>Change Password</Link>
               </Button>
             </div>
@@ -25,8 +25,8 @@ export default function Settings(): JSX.Element {
 
           <div className="flex justify-between items-center ">
             <div>
-              <h3 className="text-lg text-shorttiee_primary font-medium">Delete Acccount</h3>
-              <p className="text-md text-grey_300">
+              <h3 className="text-lg text-shorttiee-primary font-medium">Delete Acccount</h3>
+              <p className="text-md text-grey-300">
                 This will delete your account.Your account will be permanently deleted from
                 Shorttiee
               </p>
@@ -34,7 +34,7 @@ export default function Settings(): JSX.Element {
             <div>
               <Button
                 variant="light"
-                className="text-shorttiee_red-dark font-semibold"
+                className="text-shorttiee-red-dark font-semibold"
                 onPress={deleteAcount.onOpen}
               >
                 Delete
