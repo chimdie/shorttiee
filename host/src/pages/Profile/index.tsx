@@ -36,7 +36,7 @@ export default function Profile(): JSX.Element {
         email: user.data.email || "",
         mobileNumber: user.data.mobileNumber || "",
         address: user.data.address || "",
-        bussinessName: user.data.businessName || "",
+        businessName: user.data.businessName || "",
         photo: user.data.photo || "",
         gender: user.data.gender as UpdateUserDto["gender"],
       });
@@ -269,7 +269,7 @@ export default function Profile(): JSX.Element {
 
             <FormField
               control={form.control}
-              name="bussinessName"
+              name="businessName"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>

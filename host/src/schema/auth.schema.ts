@@ -45,12 +45,11 @@ export const SignUpSchema = z.object({
   gender: z.enum(["M", "F"], { message: "Select your gender" }),
   mobileNumber: z.string({ message: "Phone Number is required" }),
   email: z.string({ message: "Email is required" }).email({ message: "Incorrect email format" }),
-  home: z.string({ message: "Home Address is required" }),
-  bussinessName: z.string({ message: "Busines Name is required" }),
+  address: z.string({ message: "Home Address is required" }),
+  businessName: z.string({ message: "Busines Name is required" }),
   password: z
     .string({ message: "Password is required" })
     .min(6, { message: "Password must not be less than 6 characters" }),
-  // .regex(passwordValidation, { message: "Password must Contain at least unique characters" }),
   terms: z.boolean({ message: "You have to agree to the the terms and conditions" }),
 });
 

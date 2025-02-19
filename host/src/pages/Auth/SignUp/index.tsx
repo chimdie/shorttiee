@@ -223,7 +223,7 @@ export default function SignUp(): JSX.Element {
           />
           <FormField
             control={form.control}
-            name="home"
+            name="address"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -245,7 +245,7 @@ export default function SignUp(): JSX.Element {
           />
           <FormField
             control={form.control}
-            name="bussinessName"
+            name="businessName"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
