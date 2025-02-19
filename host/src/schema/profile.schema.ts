@@ -10,7 +10,7 @@ export const ProfileSchema = z.object({
     .min(2, { message: "Last Name is required" }),
   mobileNumber: z.string({ message: "Phone Number is required" }),
   address: z.string({ message: "Address is required" }),
-  bussinessName: z.string({ message: "Business Name is required" }),
+  businessName: z.string({ message: "Business Name is required" }),
   photo: z.string().optional(),
   gender: z.union([z.literal("M"), z.literal("F"), z.null()]).optional(),
 });
