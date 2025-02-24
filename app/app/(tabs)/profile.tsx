@@ -23,11 +23,13 @@ import {APISDK} from '@/sdk';
 import {UpdateUserDto, CreateFileResponse} from '@/sdk/generated';
 import {QueryKeys} from '@/constants/queryKeys';
 import {cameraPickImage, pickImage} from '@/config/imagePicker';
+import {useLogout} from '@/hooks/useLogout';
 
 export default function Profile() {
   const [isVisible, setIsVisible] = useState(false);
   const user = useAtomValue(savedUserInfo);
   const queryClient = useQueryClient();
+  const {logout} = useLogout();
 
   const updateAvatar = useMutation({
     mutationFn: (photo: Pick<UpdateUserDto, 'photo'>) =>
@@ -78,6 +80,10 @@ export default function Profile() {
 
     if (img === undefined) return;
     fileUpload.mutate(img[1]);
+  };
+
+  const handleLogout = () => {
+    logout({redirect: true});
   };
 
   return (
@@ -177,6 +183,7 @@ export default function Profile() {
                     {
                       text: 'Yes',
                       style: 'destructive',
+                      onPress: handleLogout,
                     },
                   ]);
                 }}
