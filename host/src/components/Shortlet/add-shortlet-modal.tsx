@@ -33,10 +33,11 @@ import {
   Link,
 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiError, CreateFileDto, CreateListingsDto } from "@/sdk/generated";
+import { CreateFileDto, CreateListingsDto } from "@/sdk/generated";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
 import { QueryKeys } from "@/utils/queryKeys";
+import { apiErrorParser } from "@/utils/errorParser";
 
 type ShortletModalT = {
   isOpen: boolean;
@@ -91,10 +92,10 @@ export default function AddShortletModal({
       });
     },
     onError(error) {
-      const err = error as ApiError;
+      const err = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: err.message,
       });
     },
   });
@@ -113,6 +114,7 @@ export default function AddShortletModal({
     uploadImgMutation.mutate({ files });
   };
 
+  // should make a PATCH reques to remove the image already uploaded
   const handleRemoveImage = (imageUrl: string) => {
     const updatedImages = images.filter((image) => image !== imageUrl);
     setImages(updatedImages);
@@ -134,10 +136,11 @@ export default function AddShortletModal({
       });
     },
     onError(error) {
-      const err = error as ApiError;
+      const err = apiErrorParser(error);
+
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: err.message,
       });
     },
   });
