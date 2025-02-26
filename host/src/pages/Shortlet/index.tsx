@@ -56,6 +56,7 @@ export default function Shortlet(): JSX.Element {
         ]),
       ),
     enabled: !!userId,
+    refetchOnMount: false,
   });
 
   const filteredShortlets = useMemo(() => {

@@ -30,7 +30,7 @@ const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string 
 
 export default function AuthLayout(): JSX.Element {
   const currentPath = useLocation().pathname as AuthRoutes;
-  const { authToken } = useAuthRedirect();
+  const { authToken } = useAuthRedirect(false);
 
   const { title, description } = routeHelmetTitle[currentPath] || {
     title: "Shorttie",
