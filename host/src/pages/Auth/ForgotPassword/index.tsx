@@ -9,7 +9,8 @@ import { ForgotPassWordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
 import { AuthRoutes } from "@/types/routes";
-import { ApiError, ForgotPasswordDto } from "@/sdk/generated";
+import { ForgotPasswordDto } from "@/sdk/generated";
+import { apiErrorParser } from "@/utils/errorParser";
 
 export default function ForgotPassword(): JSX.Element {
   const { toast } = useToast();
@@ -28,10 +29,10 @@ export default function ForgotPassword(): JSX.Element {
       navigate(AuthRoutes.verifyOtp);
     },
     onError(error) {
-      const err = error as ApiError;
+      const parsedError = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: parsedError.message,
       });
     },
   });

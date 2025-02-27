@@ -10,9 +10,10 @@ import { LoginSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
 import { useToast } from "@/hooks/use-toast";
-import { ApiError, LoginDto } from "@/sdk/generated";
+import { LoginDto } from "@/sdk/generated";
 import { useSetAtom } from "jotai";
 import { loggedinUserAtom, storedAuthTokenAtom } from "@/atoms/user.atom";
+import { apiErrorParser } from "@/utils/errorParser";
 
 export default function Login(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -42,10 +43,10 @@ export default function Login(): JSX.Element {
       }
     },
     onError(error) {
-      const err = error as ApiError;
+      const parsedError = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: parsedError.message,
       });
     },
   });
