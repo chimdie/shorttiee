@@ -9,8 +9,9 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 import { ChangePasswordSchema } from "@/schema/auth.schema";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { ApiSDK } from "@/sdk";
-import { ApiError, ChangePasswordDto } from "@/sdk/generated";
+import { ChangePasswordDto } from "@/sdk/generated";
 import { DashboardRoutes } from "@/types/routes";
+import { apiErrorParser } from "@/utils/errorParser";
 
 export default function ChangePassword(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -34,10 +35,10 @@ export default function ChangePassword(): JSX.Element {
       navigate(DashboardRoutes.home);
     },
     onError(error) {
-      const err = error as ApiError;
+      const parsedError = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: parsedError.message,
       });
     },
   });

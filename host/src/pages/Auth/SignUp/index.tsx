@@ -17,9 +17,10 @@ import {
 import { AuthRoutes } from "@/types/routes";
 import { genderData, SignUpSchema } from "@/schema/auth.schema";
 import { ApiSDK } from "@/sdk";
-import { ApiError, RegisterDto } from "@/sdk/generated";
+import { RegisterDto } from "@/sdk/generated";
 import { useSetAtom } from "jotai";
 import { loggedinUserAtom, storedAuthTokenAtom } from "@/atoms/user.atom";
+import { apiErrorParser } from "@/utils/errorParser";
 
 export default function SignUp(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -50,10 +51,10 @@ export default function SignUp(): JSX.Element {
       }
     },
     onError(error) {
-      const err = error as ApiError;
+      const parsedError = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: parsedError.message,
       });
     },
   });

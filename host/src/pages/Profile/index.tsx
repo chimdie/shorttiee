@@ -10,8 +10,9 @@ import { ProfileSchema } from "@/schema/profile.schema";
 import { DashboardRoutes } from "@/types/routes";
 import { ApiSDK } from "@/sdk";
 import { QueryKeys } from "@/utils/queryKeys";
-import { ApiError, CreateFileDto, UpdateUserDto } from "@/sdk/generated";
+import { CreateFileDto, UpdateUserDto } from "@/sdk/generated";
 import { useToast } from "@/hooks/use-toast";
+import { apiErrorParser } from "@/utils/errorParser";
 
 export default function Profile(): JSX.Element {
   const [isEdit, setIsEdit] = useState<boolean>(true);
@@ -56,10 +57,10 @@ export default function Profile(): JSX.Element {
     },
     onError(error) {
       setIsEdit(true);
-      const err = error as ApiError;
+      const parsedError = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: parsedError.message,
       });
     },
   });
@@ -82,10 +83,10 @@ export default function Profile(): JSX.Element {
       });
     },
     onError(error) {
-      const err = error as ApiError;
+      const parsedError = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: err.body.message,
+        description: parsedError.message,
       });
     },
   });
