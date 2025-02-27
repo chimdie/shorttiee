@@ -3,6 +3,10 @@ import TablePagination from "../TablePagination";
 import { confirmedReservations } from "@/dummyData/shortlet";
 
 export default function ConfirmedReservation(): JSX.Element {
+  //TODO: import resrvation interface from  incoming reservation file
+  //TODO: set props for reservation as done in incoming reservation component
+  //TODO: implement reservation query to fetch all reservation
+  //TODO: filter through the fetched reservation for reservations with status of confirmed
   return (
     <div className="py-8 overflow-x-auto md:overflow-x-visible">
       <Table

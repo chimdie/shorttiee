@@ -11,3 +11,12 @@ export const getNameIntials = (name: string) => {
       .slice(0, 2);
   }
 };
+
+export const calculateNights = (startDate: string, endDate: string): number => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const nights = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+
+  return Math.max(0, nights);
+};
