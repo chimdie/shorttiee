@@ -1,9 +1,18 @@
 import { oapi } from "../config/docs.config";
-import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
+import {
+  CreateListingsDto,
+  ListingDto,
+  ListingWithUserDto
+} from "../dto/listings.dto";
 import { BasicQueriesDocs } from "./query.docs";
 import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
 
 oapi.component("schemas", "ListingsDto", dtoToJsonSchema(ListingDto));
+oapi.component(
+  "schemas",
+  "ListingWithUserDto",
+  dtoToJsonSchema(ListingWithUserDto)
+);
 
 oapi.component(
   "schemas",
@@ -90,7 +99,7 @@ oapi.component("schemas", "GetListingResponse", {
   required: ["data", "message"],
   properties: {
     message: { type: "string" },
-    data: { $ref: "#/components/schemas/ListingsDto" }
+    data: { $ref: "#/components/schemas/ListingWithUserDto" }
   }
 });
 export const getListingsDocs = oapi.path({

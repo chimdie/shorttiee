@@ -20,6 +20,7 @@ import { db } from "../config/db.config";
 import { createFacilityAndListingQuery } from "../db/facility-and-listing.db";
 import { fnToResult } from "../utils/fn-result";
 import { findAllFacilitiesInArrayQuery } from "../db/facility.db";
+import { findProductOwnerById, findUserById } from "../db/users.db";
 
 export const createListingCtl = ctlWrapper(
   async (req: Request<unknown, unknown, CreateListingsDto>, res) => {
@@ -112,7 +113,14 @@ export const getListingCtl = ctlWrapper(
       return NotFoundResponse(res);
     }
 
-    return SuccessResponse(res, listingResult);
+    const [userError, user] = findProductOwnerById(listingResult.userId);
+    if (userError) {
+      return next(userError);
+    }
+
+    const listingWithUser = Object.assign({}, listingResult, { user });
+
+    return SuccessResponse(res, listingWithUser);
   }
 );
 

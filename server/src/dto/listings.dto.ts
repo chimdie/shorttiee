@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PopulatedEntity } from "../types/utils";
+import { UserDto } from "./user.dto";
 
 export const ListingDto = z.object({
   id: z.string().uuid(),
@@ -35,6 +36,18 @@ export const ListingDto = z.object({
   userId: z.string().uuid(),
   categoryId: z.string().uuid()
 });
+
+export const ListingWithUserDto = ListingDto.extend({
+  user: UserDto.pick({
+    firstName: true,
+    lastName: true,
+    email: true,
+    photo: true,
+    mobileNumber: true,
+    businessName: true
+  }).required()
+});
+export type ListingWithUserDto = z.infer<typeof ListingWithUserDto>;
 
 export const ListingDBDto = ListingDto.omit({
   images: true
