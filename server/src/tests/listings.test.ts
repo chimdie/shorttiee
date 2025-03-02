@@ -212,6 +212,27 @@ describe("GET /api/v1/listings/:id", () => {
 
     expect(res.body.data.id).toEqual(createdListing.id);
     expect(res.body.data.images).toBeInstanceOf(Array);
+    expect(res.body.data.user).toBeTruthy();
+    expect(res.body.data.user).toMatchObject(
+      expect.objectContaining({
+        firstName: expect.any(String),
+        lastName: expect.any(String),
+        email: expect.any(String),
+        // photo: expect.any(String), // could be null
+        mobileNumber: expect.any(String),
+        businessName: expect.any(String)
+      })
+    );
+    expect(res.body.data.user).not.toMatchObject(
+      expect.objectContaining({
+        referrerCode: expect.any(String),
+        address: expect.any(String),
+        gender: expect.any(String),
+        role: expect.any(String),
+        id: expect.any(String)
+      })
+    );
+
     // expect(res.body.data.facilities).toBeInstanceOf(Array);
     // expect(expect.arrayContaining(facilities)).toEqual(
     //   res.body.data.facilities.map((e: FacilityDto) => e.id)
