@@ -1,4 +1,4 @@
-import {AxiosError} from 'axios';
+import { AxiosError } from "axios";
 
 export const apiErrorMessageParser = (message: string | string[]) => {
   if (Array.isArray(message)) {
@@ -8,19 +8,17 @@ export const apiErrorMessageParser = (message: string | string[]) => {
   return message.toString();
 };
 
-export const apiErrorParser = (
-  requestError: unknown,
-): {name: string; message: string} => {
+export const apiErrorParser = (requestError: unknown): { name: string; message: string } => {
   const err = requestError as Error;
 
   console.warn(
-    '[ERROR_PARSER]',
+    "[ERROR_PARSER]",
     JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err), 2)),
   );
 
-  if (err instanceof ApiError || err.name === 'ApiError') {
+  if (err instanceof ApiError || err.name === "ApiError") {
     const error = err as ApiError;
-    const errorBody = error.body; //as DriverLoginHttpResponseDto;
+    const errorBody = error.body;
 
     return {
       name: error.name,
@@ -30,21 +28,14 @@ export const apiErrorParser = (
 
   if (err instanceof AxiosError || err.name === AxiosError.name) {
     const axiosError = err as AxiosError;
-    console.log('AXIOS ERROR', axiosError.response?.data);
+    console.log("AXIOS ERROR", axiosError.response?.data);
   }
 
-  return {name: err.name, message: err.message};
+  return { name: err.name, message: err.message };
 };
 
 export type ApiRequestOptions = {
-  readonly method:
-    | 'GET'
-    | 'PUT'
-    | 'POST'
-    | 'DELETE'
-    | 'OPTIONS'
-    | 'HEAD'
-    | 'PATCH';
+  readonly method: "GET" | "PUT" | "POST" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH";
   readonly url: string;
   readonly path?: Record<string, any>;
   readonly cookies?: Record<string, any>;
@@ -64,14 +55,10 @@ export class ApiError extends Error {
   public readonly body: any;
   public readonly request: ApiRequestOptions;
 
-  constructor(
-    request: ApiRequestOptions,
-    response: ApiResult,
-    message: string,
-  ) {
+  constructor(request: ApiRequestOptions, response: ApiResult, message: string) {
     super(message);
 
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.url = response.url;
     this.status = response.status;
     this.statusText = response.statusText;

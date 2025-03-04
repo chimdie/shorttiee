@@ -8,7 +8,6 @@ import { fnToResult, fnToResultAsync } from "../utils/fn-result";
 import { OTP } from "../utils/otp";
 import { createAuth } from "./auth.db";
 import debug from "debug";
-import assert from "assert";
 
 export function createUser() {
   return db.prepare<Array<UserDto>>(
@@ -113,11 +112,14 @@ export const createAdmin = fnToResultAsync(async () => {
 });
 
 export function findUserById(id: string) {
-  const statement = db.prepare<string[], WithDBTimestamps<UserDto>>(
-    "SELECT * FROM tblUsers WHERE id = ?"
-  );
-
-  const fn = fnToResult(statement.get.bind(statement));
+  const fn = fnToResult((id: string) => {
+    return db
+      .prepare<
+        string[],
+        WithDBTimestamps<UserDto>
+      >("SELECT * FROM tblUsers WHERE id = ?")
+      .get(id);
+  });
   return fn(id);
 }
 
@@ -160,4 +162,23 @@ export function updateUserById(id: string, payload: UpdateUserPayload) {
 
   const fn = fnToResult(statement.run.bind(statement));
   return fn({ id, ...payload });
+}
+
+export function findProductOwnerById(id: string) {
+  type User = WithDBTimestamps<
+    Pick<
+      UserDto,
+      "firstName" | "lastName" | "email" | "mobileNumber" | "businessName"
+    >
+  >;
+
+  const fn = fnToResult(() => {
+    return db
+      .prepare<
+        string[],
+        User
+      >("SELECT firstName, lastName, email, mobileNumber, businessName, photo FROM tblUsers WHERE id = ?")
+      .get(id);
+  });
+  return fn();
 }

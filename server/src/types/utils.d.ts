@@ -10,9 +10,11 @@ type StrictEquals<A1, A2> =
 
 export type Equals<A1, A2> = StrictEquals<Unite<A1>, Unite<A2>>;
 
-export type Expand<T extends Record<string, any>> = {
-  [k in keyof T]: T[k];
-};
+export type Expand<T> = T extends any[] | Date
+  ? T
+  : {
+      [K in keyof T]: T[K];
+    } & {};
 
 interface _WithDBTimestamps<T extends Record<string, any>> extends T {
   createdAt: string;
