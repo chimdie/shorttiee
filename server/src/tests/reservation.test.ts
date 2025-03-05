@@ -108,6 +108,7 @@ describe("POST /api/v1/users/reservations", () => {
 
     expect(typeof res.body.data).toEqual("object");
     expect(typeof res.body.data.code).toEqual("string");
+    expect(res.body.data.status).toEqual("PENDING");
     createdReservation = res.body.data;
   });
 });
@@ -208,6 +209,23 @@ describe("GET /api/v1/users/reservations/:id", () => {
     expect(res.body.data.user).toMatchObject(
       expect.not.objectContaining({
         businessName: expect.any(String)
+      })
+    );
+
+    expect(res.body.data.listing).toBeTruthy();
+    expect(res.body.data.listing).toMatchObject(
+      expect.objectContaining({
+        name: expect.any(String),
+        address: expect.any(String),
+        type: expect.any(String),
+        status: expect.any(String),
+        description: expect.any(String),
+        price: expect.any(Number),
+        rate: expect.any(Number),
+        // restrictions: expect.any(String),
+        images: expect.any(Array),
+        userId: expect.any(String),
+        categoryId: expect.any(String)
       })
     );
   });

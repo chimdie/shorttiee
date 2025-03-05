@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { UserDto } from "./user.dto";
+import { ListingWithUserDto } from "./listings.dto";
 
 export const ReservationDto = z.object({
   id: z.string(),
@@ -44,16 +45,31 @@ export const ReservationDto = z.object({
 
 export type ReservationDto = z.infer<typeof ReservationDto>;
 
-const ReservationWithUserDto = ReservationDto.extend({
+export const ReservationWithUserAndListingDto = ReservationDto.extend({
   user: UserDto.pick({
     firstName: true,
     lastName: true,
     email: true,
     mobileNumber: true
+  }),
+  listing: ListingWithUserDto.pick({
+    name: true,
+    address: true,
+    type: true,
+    status: true,
+    description: true,
+    price: true,
+    rate: true,
+    restrictions: true,
+    images: true,
+    userId: true,
+    categoryId: true
   })
 });
 
-export type ReservationWithUserDto = z.infer<typeof ReservationWithUserDto>;
+export type ReservationWithUserAndListingDto = z.infer<
+  typeof ReservationWithUserAndListingDto
+>;
 
 // create
 export const CreateReservationDto = ReservationDto.pick({
