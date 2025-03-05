@@ -1,5 +1,6 @@
 import validator from "validator";
 import { z } from "zod";
+import { clone } from "../utils/clone-obj";
 
 const MIN_PASSWORD = 8;
 const email = z.string().email().toLowerCase().trim();
@@ -50,8 +51,8 @@ export const ResetPasswordDto = z.object({
 export type ResetPasswordDto = z.infer<typeof ResetPasswordDto>;
 
 export const ChangePasswordDto = z.object({
-  newPassword: password,
-  oldPassword: password,
+  newPassword: clone(password),
+  oldPassword: clone(password),
   reauth: z.boolean().optional()
 });
 export type ChangePasswordDto = z.infer<typeof ChangePasswordDto>;
