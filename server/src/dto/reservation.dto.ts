@@ -78,3 +78,7 @@ export const CreateReservationDto = ReservationDto.pick({
   listingId: true
 });
 export type CreateReservationDto = z.infer<typeof CreateReservationDto>;
+
+// review
+export const ReviewReservationDto = ReservationDto.pick({ status: true });
+export type ReviewReservationDto = z.infer<typeof ReviewReservationDto>;

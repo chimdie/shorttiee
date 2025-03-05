@@ -75,20 +75,24 @@ function getAdminAuth() {
   };
 }
 
-function getListings() {
-  const listings = db
-    .prepare<[], { id: string }>(
-      `SELECT id
-        FROM tblListings`
-    )
-    .all();
+function getNonApprovedListings() {
+  const sql = `SELECT * FROM tblListings WHERE status != 'APPROVED'`;
+  const listings = db.prepare<[], { id: string }>(sql).all();
+
+  return listings;
+}
+
+function getApprovedListings() {
+  const sql = `SELECT * FROM tblListings WHERE status = 'APPROVED'`;
+  const listings = db.prepare<[], { id: string }>(sql).all();
 
   return listings;
 }
 
 export const helper = {
   getAdminAuth,
+  getApprovedListings,
+  getNonApprovedListings,
   getUserAuth,
-  getUserAuthWithBusiness,
-  getListings
+  getUserAuthWithBusiness
 };
