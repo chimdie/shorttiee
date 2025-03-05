@@ -7,6 +7,8 @@ import { faker } from "@faker-js/faker";
 import assert from "node:assert";
 import { helper } from "./helper";
 import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
+import { findReservationByIdQuery } from "../db/reservation.db";
+import db from "../config/db.config";
 
 let payloadNonApprovedListing: CreateReservationDto;
 let payload: CreateReservationDto;
@@ -27,10 +29,16 @@ beforeAll(() => {
   };
 
   payload = {
-    listingId: faker.helpers.arrayElement(helper.getApprovedListings()).id,
+    listingId: faker.helpers.arrayElement(
+      helper.getApprovedListingsByUserId(business.id)
+    ).id,
     startDate: new Date().toISOString().split("T")[0],
     endDate: faker.date.future().toISOString().split("T")[0]
   };
+
+  db.prepare("UPDATE tblListings SET status='APPROVED' WHERE id=@id").run({
+    id: payload.listingId
+  });
 });
 
 let createdReservation: ReservationDto;
@@ -244,5 +252,41 @@ describe("GET /api/v1/users/reservations/:id", () => {
         categoryId: expect.any(String)
       })
     );
+  });
+});
+
+describe("PATCH /api/v1/users/reservations/:id", () => {
+  it("Should return 400 for invalid param", async () => {
+    const res = await supertest(app)
+      .patch("/api/v1/users/reservations/not-a-uuid")
+      .auth(business.token, { type: "bearer" })
+      .expect(400);
+
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.error).toMatch(/validation/i);
+  });
+
+  it("Should return 400 for bad request", async () => {
+    await supertest(app)
+      .patch("/api/v1/users/reservations/not-a-uuid")
+      .auth(business.token, { type: "bearer" })
+      .send({ status: "DONE" })
+      .expect(400);
+  });
+
+  it("Should review the reservation", async () => {
+    await supertest(app)
+      .patch("/api/v1/users/reservations/" + createdReservation.id)
+      .auth(business.token, { type: "bearer" })
+      .send({ status: "ACCEPTED" })
+      .expect(200);
+
+    const [error, reservation] = findReservationByIdQuery(
+      createdReservation.id
+    );
+    assert(error === null);
+    assert(!!reservation);
+
+    expect(reservation.status).toEqual("ACCEPTED");
   });
 });

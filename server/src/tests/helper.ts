@@ -89,9 +89,19 @@ function getApprovedListings() {
   return listings;
 }
 
+function getApprovedListingsByUserId(userId: string) {
+  const sql = `SELECT * FROM tblListings WHERE status = 'APPROVED' AND userId=@userId`;
+  const listings = db
+    .prepare<[{ userId: string }], { id: string }>(sql)
+    .all({ userId });
+
+  return listings;
+}
+
 export const helper = {
   getAdminAuth,
   getApprovedListings,
+  getApprovedListingsByUserId,
   getNonApprovedListings,
   getUserAuth,
   getUserAuthWithBusiness

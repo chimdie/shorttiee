@@ -4,7 +4,8 @@ import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
   CreateReservationDto,
   ReservationDto,
-  ReservationWithUserAndListingDto
+  ReservationWithUserAndListingDto,
+  ReviewReservationDto
 } from "../dto/reservation.dto";
 import {
   BadRequestResponse,
@@ -17,7 +18,8 @@ import {
   createReservationQuery,
   createReservationCodeQuery,
   findAllReservationByUserIdQuery,
-  findReservationByIdAndUserIdQuery
+  findReservationByIdAndUserIdQuery,
+  updateResvartionStatusQuery
 } from "../db/reservation.db";
 import assert from "assert";
 import { getDayDuration } from "../utils/get-day-duration";
@@ -155,5 +157,22 @@ export const getReservationCtl = ctlWrapper(
     }
 
     return SuccessResponse(res, reservationWithUser);
+  }
+);
+
+export const updateReservationCtl = ctlWrapper(
+  async (req: Request<IdDto, unknown, ReviewReservationDto>, res, _next) => {
+    assert(req.user);
+    const [updateError, _] = updateResvartionStatusQuery(
+      req.params.id,
+      req.user.id,
+      req.body.status
+    );
+
+    if (updateError) {
+      return _next(updateError);
+    }
+
+    return SuccessResponse(res, null);
   }
 );
