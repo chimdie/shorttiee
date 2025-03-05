@@ -23,13 +23,15 @@ export const createReservationQuery = (payload: ReservationDto) => {
 };
 
 export const findReservationByIdQuery = (id: string) => {
-  return fnToResult(() => {
+  const fn = fnToResult(() => {
     const reservationStatement = db.prepare<string[], ReservationDto>(
       "SELECT * FROM tblReservations WHERE id = ?"
     );
 
     return reservationStatement.get(id);
   });
+
+  return fn();
 };
 
 export const findAllReservationByUserIdQuery = (
@@ -58,7 +60,7 @@ export const findReservationByIdAndUserIdQuery = (
 ) => {
   return fnToResult(() => {
     const reservationStatement = db.prepare<unknown[], ReservationDto>(
-      "SELECT *  FROM tblReservations WHERE (userId = ?  or listingOwnerId = ?) and (id = ?) LIMIT 1"
+      "SELECT * FROM tblReservations WHERE (userId = ?  or listingOwnerId = ?) and (id = ?) LIMIT 1"
     );
 
     return reservationStatement.get([userId, userId, id]);
@@ -93,3 +95,26 @@ export const createReservationCodeQuery = () => {
   const code = `RES-${point}${totalResevations + 1}`;
   return [null, code] as const;
 };
+
+export function updateResvartionStatusQuery(
+  id: string,
+  userId: string,
+  status: ReservationDto["status"]
+) {
+  const sql = `
+    UPDATE tblReservations
+    SET status=@status
+    WHERE id=@id AND listingOwnerId=@userId
+  `;
+
+  const fn = fnToResult(() => {
+    return db
+      .prepare<
+        { id: string; userId: string; status: ReservationDto["status"] }[],
+        null
+      >(sql)
+      .run({ id, status, userId });
+  });
+
+  return fn();
+}
