@@ -195,5 +195,20 @@ describe("GET /api/v1/users/reservations/:id", () => {
 
     expect(res.body.data.id).toEqual(createdReservation.id);
     expect(res.body.data.code).toEqual(createdReservation.code);
+    expect(res.body.data).toHaveProperty("user");
+    expect(typeof res.body.data.user).toEqual("object");
+    expect(res.body.data.user).toMatchObject(
+      expect.objectContaining({
+        firstName: expect.any(String),
+        lastName: expect.any(String),
+        email: expect.any(String),
+        mobileNumber: expect.any(String)
+      })
+    );
+    expect(res.body.data.user).toMatchObject(
+      expect.not.objectContaining({
+        businessName: expect.any(String)
+      })
+    );
   });
 });

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserDto } from "./user.dto";
 
 export const ReservationDto = z.object({
   id: z.string(),
@@ -29,6 +30,10 @@ export const ReservationDto = z.object({
       },
       { message: "Reservation date cannot be in the past" }
     ),
+  status: z
+    .union([z.literal("ACCEPTED"), z.literal("PENDING"), z.literal("REJECTED")])
+    .default("PENDING"),
+
   /**
    * The user creating the reservation
    */
@@ -38,6 +43,17 @@ export const ReservationDto = z.object({
 });
 
 export type ReservationDto = z.infer<typeof ReservationDto>;
+
+const ReservationWithUserDto = ReservationDto.extend({
+  user: UserDto.pick({
+    firstName: true,
+    lastName: true,
+    email: true,
+    mobileNumber: true
+  })
+});
+
+export type ReservationWithUserDto = z.infer<typeof ReservationWithUserDto>;
 
 // create
 export const CreateReservationDto = ReservationDto.pick({
