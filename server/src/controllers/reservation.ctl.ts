@@ -1,10 +1,10 @@
 import { Request } from "express";
-import { findListingByIdQuery } from "../db/listing.db";
+import { findListingByIdFilter, findListingByIdQuery } from "../db/listing.db";
 import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
   CreateReservationDto,
   ReservationDto,
-  ReservationWithUserDto
+  ReservationWithUserAndListingDto
 } from "../dto/reservation.dto";
 import {
   BadRequestResponse,
@@ -58,6 +58,7 @@ export const createReservationCtl = ctlWrapper(
         userId: req.user.id,
         listingOwnerId: listingResult.userId,
         id: crypto.randomUUID() as string,
+        status: "PENDING" as const,
         amount
       },
       req.body
@@ -115,9 +116,30 @@ export const getReservationCtl = ctlWrapper(
       return ErrorResponse(res);
     }
 
+    const [listingError, listing] = findListingByIdFilter(
+      reservation.listingId,
+      [
+        "name",
+        "address",
+        "type",
+        "status",
+        "description",
+        "price",
+        "rate",
+        "restrictions",
+        "images",
+        "userId",
+        "categoryId"
+      ]
+    );
+    if (listingError) {
+      return next(listingError);
+    }
+
     const reservationWithUser = Object.assign({}, reservation, {
-      user
-    }) satisfies ReservationWithUserDto;
+      user,
+      listing
+    }) satisfies ReservationWithUserAndListingDto;
 
     const cannot = ForbiddenError.from(req.userAbility).unlessCan(
       "read",

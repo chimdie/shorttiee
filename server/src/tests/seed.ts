@@ -223,8 +223,8 @@ function seedListings(
 function seedReservation(userIds: string[], listingIds: ListingDto[]) {
   const statements = Array.from({ length: 30 }).map(() => {
     const reservationStatement = db.prepare<ReservationDto[]>(`
-      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId, listingOwnerId)
-      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId, @listingOwnerId)
+      INSERT INTO tblReservations (id, code, amount, startDate, endDate, status, userId, listingId, listingOwnerId)
+      VALUES(@id, @code, @amount, @startDate, @endDate, @status, @userId, @listingId, @listingOwnerId)
     `);
 
     return reservationStatement;
@@ -239,6 +239,7 @@ function seedReservation(userIds: string[], listingIds: ListingDto[]) {
         amount: +faker.commerce.price(),
         startDate: faker.date.soon().toISOString(),
         endDate: faker.date.soon().toISOString(),
+        status: "PENDING",
 
         userId: faker.helpers.arrayElement(userIds),
         listingId: listing.id,
