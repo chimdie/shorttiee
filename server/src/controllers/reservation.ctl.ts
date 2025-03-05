@@ -42,6 +42,10 @@ export const createReservationCtl = ctlWrapper(
       return BadRequestResponse(res, "Invalid listing");
     }
 
+    if (listingResult.status !== "APPROVED") {
+      return BadRequestResponse(res, "Listing not approved");
+    }
+
     const [codeError, code] = createReservationCodeQuery();
 
     if (codeError) {

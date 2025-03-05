@@ -8,6 +8,7 @@ import assert from "node:assert";
 import { helper } from "./helper";
 import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
 
+let payloadNonApprovedListing: CreateReservationDto;
 let payload: CreateReservationDto;
 let user: { token: string; id: string };
 let business: { token: string; id: string };
@@ -19,8 +20,14 @@ beforeAll(() => {
   const _bus = helper.getUserAuthWithBusiness();
   business = { id: _bus.user.id, token: _bus.token };
 
+  payloadNonApprovedListing = {
+    listingId: faker.helpers.arrayElement(helper.getNonApprovedListings()).id,
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: faker.date.future().toISOString().split("T")[0]
+  };
+
   payload = {
-    listingId: faker.helpers.arrayElement(helper.getListings()).id,
+    listingId: faker.helpers.arrayElement(helper.getApprovedListings()).id,
     startDate: new Date().toISOString().split("T")[0],
     endDate: faker.date.future().toISOString().split("T")[0]
   };
@@ -37,7 +44,7 @@ describe("POST /api/v1/users/reservations", () => {
     const res = await supertest(app)
       .post("/api/v1/users/reservations")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(payloadNonApprovedListing)
       .expect(401);
 
     assert.equal(res.body.data, undefined);
@@ -61,7 +68,7 @@ describe("POST /api/v1/users/reservations", () => {
       .post("/api/v1/users/reservations")
       .auth(user.token, { type: "bearer" })
       .set("Accept", "application/json")
-      .send({ ...payload, listingId: crypto.randomUUID() })
+      .send({ ...payloadNonApprovedListing, listingId: crypto.randomUUID() })
       .expect(400);
 
     assert.equal(res.body.data, undefined);
@@ -75,7 +82,7 @@ describe("POST /api/v1/users/reservations", () => {
       .auth(user.token, { type: "bearer" })
       .set("Accept", "application/json")
       .send({
-        ...payload,
+        ...payloadNonApprovedListing,
         endDate: faker.date.past().toISOString().split("T")[0],
         startDate: faker.date.past().toISOString().split("T")[0]
       })
@@ -91,11 +98,20 @@ describe("POST /api/v1/users/reservations", () => {
       .post("/api/v1/users/reservations")
       .auth(business.token, { type: "bearer" })
       .set("Accept", "application/json")
-      .send(payload)
+      .send(payloadNonApprovedListing)
       .expect(403);
 
     expect(res.body).toHaveProperty("error");
     expect(res.body.message).toMatch(/cannot execute/i);
+  });
+
+  it("Should not create a reservation with non-approved listing", async () => {
+    await supertest(app)
+      .post("/api/v1/users/reservations")
+      .set("Accept", "application/json")
+      .auth(user.token, { type: "bearer" })
+      .send(payloadNonApprovedListing)
+      .expect(400);
   });
 
   it("Should create a reservation", async () => {
