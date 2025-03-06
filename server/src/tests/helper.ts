@@ -17,7 +17,7 @@ function getUserAuthWithBusiness() {
     .prepare<[], { id: string; nonce: string }>(
       `SELECT u.id, a.nonce 
         FROM tblUsers AS u
-        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NOT NULL LIMIT 1`
+        JOIN tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NOT NULL LIMIT 1`
     )
     .get();
 
@@ -38,7 +38,7 @@ function getUserAuth() {
     .prepare<[], { id: string; nonce: string }>(
       `SELECT u.id, a.nonce 
         FROM tblUsers AS u
-        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NULL LIMIT 1`
+        JOIN tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NULL LIMIT 1`
     )
     .get();
 
@@ -59,7 +59,7 @@ function getAdminAuth() {
     .prepare<[], { id: string; nonce: string }>(
       `SELECT u.id, a.nonce 
         FROM tblUsers AS u
-        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE role='ADMIN' LIMIT 1`
+        JOIN tblAuthentications AS a ON a.userId = u.id WHERE role='ADMIN' LIMIT 1`
     )
     .get();
 

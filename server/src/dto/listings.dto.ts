@@ -60,5 +60,11 @@ export const CreateListingsDto = ListingDto.omit({
 });
 export type CreateListingsDto = z.infer<typeof CreateListingsDto>;
 
-export const UpdateListingsDto = CreateListingsDto.partial();
-export type UpdateListingsDto = z.infer<typeof UpdateListingsDto>;
+// export const UpdateListingsDto = CreateListingsDto.partial();
+// export type UpdateListingsDto = z.infer<typeof UpdateListingsDto>;
+
+export const ReviewListingDto = z.object({
+  status: z.enum(["ACCEPT", "DECLINE"])
+});
+
+export type ReviewListingDto = z.infer<typeof ReviewListingDto>;

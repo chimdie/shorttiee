@@ -107,3 +107,26 @@ export function findListingFacilitiesQuery(listingId: string) {
   const fn = fnToResult(run);
   return fn();
 }
+
+/**
+ * @description should be used for admin operations only
+ */
+export function updateListingStatusQuery(
+  id: string,
+  userId: string,
+  status: ListingDto["status"]
+) {
+  const sql = `
+    UPDATE tblListings
+    SET status=@status
+    WHERE id=@id 
+    RETURNING *
+  `;
+
+  const fn = fnToResult(() => {
+    type Params = { id: string; userId: string; status: ListingDto["status"] };
+    return db.prepare<Params[], ListingDto>(sql).get({ id, status, userId });
+  });
+
+  return fn();
+}

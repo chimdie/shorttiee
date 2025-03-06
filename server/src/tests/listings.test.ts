@@ -4,19 +4,26 @@ import { db } from "../config/db.config";
 import { CreateApplicationService } from "../config/services.config";
 import { OTP } from "../utils/otp";
 import supertest from "supertest";
-import { CreateListingsDto, ListingDto } from "../dto/listings.dto";
+import {
+  CreateListingsDto,
+  ListingDto,
+  ReviewListingDto
+} from "../dto/listings.dto";
 import { faker } from "@faker-js/faker";
 import assert from "node:assert";
 import { helper } from "./helper";
 import { FacilityDto } from "../dto/facility.dto";
+import { findListingByIdQuery } from "../db/listing.db";
 
 let token = "";
 let businessToken = "";
+let adminToken = "";
 let payload: CreateListingsDto;
 
 beforeAll(() => {
   token = helper.getUserAuth().token;
   businessToken = helper.getUserAuthWithBusiness().token;
+  adminToken = helper.getAdminAuth().token;
 });
 
 const categories: string[] = [];
@@ -279,5 +286,52 @@ describe("GET /api/v1/listings/:id/facilities", () => {
     expect(expect.arrayContaining(facilities)).toEqual(
       res.body.data.map((e: FacilityDto) => e.id)
     );
+  });
+});
+
+describe("PATCH /api/v1/listings/:id", () => {
+  it("Should return 400 for invalid param", async () => {
+    const res = await supertest(app)
+      .patch("/api/v1/listings/not-a-uuid")
+      .auth(adminToken, { type: "bearer" })
+      .expect(400);
+
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.error).toMatch(/validation/i);
+  });
+
+  it("Should return 400 for bad request", async () => {
+    await supertest(app)
+      .patch("/api/v1/listings/" + createdListing.id)
+      .auth(adminToken, { type: "bearer" })
+      .send({ status: "DONE" })
+      .expect(400);
+  });
+
+  it("Should return 403 for restricted to admin", async () => {
+    const res = await supertest(app)
+      .patch("/api/v1/listings/" + createdListing.id)
+      .auth(businessToken, { type: "bearer" })
+      .send(payload)
+      .expect(403);
+
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.error).toMatch(/Forbidden/i);
+  });
+
+  it("Should review the listing", async () => {
+    const payload: ReviewListingDto = { status: "ACCEPT" };
+    const res = await supertest(app)
+      .patch("/api/v1/listings/" + createdListing.id)
+      .auth(adminToken, { type: "bearer" })
+      .send(payload)
+      .expect(200);
+
+    const [error, listing] = findListingByIdQuery(createdListing.id);
+    assert(error === null);
+    assert(!!listing);
+
+    expect(listing.status).toEqual("APPROVED");
+    expect(res.body.data.status).toEqual(listing.status);
   });
 });
