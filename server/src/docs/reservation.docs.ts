@@ -1,9 +1,18 @@
 import { oapi } from "../config/docs.config";
-import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
+import {
+  CreateReservationDto,
+  ReservationWithUserAndListingDto,
+  ReservationDto
+} from "../dto/reservation.dto";
 import { BasicQueriesDocs } from "./query.docs";
 import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
 
 oapi.component("schemas", "ReservationDto", dtoToJsonSchema(ReservationDto));
+oapi.component(
+  "schemas",
+  "ReservationWithUserAndListingDto",
+  dtoToJsonSchema(ReservationWithUserAndListingDto)
+);
 
 oapi.component(
   "schemas",
@@ -91,7 +100,7 @@ oapi.component("schemas", "GetReservationResponse", {
   required: ["data", "message"],
   properties: {
     message: { type: "string" },
-    data: { $ref: "#/components/schemas/ReservationDto" }
+    data: { $ref: "#/components/schemas/ReservationWithUserAndListingDto" }
   }
 });
 export const getReservationDocs = oapi.path({

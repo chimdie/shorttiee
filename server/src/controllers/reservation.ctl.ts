@@ -1,9 +1,14 @@
 import { Request } from "express";
-import { findListingByIdQuery } from "../db/listing.db";
+import { findListingByIdFilter, findListingByIdQuery } from "../db/listing.db";
 import { ctlWrapper } from "../utils/ctl-wrapper";
-import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
+import {
+  CreateReservationDto,
+  ReservationDto,
+  ReservationWithUserAndListingDto
+} from "../dto/reservation.dto";
 import {
   BadRequestResponse,
+  ErrorResponse,
   ForbiddenResponse,
   NotFoundResponse,
   SuccessResponse
@@ -19,6 +24,7 @@ import { getDayDuration } from "../utils/get-day-duration";
 import { IdDto } from "../dto/util.dto";
 import { ForbiddenError, subject } from "@casl/ability";
 import { Models } from "../types/abilities";
+import { findReservationOwnerById } from "../db/users.db";
 
 export const createReservationCtl = ctlWrapper(
   async (req: Request<unknown, unknown, CreateReservationDto>, res, next) => {
@@ -52,6 +58,7 @@ export const createReservationCtl = ctlWrapper(
         userId: req.user.id,
         listingOwnerId: listingResult.userId,
         id: crypto.randomUUID() as string,
+        status: "PENDING" as const,
         amount
       },
       req.body
@@ -100,15 +107,49 @@ export const getReservationCtl = ctlWrapper(
       return NotFoundResponse(res);
     }
 
+    const [userError, user] = findReservationOwnerById(reservation.userId);
+    if (userError) {
+      return next(userError);
+    }
+
+    if (!user) {
+      return ErrorResponse(res);
+    }
+
+    const [listingError, listing] = findListingByIdFilter(
+      reservation.listingId,
+      [
+        "name",
+        "address",
+        "type",
+        "status",
+        "description",
+        "price",
+        "rate",
+        "restrictions",
+        "images",
+        "userId",
+        "categoryId"
+      ]
+    );
+    if (listingError) {
+      return next(listingError);
+    }
+
+    const reservationWithUser = Object.assign({}, reservation, {
+      user,
+      listing
+    }) satisfies ReservationWithUserAndListingDto;
+
     const cannot = ForbiddenError.from(req.userAbility).unlessCan(
       "read",
-      subject<keyof Models, ReservationDto>("reservation", reservation)
+      subject<keyof Models, ReservationDto>("reservation", reservationWithUser)
     );
 
     if (cannot) {
       return ForbiddenResponse(res, cannot.message);
     }
 
-    return SuccessResponse(res, reservation);
+    return SuccessResponse(res, reservationWithUser);
   }
 );

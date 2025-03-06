@@ -173,12 +173,22 @@ export function findProductOwnerById(id: string) {
   >;
 
   const fn = fnToResult(() => {
-    return db
-      .prepare<
-        string[],
-        User
-      >("SELECT firstName, lastName, email, mobileNumber, businessName, photo FROM tblUsers WHERE id = ?")
-      .get(id);
+    const sql =
+      "SELECT firstName, lastName, email, mobileNumber, businessName, photo FROM tblUsers WHERE id = ?";
+    return db.prepare<string[], User>(sql).get(id);
+  });
+  return fn();
+}
+
+export function findReservationOwnerById(id: string) {
+  type User = WithDBTimestamps<
+    Pick<UserDto, "firstName" | "lastName" | "email" | "mobileNumber">
+  >;
+
+  const fn = fnToResult(() => {
+    const sql =
+      "SELECT firstName, lastName, email, mobileNumber, photo FROM tblUsers WHERE id = ?";
+    return db.prepare<string[], User>(sql).get(id);
   });
   return fn();
 }
