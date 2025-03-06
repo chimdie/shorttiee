@@ -161,18 +161,23 @@ export const getReservationCtl = ctlWrapper(
 );
 
 export const updateReservationCtl = ctlWrapper(
-  async (req: Request<IdDto, unknown, ReviewReservationDto>, res, _next) => {
+  async (req: Request<IdDto, unknown, ReviewReservationDto>, res, next) => {
     assert(req.user);
-    const [updateError, _] = updateResvartionStatusQuery(
+
+    let status: ReservationDto["status"] = req.body.status
+      ? "ACCEPTED"
+      : "REJECTED";
+
+    const [updateError, reservation] = updateResvartionStatusQuery(
       req.params.id,
       req.user.id,
-      req.body.status
+      status
     );
 
     if (updateError) {
-      return _next(updateError);
+      return next(updateError);
     }
 
-    return SuccessResponse(res, null);
+    return SuccessResponse(res, reservation);
   }
 );

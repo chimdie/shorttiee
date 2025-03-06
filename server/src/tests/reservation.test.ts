@@ -6,7 +6,11 @@ import supertest from "supertest";
 import { faker } from "@faker-js/faker";
 import assert from "node:assert";
 import { helper } from "./helper";
-import { CreateReservationDto, ReservationDto } from "../dto/reservation.dto";
+import {
+  CreateReservationDto,
+  ReservationDto,
+  ReviewReservationDto
+} from "../dto/reservation.dto";
 import { findReservationByIdQuery } from "../db/reservation.db";
 import db from "../config/db.config";
 
@@ -275,10 +279,11 @@ describe("PATCH /api/v1/users/reservations/:id", () => {
   });
 
   it("Should review the reservation", async () => {
-    await supertest(app)
+    const payload: ReviewReservationDto = { status: "ACCEPT" };
+    const res = await supertest(app)
       .patch("/api/v1/users/reservations/" + createdReservation.id)
       .auth(business.token, { type: "bearer" })
-      .send({ status: "ACCEPTED" })
+      .send(payload)
       .expect(200);
 
     const [error, reservation] = findReservationByIdQuery(
@@ -288,5 +293,6 @@ describe("PATCH /api/v1/users/reservations/:id", () => {
     assert(!!reservation);
 
     expect(reservation.status).toEqual("ACCEPTED");
+    expect(res.body.data.status).toEqual(reservation.status);
   });
 });

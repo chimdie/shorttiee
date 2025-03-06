@@ -78,5 +78,7 @@ export const CreateReservationDto = ReservationDto.pick({
 export type CreateReservationDto = z.infer<typeof CreateReservationDto>;
 
 // review
-export const ReviewReservationDto = ReservationDto.pick({ status: true });
+export const ReviewReservationDto = z.object({
+  status: z.enum(["ACCEPT", "DECLINE"])
+});
 export type ReviewReservationDto = z.infer<typeof ReviewReservationDto>;
