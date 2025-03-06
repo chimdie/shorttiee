@@ -8,6 +8,7 @@ export type ReservationDto = {
   amount: number;
   startDate: string;
   endDate: string;
+  status?: ('ACCEPTED' | 'PENDING' | 'REJECTED');
   userId: string;
   listingId: string;
   listingOwnerId: string;

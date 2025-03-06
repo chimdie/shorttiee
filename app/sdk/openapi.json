@@ -594,32 +594,38 @@
     "schemas": {
       "RegisterDto": {
         "type": "object",
-        "required": [
-          "firstName",
-          "lastName",
-          "email",
-          "password",
-          "mobileNumber"
-        ],
         "properties": {
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "minLength": 2
           },
           "email": {
             "type": "string",
             "format": "email"
           },
+          "gender": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["M"]
+              },
+              {
+                "type": "string",
+                "enum": ["F"]
+              }
+            ],
+            "nullable": true
+          },
           "password": {
             "type": "string",
-            "format": "password",
             "minLength": 8
           },
           "mobileNumber": {
-            "type": "string",
-            "pattern": "^090\\d{8}$"
+            "type": "string"
           },
           "businessName": {
             "type": "string"
@@ -629,13 +635,15 @@
           },
           "address": {
             "type": "string"
-          },
-          "gender": {
-            "type": "string",
-            "enum": ["M", "F"],
-            "nullable": true
           }
         },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "mobileNumber"
+        ],
         "additionalProperties": false
       },
       "RegisterResponse": {
@@ -670,8 +678,6 @@
       },
       "LoginDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string",
@@ -679,10 +685,11 @@
           },
           "password": {
             "type": "string",
-            "format": "password",
             "minLength": 8
           }
-        }
+        },
+        "required": ["email", "password"],
+        "additionalProperties": false
       },
       "LoginResponse": {
         "type": "object",
@@ -716,14 +723,14 @@
       },
       "ForgotPasswordDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["email"],
         "properties": {
           "email": {
             "type": "string",
             "format": "email"
           }
-        }
+        },
+        "required": ["email"],
+        "additionalProperties": false
       },
       "ForgotPasswordResponse": {
         "type": "object",
@@ -743,22 +750,22 @@
       },
       "ResetPasswordDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["otp", "email", "password"],
         "properties": {
           "email": {
             "type": "string",
             "format": "email"
           },
-          "otp": {
-            "type": "string",
-            "pattern": "\\d{6}"
-          },
           "password": {
             "type": "string",
-            "format": "password"
+            "minLength": 8
+          },
+          "otp": {
+            "type": "string",
+            "minLength": 4
           }
-        }
+        },
+        "required": ["email", "password", "otp"],
+        "additionalProperties": false
       },
       "ResetPasswordResponse": {
         "type": "object",
@@ -778,21 +785,21 @@
       },
       "ChangePasswordDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["oldPassword", "newPassword"],
         "properties": {
-          "oldPassword": {
+          "newPassword": {
             "type": "string",
             "minLength": 8
           },
-          "newPassword": {
+          "oldPassword": {
             "type": "string",
             "minLength": 8
           },
           "reauth": {
             "type": "boolean"
           }
-        }
+        },
+        "required": ["newPassword", "oldPassword"],
+        "additionalProperties": false
       },
       "ChangePasswordResponse": {
         "type": "object",
@@ -884,34 +891,37 @@
       },
       "CategoryDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "name"],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 3
           },
           "comment": {
             "type": "string",
             "nullable": true
           }
-        }
+        },
+        "required": ["id", "name"],
+        "additionalProperties": false
       },
       "CreateCategoryDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["name"],
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 3
           },
           "comment": {
             "type": "string",
             "nullable": true
           }
-        }
+        },
+        "required": ["name"],
+        "additionalProperties": false
       },
       "CreateCategoryResponse": {
         "type": "object",
@@ -945,18 +955,52 @@
         }
       },
       "CreateFileDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["files"],
-        "properties": {
-          "files": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "binary"
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "fieldname": {
+              "type": "string"
+            },
+            "originalname": {
+              "type": "string"
+            },
+            "encoding": {
+              "type": "string"
+            },
+            "mimetype": {
+              "type": "string"
+            },
+            "destination": {
+              "type": "string"
+            },
+            "filename": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "size": {
+              "type": "number"
+            },
+            "hash": {
+              "type": "string"
             }
-          }
-        }
+          },
+          "required": [
+            "fieldname",
+            "originalname",
+            "encoding",
+            "mimetype",
+            "destination",
+            "filename",
+            "path",
+            "size",
+            "hash"
+          ],
+          "additionalProperties": false
+        },
+        "maxItems": 6
       },
       "CreateFileResponse": {
         "type": "object",
@@ -995,36 +1039,50 @@
       },
       "ListingsDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "name",
-          "address",
-          "type",
-          "status",
-          "images",
-          "userId",
-          "categoryId"
-        ],
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 3
           },
           "address": {
             "type": "string",
-            "format": "email"
+            "minLength": 3
           },
           "type": {
-            "type": "string",
-            "enum": ["SHORTLET", "RENTAL", "SALE"]
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["SHORTLET"]
+              },
+              {
+                "type": "string",
+                "enum": ["RENTAL"]
+              },
+              {
+                "type": "string",
+                "enum": ["SALE"]
+              }
+            ]
           },
           "status": {
-            "type": "string",
-            "enum": ["AWAITING_REVIEW", "REJECTED", "APPROVED"]
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["AWAITING_REVIEW"]
+              },
+              {
+                "type": "string",
+                "enum": ["REJECTED"]
+              },
+              {
+                "type": "string",
+                "enum": ["APPROVED"]
+              }
+            ]
           },
           "description": {
             "type": "string",
@@ -1037,70 +1095,6 @@
           "rate": {
             "type": "number",
             "nullable": true
-          },
-          "restrictions": {
-            "type": "string",
-            "nullable": true
-          },
-          "images": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri",
-              "pattern": "www\\.[a-z]{2,20}\\.[a-z]{2,4}"
-            }
-          },
-          "userId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "categoryId": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      },
-      "CreateListingsDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "address",
-          "type",
-          "images",
-          "categoryId",
-          "facilities"
-        ],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "address": {
-            "type": "string",
-            "format": "email"
-          },
-          "type": {
-            "type": "string",
-            "enum": ["SHORTLET", "RENTAL", "SALE"]
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "price": {
-            "type": "number",
-            "nullable": true
-          },
-          "rate": {
-            "type": "number",
-            "nullable": true
-          },
-          "facilities": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
           },
           "restrictions": {
             "type": "string",
@@ -1111,13 +1105,232 @@
             "items": {
               "type": "string",
               "format": "uri"
-            }
+            },
+            "minItems": 3,
+            "maxItems": 6
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
           },
           "categoryId": {
             "type": "string",
             "format": "uuid"
           }
-        }
+        },
+        "required": [
+          "id",
+          "name",
+          "address",
+          "type",
+          "status",
+          "images",
+          "userId",
+          "categoryId"
+        ],
+        "additionalProperties": false
+      },
+      "ListingWithUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3
+          },
+          "address": {
+            "type": "string",
+            "minLength": 3
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["SHORTLET"]
+              },
+              {
+                "type": "string",
+                "enum": ["RENTAL"]
+              },
+              {
+                "type": "string",
+                "enum": ["SALE"]
+              }
+            ]
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["AWAITING_REVIEW"]
+              },
+              {
+                "type": "string",
+                "enum": ["REJECTED"]
+              },
+              {
+                "type": "string",
+                "enum": ["APPROVED"]
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "number",
+            "nullable": true
+          },
+          "rate": {
+            "type": "number",
+            "nullable": true
+          },
+          "restrictions": {
+            "type": "string",
+            "nullable": true
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "minItems": 3,
+            "maxItems": 6
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "photo": {
+                "type": "string",
+                "nullable": true
+              },
+              "mobileNumber": {
+                "type": "string"
+              },
+              "businessName": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "firstName",
+              "lastName",
+              "email",
+              "photo",
+              "mobileNumber",
+              "businessName"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "address",
+          "type",
+          "status",
+          "images",
+          "userId",
+          "categoryId",
+          "user"
+        ],
+        "additionalProperties": false
+      },
+      "CreateListingsDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3
+          },
+          "address": {
+            "type": "string",
+            "minLength": 3
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["SHORTLET"]
+              },
+              {
+                "type": "string",
+                "enum": ["RENTAL"]
+              },
+              {
+                "type": "string",
+                "enum": ["SALE"]
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "number",
+            "nullable": true
+          },
+          "rate": {
+            "type": "number",
+            "nullable": true
+          },
+          "restrictions": {
+            "type": "string",
+            "nullable": true
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "minItems": 3,
+            "maxItems": 6
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "facilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "type",
+          "images",
+          "categoryId",
+          "facilities"
+        ],
+        "additionalProperties": false
       },
       "CreateListingResponse": {
         "type": "object",
@@ -1158,29 +1371,15 @@
             "type": "string"
           },
           "data": {
-            "$ref": "#/components/schemas/ListingsDto"
+            "$ref": "#/components/schemas/ListingWithUserDto"
           }
         }
       },
       "UserDto": {
         "type": "object",
-        "description": "User model",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "firstName",
-          "lastName",
-          "email",
-          "mobileNumber",
-          "role",
-          "createdAt",
-          "updatedAt"
-        ],
         "properties": {
           "id": {
-            "type": "string",
-            "uniqueItems": true,
-            "format": "uuid"
+            "type": "string"
           },
           "firstName": {
             "type": "string"
@@ -1190,7 +1389,7 @@
           },
           "email": {
             "type": "string",
-            "uniqueItems": true
+            "format": "email"
           },
           "mobileNumber": {
             "type": "string"
@@ -1212,23 +1411,40 @@
             "nullable": true
           },
           "role": {
-            "type": "string",
-            "enum": ["USER", "ADMIN"]
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["ADMIN"]
+              },
+              {
+                "type": "string",
+                "enum": ["USER"]
+              }
+            ]
           },
           "gender": {
-            "type": "string",
-            "enum": ["M", "F"],
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["M"]
+              },
+              {
+                "type": "string",
+                "enum": ["F"]
+              }
+            ],
             "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
           }
-        }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "mobileNumber",
+          "role"
+        ],
+        "additionalProperties": false
       },
       "UserProfileResponse": {
         "type": "object",
@@ -1246,8 +1462,6 @@
       },
       "UpdateUserDto": {
         "type": "object",
-        "description": "User model",
-        "additionalProperties": false,
         "properties": {
           "firstName": {
             "type": "string"
@@ -1271,57 +1485,68 @@
             "nullable": true
           },
           "gender": {
-            "type": "string",
-            "enum": ["M", "F"],
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["M"]
+              },
+              {
+                "type": "string",
+                "enum": ["F"]
+              }
+            ],
             "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "FacilityDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "name", "icon"],
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 3
           },
           "icon": {
             "type": "string"
           },
-          "color": {
-            "type": "string",
-            "nullable": true
-          },
           "comment": {
             "type": "string",
             "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "required": ["id", "name", "icon"],
+        "additionalProperties": false
       },
       "CreateFacilityDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["name", "icon"],
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 3
           },
           "icon": {
             "type": "string"
           },
-          "color": {
-            "type": "string",
-            "nullable": true
-          },
           "comment": {
             "type": "string",
             "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "required": ["name", "icon"],
+        "additionalProperties": false
       },
       "CreateFacilityResponse": {
         "type": "object",
@@ -1370,21 +1595,9 @@
       },
       "ReservationDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "code",
-          "amount",
-          "startDate",
-          "endDate",
-          "userId",
-          "listingId",
-          "listingOwnerId"
-        ],
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "type": "string"
           },
           "code": {
             "type": "string"
@@ -1400,6 +1613,23 @@
             "type": "string",
             "format": "date"
           },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["ACCEPTED"]
+              },
+              {
+                "type": "string",
+                "enum": ["PENDING"]
+              },
+              {
+                "type": "string",
+                "enum": ["REJECTED"]
+              }
+            ],
+            "default": "PENDING"
+          },
           "userId": {
             "type": "string",
             "format": "uuid"
@@ -1412,12 +1642,193 @@
             "type": "string",
             "format": "uuid"
           }
-        }
+        },
+        "required": [
+          "id",
+          "code",
+          "amount",
+          "startDate",
+          "endDate",
+          "userId",
+          "listingId",
+          "listingOwnerId"
+        ],
+        "additionalProperties": false
+      },
+      "ReservationWithUserAndListingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["ACCEPTED"]
+              },
+              {
+                "type": "string",
+                "enum": ["PENDING"]
+              },
+              {
+                "type": "string",
+                "enum": ["REJECTED"]
+              }
+            ],
+            "default": "PENDING"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "listingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "listingOwnerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "mobileNumber": {
+                "type": "string"
+              }
+            },
+            "required": ["firstName", "lastName", "email", "mobileNumber"],
+            "additionalProperties": false
+          },
+          "listing": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 3
+              },
+              "address": {
+                "type": "string",
+                "minLength": 3
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": ["SHORTLET"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["RENTAL"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["SALE"]
+                  }
+                ]
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": ["AWAITING_REVIEW"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["REJECTED"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["APPROVED"]
+                  }
+                ]
+              },
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
+              "price": {
+                "type": "number",
+                "nullable": true
+              },
+              "rate": {
+                "type": "number",
+                "nullable": true
+              },
+              "restrictions": {
+                "type": "string",
+                "nullable": true
+              },
+              "images": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 3,
+                "maxItems": 6
+              },
+              "userId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "categoryId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "name",
+              "address",
+              "type",
+              "status",
+              "images",
+              "userId",
+              "categoryId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "amount",
+          "startDate",
+          "endDate",
+          "userId",
+          "listingId",
+          "listingOwnerId",
+          "user",
+          "listing"
+        ],
+        "additionalProperties": false
       },
       "CreateReservationDto": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["startDate", "endDate", "listingId"],
         "properties": {
           "startDate": {
             "type": "string",
@@ -1431,7 +1842,9 @@
             "type": "string",
             "format": "uuid"
           }
-        }
+        },
+        "required": ["startDate", "endDate", "listingId"],
+        "additionalProperties": false
       },
       "CreateReservationsResponse": {
         "type": "object",
@@ -1472,7 +1885,7 @@
             "type": "string"
           },
           "data": {
-            "$ref": "#/components/schemas/ReservationDto"
+            "$ref": "#/components/schemas/ReservationWithUserAndListingDto"
           }
         }
       }
