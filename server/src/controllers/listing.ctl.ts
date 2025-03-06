@@ -3,9 +3,14 @@ import {
   createListingQuery,
   findAllListingQuery,
   findListingByIdQuery,
-  findListingFacilitiesQuery
+  findListingFacilitiesQuery,
+  updateListingStatusQuery as reviewListingStatusQuery
 } from "../db/listing.db";
-import { CreateListingsDto } from "../dto/listings.dto";
+import {
+  CreateListingsDto,
+  ListingDto,
+  ReviewListingDto
+} from "../dto/listings.dto";
 import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
   BadRequestResponse,
@@ -20,7 +25,7 @@ import { db } from "../config/db.config";
 import { createFacilityAndListingQuery } from "../db/facility-and-listing.db";
 import { fnToResult } from "../utils/fn-result";
 import { findAllFacilitiesInArrayQuery } from "../db/facility.db";
-import { findProductOwnerById, findUserById } from "../db/users.db";
+import { findProductOwnerById } from "../db/users.db";
 
 export const createListingCtl = ctlWrapper(
   async (req: Request<unknown, unknown, CreateListingsDto>, res) => {
@@ -135,5 +140,27 @@ export const getListingFacilitiesCtl = ctlWrapper(
     }
 
     SuccessResponse(res, facilities);
+  }
+);
+
+export const reviewListingCtl = ctlWrapper(
+  async (req: Request<IdDto, unknown, ReviewListingDto>, res, next) => {
+    assert(req.user);
+
+    let status: ListingDto["status"] = req.body.status
+      ? "APPROVED"
+      : "REJECTED";
+
+    const [updateError, reservation] = reviewListingStatusQuery(
+      req.params.id,
+      req.user.id,
+      status
+    );
+
+    if (updateError) {
+      return next(updateError);
+    }
+
+    return SuccessResponse(res, reservation);
   }
 );

@@ -272,7 +272,7 @@ describe("PATCH /api/v1/users/reservations/:id", () => {
 
   it("Should return 400 for bad request", async () => {
     await supertest(app)
-      .patch("/api/v1/users/reservations/not-a-uuid")
+      .patch("/api/v1/users/reservations/" + createdReservation.id)
       .auth(business.token, { type: "bearer" })
       .send({ status: "DONE" })
       .expect(400);
