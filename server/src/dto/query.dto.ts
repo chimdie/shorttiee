@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+const filters = [
+  "eq",
+  "gt",
+  "lt",
+  "gte",
+  "lte",
+  "in",
+  "between",
+  "like",
+  "exists",
+  "ne",
+  "nin",
+  "not between",
+  "not like"
+] as const;
+
 const filterSchema = z
   .string()
   .transform(jsonTransform)
@@ -7,24 +23,7 @@ const filterSchema = z
     z.array(
       z.tuple([
         z.string(),
-        z.union(
-          [
-            z.literal("eq"),
-            z.literal("gt"),
-            z.literal("lt"),
-            z.literal("gte"),
-            z.literal("lte"),
-            z.literal("in"),
-            z.literal("between"),
-            z.literal("like"),
-            z.literal("exists"),
-            z.literal("ne"),
-            z.literal("nin"),
-            z.literal("not between"),
-            z.literal("not like")
-          ],
-          { message: "Invalid query operation" }
-        ),
+        z.enum(filters, { message: "Invalid query operation" }),
         z.string().or(z.array(z.any()))
       ])
     )
