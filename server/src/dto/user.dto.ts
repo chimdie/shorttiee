@@ -10,8 +10,8 @@ export const UserDto = z.object({
   referrerCode: z.string().nullish(),
   address: z.string().nullish(),
   photo: z.string().nullish(),
-  role: z.union([z.literal("ADMIN"), z.literal("USER")]),
-  gender: z.union([z.literal("M"), z.literal("F")]).nullish()
+  role: z.enum(["ADMIN", "USER"]),
+  gender: z.enum(["M", "F"]).nullish()
 });
 
 export type UserDto = z.infer<typeof UserDto>;

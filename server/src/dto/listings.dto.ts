@@ -12,16 +12,8 @@ export const ListingDto = z.object({
     .string()
     .trim()
     .min(3, { message: "Listing address cannot be less that 3" }),
-  type: z.union([
-    z.literal("SHORTLET"),
-    z.literal("RENTAL"),
-    z.literal("SALE")
-  ]),
-  status: z.union([
-    z.literal("AWAITING_REVIEW"),
-    z.literal("REJECTED"),
-    z.literal("APPROVED")
-  ]),
+  type: z.enum(["SHORTLET", "RENTAL", "SALE"]),
+  status: z.enum(["AWAITING_REVIEW", "REJECTED", "APPROVED"]),
   description: z.string().nullish(),
   price: z.number().nullish(),
   rate: z.number().nullish(),

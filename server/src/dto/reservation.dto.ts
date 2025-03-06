@@ -31,9 +31,7 @@ export const ReservationDto = z.object({
       },
       { message: "Reservation date cannot be in the past" }
     ),
-  status: z
-    .union([z.literal("ACCEPTED"), z.literal("PENDING"), z.literal("REJECTED")])
-    .default("PENDING"),
+  status: z.enum(["ACCEPTED", "PENDING", "REJECTED"]).default("PENDING"),
 
   /**
    * The user creating the reservation
