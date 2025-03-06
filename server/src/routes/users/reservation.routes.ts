@@ -16,7 +16,8 @@ import { RequestQuery } from "../../dto/query.dto";
 import {
   createReservationsDocs,
   getAllReservationsDocs,
-  getReservationDocs
+  getReservationDocs,
+  reviewReservationDocs
 } from "../../docs/reservation.docs";
 import { IdDto } from "../../dto/util.dto";
 
@@ -48,7 +49,7 @@ reservationRouter
     getReservationCtl
   )
   .patch(
-    // getReservationDocs,
+    reviewReservationDocs,
     authorize("update", "reservation"),
     validator({ params: IdDto, body: ReviewReservationDto }),
     updateReservationCtl

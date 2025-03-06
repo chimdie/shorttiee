@@ -105,15 +105,16 @@ export function updateResvartionStatusQuery(
     UPDATE tblReservations
     SET status=@status
     WHERE id=@id AND listingOwnerId=@userId
+    RETURNING *
   `;
 
   const fn = fnToResult(() => {
     return db
       .prepare<
         { id: string; userId: string; status: ReservationDto["status"] }[],
-        null
+        ReservationDto
       >(sql)
-      .run({ id, status, userId });
+      .get({ id, status, userId });
   });
 
   return fn();
