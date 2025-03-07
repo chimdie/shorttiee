@@ -57,14 +57,6 @@ export default function ApartmentDetailScreen() {
       APISDK.ListingService.getApiV1Listings1(id as unknown as string),
   });
 
-  useQuery({
-    queryKey: ['userId'],
-    queryFn: () => APISDK.UserService.getApiV1UsersProfile(),
-    select(data) {
-      console.log(data);
-    },
-  });
-
   const handlerShowSheet = () => {
     setModalVisible(false);
     setTimeout(() => {
@@ -72,13 +64,17 @@ export default function ApartmentDetailScreen() {
     }, 300);
   };
 
-  console.log(listingInfo.data?.data.userId);
+  console.log(listingInfo.data?.data);
 
   return (
     <SafeAreaView className="flex-1 justify-betweenn bg-white">
       <ScrollView className="flex-1 gap-8">
         <ImageBackground
-          source={require('../../assets/images/parlour.jpg')}
+          source={
+            listingInfo.data?.data.images?.[0]
+              ? {uri: listingInfo.data?.data.images[0]}
+              : require('../../assets/images/parlour.jpg')
+          }
           style={tw`w-full h-80`}>
           <View className="p-4 flex-row justify-between w-full">
             <TouchableOpacity
@@ -128,7 +124,9 @@ export default function ApartmentDetailScreen() {
           <View className="bg-shorttiee-primary/10 p-4 rounded-lg flex-row items-center gap-2">
             <Ionicons name="person-outline" size={24} color="black" />
             <View className="gap-1">
-              <Text className="">Hosted by Solomon</Text>
+              <Text className="">
+                Hosted by {listingInfo.data?.data?.user?.firstName ?? ''}
+              </Text>
               <Text className="text-gray-500">Contact</Text>
             </View>
           </View>
