@@ -2,7 +2,8 @@ import { oapi } from "../config/docs.config";
 import {
   CreateReservationDto,
   ReservationWithUserAndListingDto,
-  ReservationDto
+  ReservationDto,
+  ReviewReservationDto
 } from "../dto/reservation.dto";
 import { BasicQueriesDocs } from "./query.docs";
 import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
@@ -105,6 +106,46 @@ oapi.component("schemas", "GetReservationResponse", {
 });
 export const getReservationDocs = oapi.path({
   tags: ["Reservation"],
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/components/schemas/GetReservationResponse"
+          }
+        }
+      }
+    }
+  }
+});
+
+// patch reservation
+oapi.component(
+  "schemas",
+  "ReviewReservationDto",
+  dtoToJsonSchema(ReviewReservationDto)
+);
+oapi.component("schemas", "ReviewReservationResponse", {
+  type: "object",
+  additionalProperties: false,
+  required: ["data", "message"],
+  properties: {
+    message: { type: "string" },
+    data: { $ref: "#/components/schemas/ReservationDto", nullable: true }
+  }
+});
+export const reviewReservationDocs = oapi.path({
+  tags: ["Reservation"],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          $ref: "#/components/schemas/ReviewReservationDto"
+        }
+      }
+    }
+  },
   responses: {
     200: {
       description: "Success",

@@ -4,7 +4,8 @@ import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
   CreateReservationDto,
   ReservationDto,
-  ReservationWithUserAndListingDto
+  ReservationWithUserAndListingDto,
+  ReviewReservationDto
 } from "../dto/reservation.dto";
 import {
   BadRequestResponse,
@@ -17,7 +18,8 @@ import {
   createReservationQuery,
   createReservationCodeQuery,
   findAllReservationByUserIdQuery,
-  findReservationByIdAndUserIdQuery
+  findReservationByIdAndUserIdQuery,
+  updateResvartionStatusQuery
 } from "../db/reservation.db";
 import assert from "assert";
 import { getDayDuration } from "../utils/get-day-duration";
@@ -40,6 +42,10 @@ export const createReservationCtl = ctlWrapper(
 
     if (!listingResult) {
       return BadRequestResponse(res, "Invalid listing");
+    }
+
+    if (listingResult.status !== "APPROVED") {
+      return BadRequestResponse(res, "Listing not approved");
     }
 
     const [codeError, code] = createReservationCodeQuery();
@@ -151,5 +157,27 @@ export const getReservationCtl = ctlWrapper(
     }
 
     return SuccessResponse(res, reservationWithUser);
+  }
+);
+
+export const updateReservationCtl = ctlWrapper(
+  async (req: Request<IdDto, unknown, ReviewReservationDto>, res, next) => {
+    assert(req.user);
+
+    let status: ReservationDto["status"] = req.body.status
+      ? "ACCEPTED"
+      : "REJECTED";
+
+    const [updateError, reservation] = updateResvartionStatusQuery(
+      req.params.id,
+      req.user.id,
+      status
+    );
+
+    if (updateError) {
+      return next(updateError);
+    }
+
+    return SuccessResponse(res, reservation);
   }
 );

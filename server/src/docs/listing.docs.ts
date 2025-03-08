@@ -2,7 +2,8 @@ import { oapi } from "../config/docs.config";
 import {
   CreateListingsDto,
   ListingDto,
-  ListingWithUserDto
+  ListingWithUserDto,
+  ReviewListingDto
 } from "../dto/listings.dto";
 import { BasicQueriesDocs } from "./query.docs";
 import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
@@ -12,6 +13,12 @@ oapi.component(
   "schemas",
   "ListingWithUserDto",
   dtoToJsonSchema(ListingWithUserDto)
+);
+
+oapi.component(
+  "schemas",
+  "ReviewListingDto",
+  dtoToJsonSchema(ReviewListingDto)
 );
 
 oapi.component(
@@ -131,6 +138,41 @@ export const getListingFacilitiesDocs = oapi.path({
             items: {
               $ref: "#/components/schemas/FacilityDto"
             }
+          }
+        }
+      }
+    }
+  }
+});
+
+// review a lising
+oapi.component("schemas", "ListingsResponse", {
+  type: "object",
+  additionalProperties: false,
+  required: ["data", "message"],
+  properties: {
+    message: { type: "string" },
+    data: { $ref: "#/components/schemas/ListingsDto" }
+  }
+});
+export const reviewListingsDocs = oapi.path({
+  tags: ["Listing"],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          $ref: "#/components/schemas/ReviewListingDto"
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/components/schemas/ListingsResponse"
           }
         }
       }
