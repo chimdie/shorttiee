@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Feather, Ionicons} from '@expo/vector-icons';
 import tw from 'twrnc';
-import {router} from 'expo-router';
+import {router, useLocalSearchParams} from 'expo-router';
 import {Heart, I3DRotate} from 'iconsax-react-native';
 import {getColor} from '@/config/theme';
 import {ShorttieeButton} from '@/components/Button';
@@ -23,6 +23,8 @@ import {BottomSheet} from '@rneui/themed';
 import DateTimePicker, {DateType} from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import {currencyParser} from '@/utils/currencyParser';
+import {useQuery} from '@tanstack/react-query';
+import {APISDK} from '@/sdk';
 
 type Facility = {
   name: string;
@@ -47,6 +49,13 @@ export default function ApartmentDetailScreen() {
     startDate: undefined,
     endDate: undefined,
   });
+  const {id} = useLocalSearchParams();
+
+  const listingInfo = useQuery({
+    queryKey: ['listing'],
+    queryFn: () =>
+      APISDK.ListingService.getApiV1Listings1(id as unknown as string),
+  });
 
   const handlerShowSheet = () => {
     setModalVisible(false);
@@ -55,11 +64,17 @@ export default function ApartmentDetailScreen() {
     }, 300);
   };
 
+  console.log(listingInfo.data?.data);
+
   return (
     <SafeAreaView className="flex-1 justify-betweenn bg-white">
       <ScrollView className="flex-1 gap-8">
         <ImageBackground
-          source={require('../../assets/images/parlour.jpg')}
+          source={
+            listingInfo.data?.data.images?.[0]
+              ? {uri: listingInfo.data?.data.images[0]}
+              : require('../../assets/images/parlour.jpg')
+          }
           style={tw`w-full h-80`}>
           <View className="p-4 flex-row justify-between w-full">
             <TouchableOpacity
@@ -90,10 +105,12 @@ export default function ApartmentDetailScreen() {
         <View className="p-4 gap-8 bg-white">
           <View>
             <Text className="text-lg font-semibold text-gray-800">
-              2 Bedroom Shortlet Apartment in Ikeja
+              {listingInfo.data?.data?.name ?? ''}
             </Text>
             <View className="flex-row items-center gap-2">
-              <Text className="text-gray-500">Ikeja, Lagos</Text>
+              <Text className="text-gray-500">
+                {listingInfo.data?.data?.address ?? ''}
+              </Text>
               <View className="flex-row">
                 <Ionicons
                   name="location-outline"
@@ -107,7 +124,9 @@ export default function ApartmentDetailScreen() {
           <View className="bg-shorttiee-primary/10 p-4 rounded-lg flex-row items-center gap-2">
             <Ionicons name="person-outline" size={24} color="black" />
             <View className="gap-1">
-              <Text className="">Hosted by Solomon</Text>
+              <Text className="">
+                Hosted by {listingInfo.data?.data?.user?.firstName ?? ''}
+              </Text>
               <Text className="text-gray-500">Contact</Text>
             </View>
           </View>
@@ -131,8 +150,7 @@ export default function ApartmentDetailScreen() {
               Description
             </Text>
             <Text className="text-sm">
-              A fully furnished house that promises a perfect home away from
-              home experience.
+              {listingInfo.data?.data.description ?? ''}
             </Text>
           </View>
           <View className="gap-2">
@@ -165,7 +183,10 @@ export default function ApartmentDetailScreen() {
       </ScrollView>
       <View className="flex-row justify-between items-center p-4 bg-white border- w-full gap-x-6">
         <View className="flex-row items-center">
-          <Text className="text-lg font-bold text-shorttiee-primary">₦96K</Text>
+          <Text className="text-lg font-bold text-shorttiee-primary">
+            {listingInfo.data?.data.rate &&
+              currencyParser(listingInfo.data?.data.rate)}
+          </Text>
           <Text className="text-gray-500">/night</Text>
         </View>
 

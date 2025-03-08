@@ -92,10 +92,10 @@ export default function AddShortletModal({
       });
     },
     onError(error) {
-      const parsedError = apiErrorParser(error);
+      const err = apiErrorParser(error);
       toast({
         variant: "destructive",
-        description: parsedError.message,
+        description: err.message,
       });
     },
   });
@@ -114,6 +114,7 @@ export default function AddShortletModal({
     uploadImgMutation.mutate({ files });
   };
 
+  // should make a PATCH reques to remove the image already uploaded
   const handleRemoveImage = (imageUrl: string) => {
     const updatedImages = images.filter((image) => image !== imageUrl);
     setImages(updatedImages);
@@ -135,10 +136,11 @@ export default function AddShortletModal({
       });
     },
     onError(error) {
-      const parsedError = apiErrorParser(error);
+      const err = apiErrorParser(error);
+
       toast({
         variant: "destructive",
-        description: parsedError.message,
+        description: err.message,
       });
     },
   });

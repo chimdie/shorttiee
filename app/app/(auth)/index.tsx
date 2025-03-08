@@ -1,4 +1,4 @@
-import {Pressable, Text, View} from 'react-native';
+import {Alert, Pressable, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -14,10 +14,12 @@ import {LoginDto} from '@/sdk/generated';
 import {APISDK} from '@/sdk';
 import {storedUserTokenAtom} from '@/atoms/user.atom';
 import {useSetAtom} from 'jotai';
+import {apiErrorParser} from '@/utils/errorParser';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const setStoredToken = useSetAtom(storedUserTokenAtom);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const {
     control,
@@ -40,11 +42,19 @@ export default function Login() {
         router.replace('/(tabs)');
       }
     },
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+      setApiError(parsedError.message);
+    },
   });
 
   const onSubmit = (data: LoginSchema) => {
     loginMutation.mutate(data);
   };
+
+  if (__DEV__) {
+    apiError && Alert.alert(apiError);
+  }
 
   return (
     <AuthScreenLayout title="Login">

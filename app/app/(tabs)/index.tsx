@@ -41,16 +41,8 @@ const statesDATA = [
     icon: HomeHashtag,
   },
 ];
-const categories = [
-  'Apartment',
-  'Beach Villa',
-  'Studio Apartment',
-  'Vacation Home',
-  'Rest Resort',
-  'Work studio',
-];
+
 const topApartments = Array(5).fill({});
-const shortlets = Array(10).fill({});
 
 export default function HomeScreen() {
   const [user, setUser] = useAtom(savedUserInfo);
@@ -62,6 +54,18 @@ export default function HomeScreen() {
       if (data) setUser(data.data);
     },
   });
+
+  const listingQuery = useQuery({
+    queryKey: ['listing'],
+    queryFn: () => APISDK.ListingService.getApiV1Listings(),
+  });
+
+  const categoryQuery = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => APISDK.CategoryService.getApiV1Categories(),
+  });
+
+  console.log(listingQuery.data?.data);
 
   return (
     <View className="flex-1 bg-white">
@@ -130,16 +134,22 @@ export default function HomeScreen() {
                 <SearchNormal1 color={getColor('shorttiee-primary')} />
               }
             />
-            <View className="flex-1">
+            <View
+              className="flex-1"
+              style={{
+                flex: 1,
+              }}>
               <FlashList
-                data={categories}
+                data={categoryQuery.data?.data || []}
                 estimatedItemSize={36}
-                keyExtractor={item => item}
+                keyExtractor={item => item.id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({item}) => (
-                  <TouchableOpacity className="items-center justify-center mx-2 px-6 h-10 rounded-full border border-shorttiee-primary/30">
-                    <Text>{item}</Text>
+                  <TouchableOpacity
+                    onPress={() => console.log(item)}
+                    className="items-center justify-center mx-2 px-6 h-10 rounded-full border border-shorttiee-primary/30">
+                    <Text>{item.name ?? ''}</Text>
                   </TouchableOpacity>
                 )}
               />
@@ -152,13 +162,14 @@ export default function HomeScreen() {
                 estimatedItemSize={30}
                 keyExtractor={(_, index) => index.toString()}
                 onEndReachedThreshold={0.5}
+                showsHorizontalScrollIndicator={false}
               />
             </View>
             <View className="flex-1">
               <FlashList
-                data={shortlets}
-                renderItem={() => <ShortletCard />}
-                keyExtractor={(_, index) => index.toString()}
+                data={listingQuery.data?.data || []}
+                renderItem={item => <ShortletCard data={item} />}
+                keyExtractor={item => item.id}
                 estimatedItemSize={30}
                 onEndReachedThreshold={0.5}
               />
