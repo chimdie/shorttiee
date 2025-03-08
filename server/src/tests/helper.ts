@@ -17,7 +17,7 @@ function getUserAuthWithBusiness() {
     .prepare<[], { id: string; nonce: string }>(
       `SELECT u.id, a.nonce 
         FROM tblUsers AS u
-        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NOT NULL LIMIT 1`
+        JOIN tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NOT NULL LIMIT 1`
     )
     .get();
 
@@ -38,7 +38,7 @@ function getUserAuth() {
     .prepare<[], { id: string; nonce: string }>(
       `SELECT u.id, a.nonce 
         FROM tblUsers AS u
-        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NULL LIMIT 1`
+        JOIN tblAuthentications AS a ON a.userId = u.id WHERE businessName IS NULL LIMIT 1`
     )
     .get();
 
@@ -59,7 +59,7 @@ function getAdminAuth() {
     .prepare<[], { id: string; nonce: string }>(
       `SELECT u.id, a.nonce 
         FROM tblUsers AS u
-        JOIN  tblAuthentications AS a ON a.userId = u.id WHERE role='ADMIN' LIMIT 1`
+        JOIN tblAuthentications AS a ON a.userId = u.id WHERE role='ADMIN' LIMIT 1`
     )
     .get();
 
@@ -75,20 +75,34 @@ function getAdminAuth() {
   };
 }
 
-function getListings() {
+function getNonApprovedListings() {
+  const sql = `SELECT * FROM tblListings WHERE status != 'APPROVED'`;
+  const listings = db.prepare<[], { id: string }>(sql).all();
+
+  return listings;
+}
+
+function getApprovedListings() {
+  const sql = `SELECT * FROM tblListings WHERE status = 'APPROVED'`;
+  const listings = db.prepare<[], { id: string }>(sql).all();
+
+  return listings;
+}
+
+function getApprovedListingsByUserId(userId: string) {
+  const sql = `SELECT * FROM tblListings WHERE status = 'APPROVED' AND userId=@userId`;
   const listings = db
-    .prepare<[], { id: string }>(
-      `SELECT id
-        FROM tblListings`
-    )
-    .all();
+    .prepare<[{ userId: string }], { id: string }>(sql)
+    .all({ userId });
 
   return listings;
 }
 
 export const helper = {
   getAdminAuth,
+  getApprovedListings,
+  getApprovedListingsByUserId,
+  getNonApprovedListings,
   getUserAuth,
-  getUserAuthWithBusiness,
-  getListings
+  getUserAuthWithBusiness
 };

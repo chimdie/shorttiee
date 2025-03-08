@@ -17,7 +17,7 @@ export const RegisterDto = z.object({
     .min(2, { message: "Last-name must contain at least 8 character(s)" }),
   email,
   gender: z
-    .union([z.literal("M"), z.literal("F")], {
+    .enum(["M", "F"], {
       errorMap: () => {
         return {
           message: "Gender must be a valid option"

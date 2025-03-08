@@ -3,15 +3,17 @@ import {
   createListingCtl,
   getAllListingCtl,
   getListingCtl,
-  getListingFacilitiesCtl
+  getListingFacilitiesCtl,
+  reviewListingCtl
 } from "../controllers/listing.ctl";
 import { validator } from "../middlewares/validator.middleware";
-import { CreateListingsDto } from "../dto/listings.dto";
+import { CreateListingsDto, ReviewListingDto } from "../dto/listings.dto";
 import {
   createListingsDocs,
   getAllListingsDocs,
   getListingFacilitiesDocs,
-  getListingsDocs
+  getListingsDocs,
+  reviewListingsDocs
 } from "../docs/listing.docs";
 import { IdDto } from "../dto/util.dto";
 import { authenticate } from "../middlewares/authenticate.middleware";
@@ -38,9 +40,13 @@ listingsRouter.get(
   getListingFacilitiesCtl
 );
 
-listingsRouter.get(
-  "/:id",
-  getListingsDocs,
-  validator({ params: IdDto }),
-  getListingCtl
-);
+listingsRouter
+  .route("/:id")
+  .get(getListingsDocs, validator({ params: IdDto }), getListingCtl)
+  .patch(
+    reviewListingsDocs,
+    authenticate,
+    authorize("update", "listing", ["status"]),
+    validator({ params: IdDto, body: ReviewListingDto }),
+    reviewListingCtl
+  );
