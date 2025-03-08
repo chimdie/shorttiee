@@ -7,6 +7,8 @@ import type { CreateListingsDto } from '../models/CreateListingsDto';
 import type { FacilityDto } from '../models/FacilityDto';
 import type { GetAllListingResponse } from '../models/GetAllListingResponse';
 import type { GetListingResponse } from '../models/GetListingResponse';
+import type { ListingsResponse } from '../models/ListingsResponse';
+import type { ReviewListingDto } from '../models/ReviewListingDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -115,6 +117,26 @@ export class ListingService {
       path: {
         'id': id,
       },
+    });
+  }
+  /**
+   * @param id
+   * @param requestBody
+   * @returns ListingsResponse Success
+   * @throws ApiError
+   */
+  public static patchApiV1Listings(
+    id: string,
+    requestBody?: ReviewListingDto,
+  ): CancelablePromise<ListingsResponse> {
+    return __request(OpenAPI, {
+      method: 'PATCH',
+      url: '/api/v1/listings/{id}',
+      path: {
+        'id': id,
+      },
+      body: requestBody,
+      mediaType: 'application/json',
     });
   }
 }

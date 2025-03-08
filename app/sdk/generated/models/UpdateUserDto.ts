@@ -9,6 +9,6 @@ export type UpdateUserDto = {
   businessName?: string | null;
   address?: string | null;
   photo?: string | null;
-  gender?: ('M' | 'F') | null;
+  gender?: 'M' | 'F' | null;
 };
 

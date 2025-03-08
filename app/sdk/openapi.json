@@ -231,6 +231,40 @@
             }
           }
         ]
+      },
+      "patch": {
+        "tags": ["Reservation"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewReservationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetReservationResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     },
     "/api/v1/users/profile": {
@@ -587,6 +621,40 @@
             }
           }
         ]
+      },
+      "patch": {
+        "tags": ["Listing"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewListingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     }
   },
@@ -608,16 +676,8 @@
             "format": "email"
           },
           "gender": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["M"]
-              },
-              {
-                "type": "string",
-                "enum": ["F"]
-              }
-            ],
+            "type": "string",
+            "enum": ["M", "F"],
             "nullable": true
           },
           "password": {
@@ -1053,36 +1113,12 @@
             "minLength": 3
           },
           "type": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["SHORTLET"]
-              },
-              {
-                "type": "string",
-                "enum": ["RENTAL"]
-              },
-              {
-                "type": "string",
-                "enum": ["SALE"]
-              }
-            ]
+            "type": "string",
+            "enum": ["SHORTLET", "RENTAL", "SALE"]
           },
           "status": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["AWAITING_REVIEW"]
-              },
-              {
-                "type": "string",
-                "enum": ["REJECTED"]
-              },
-              {
-                "type": "string",
-                "enum": ["APPROVED"]
-              }
-            ]
+            "type": "string",
+            "enum": ["AWAITING_REVIEW", "REJECTED", "APPROVED"]
           },
           "description": {
             "type": "string",
@@ -1146,36 +1182,12 @@
             "minLength": 3
           },
           "type": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["SHORTLET"]
-              },
-              {
-                "type": "string",
-                "enum": ["RENTAL"]
-              },
-              {
-                "type": "string",
-                "enum": ["SALE"]
-              }
-            ]
+            "type": "string",
+            "enum": ["SHORTLET", "RENTAL", "SALE"]
           },
           "status": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["AWAITING_REVIEW"]
-              },
-              {
-                "type": "string",
-                "enum": ["REJECTED"]
-              },
-              {
-                "type": "string",
-                "enum": ["APPROVED"]
-              }
-            ]
+            "type": "string",
+            "enum": ["AWAITING_REVIEW", "REJECTED", "APPROVED"]
           },
           "description": {
             "type": "string",
@@ -1259,6 +1271,17 @@
         ],
         "additionalProperties": false
       },
+      "ReviewListingDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ACCEPT", "DECLINE"]
+          }
+        },
+        "required": ["status"],
+        "additionalProperties": false
+      },
       "CreateListingsDto": {
         "type": "object",
         "properties": {
@@ -1271,20 +1294,8 @@
             "minLength": 3
           },
           "type": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["SHORTLET"]
-              },
-              {
-                "type": "string",
-                "enum": ["RENTAL"]
-              },
-              {
-                "type": "string",
-                "enum": ["SALE"]
-              }
-            ]
+            "type": "string",
+            "enum": ["SHORTLET", "RENTAL", "SALE"]
           },
           "description": {
             "type": "string",
@@ -1375,6 +1386,19 @@
           }
         }
       },
+      "ListingsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["data", "message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ListingsDto"
+          }
+        }
+      },
       "UserDto": {
         "type": "object",
         "properties": {
@@ -1411,28 +1435,12 @@
             "nullable": true
           },
           "role": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["ADMIN"]
-              },
-              {
-                "type": "string",
-                "enum": ["USER"]
-              }
-            ]
+            "type": "string",
+            "enum": ["ADMIN", "USER"]
           },
           "gender": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["M"]
-              },
-              {
-                "type": "string",
-                "enum": ["F"]
-              }
-            ],
+            "type": "string",
+            "enum": ["M", "F"],
             "nullable": true
           }
         },
@@ -1485,16 +1493,8 @@
             "nullable": true
           },
           "gender": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["M"]
-              },
-              {
-                "type": "string",
-                "enum": ["F"]
-              }
-            ],
+            "type": "string",
+            "enum": ["M", "F"],
             "nullable": true
           }
         },
@@ -1614,20 +1614,8 @@
             "format": "date"
           },
           "status": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["ACCEPTED"]
-              },
-              {
-                "type": "string",
-                "enum": ["PENDING"]
-              },
-              {
-                "type": "string",
-                "enum": ["REJECTED"]
-              }
-            ],
+            "type": "string",
+            "enum": ["ACCEPTED", "PENDING", "REJECTED"],
             "default": "PENDING"
           },
           "userId": {
@@ -1676,20 +1664,8 @@
             "format": "date"
           },
           "status": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["ACCEPTED"]
-              },
-              {
-                "type": "string",
-                "enum": ["PENDING"]
-              },
-              {
-                "type": "string",
-                "enum": ["REJECTED"]
-              }
-            ],
+            "type": "string",
+            "enum": ["ACCEPTED", "PENDING", "REJECTED"],
             "default": "PENDING"
           },
           "userId": {
@@ -1736,36 +1712,12 @@
                 "minLength": 3
               },
               "type": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "enum": ["SHORTLET"]
-                  },
-                  {
-                    "type": "string",
-                    "enum": ["RENTAL"]
-                  },
-                  {
-                    "type": "string",
-                    "enum": ["SALE"]
-                  }
-                ]
+                "type": "string",
+                "enum": ["SHORTLET", "RENTAL", "SALE"]
               },
               "status": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "enum": ["AWAITING_REVIEW"]
-                  },
-                  {
-                    "type": "string",
-                    "enum": ["REJECTED"]
-                  },
-                  {
-                    "type": "string",
-                    "enum": ["APPROVED"]
-                  }
-                ]
+                "type": "string",
+                "enum": ["AWAITING_REVIEW", "REJECTED", "APPROVED"]
               },
               "description": {
                 "type": "string",
@@ -1886,6 +1838,31 @@
           },
           "data": {
             "$ref": "#/components/schemas/ReservationWithUserAndListingDto"
+          }
+        }
+      },
+      "ReviewReservationDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ACCEPT", "DECLINE"]
+          }
+        },
+        "required": ["status"],
+        "additionalProperties": false
+      },
+      "ReviewReservationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["data", "message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ReservationDto",
+            "nullable": true
           }
         }
       }
