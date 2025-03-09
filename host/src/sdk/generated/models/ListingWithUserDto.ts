@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ListingsDto = {
+export type ListingWithUserDto = {
   id: string;
   name: string;
   address: string;
@@ -15,5 +15,13 @@ export type ListingsDto = {
   images: Array<string>;
   userId: string;
   categoryId: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    photo: string | null;
+    mobileNumber: string;
+    businessName: string | null;
+  };
 };
 

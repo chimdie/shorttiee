@@ -6,3 +6,4 @@ export type NotFound = {
   message: string;
   error: string;
 };
+

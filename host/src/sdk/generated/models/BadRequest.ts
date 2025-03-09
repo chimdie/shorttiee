@@ -6,3 +6,4 @@ export type BadRequest = {
   message: string;
   error: string;
 };
+

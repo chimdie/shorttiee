@@ -6,3 +6,4 @@ export type ResetPasswordResponse = {
   message: string;
   data: string | null;
 };
+

@@ -6,3 +6,4 @@ export type Unauthorized = {
   message: string;
   error: string;
 };
+
