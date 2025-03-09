@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ListingsDto } from './ListingsDto';
-export type GetAllListingResponse = {
+import type { ReservationDto } from './ReservationDto';
+export type ReviewReservationResponse = {
   message: string;
-  data: Array<ListingsDto>;
+  data: ReservationDto | null;
 };
 

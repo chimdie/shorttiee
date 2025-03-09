@@ -1,4 +1,4 @@
-openapi: 3.1.3
+openapi: 3.1.0
 info:
   title: Shorttiee backend
   version: 1.0.0
@@ -146,6 +146,27 @@ paths:
     get:
       tags:
         - Reservation
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetReservationResponse"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+    patch:
+      tags:
+        - Reservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewReservationDto"
       responses:
         "200":
           description: Success
@@ -381,43 +402,64 @@ paths:
           required: true
           schema:
             type: string
+    patch:
+      tags:
+        - Listing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewListingDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingsResponse"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
 components:
   schemas:
     RegisterDto:
       type: object
-      required:
-        - firstName
-        - lastName
-        - email
-        - password
-        - mobileNumber
       properties:
         firstName:
           type: string
+          minLength: 2
         lastName:
           type: string
+          minLength: 2
         email:
           type: string
           format: email
-        password:
-          type: string
-          format: password
-          minLength: 8
-        mobileNumber:
-          type: string
-          pattern: ^090\d{8}$
-        businessName:
-          type: string
-        referrerCode:
-          type: string
-        address:
-          type: string
         gender:
           type: string
           enum:
             - M
             - F
           nullable: true
+        password:
+          type: string
+          minLength: 8
+        mobileNumber:
+          type: string
+        businessName:
+          type: string
+        referrerCode:
+          type: string
+        address:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+        - mobileNumber
       additionalProperties: false
     RegisterResponse:
       type: object
@@ -443,18 +485,17 @@ components:
                   pattern: ^[\w-]+.[\w-]+.[\w-]+$
     LoginDto:
       type: object
-      additionalProperties: false
-      required:
-        - email
-        - password
       properties:
         email:
           type: string
           format: email
         password:
           type: string
-          format: password
           minLength: 8
+      required:
+        - email
+        - password
+      additionalProperties: false
     LoginResponse:
       type: object
       additionalProperties: false
@@ -479,13 +520,13 @@ components:
                   pattern: ^[\w-]+.[\w-]+.[\w-]+$
     ForgotPasswordDto:
       type: object
-      additionalProperties: false
-      required:
-        - email
       properties:
         email:
           type: string
           format: email
+      required:
+        - email
+      additionalProperties: false
     ForgotPasswordResponse:
       type: object
       additionalProperties: false
@@ -502,21 +543,21 @@ components:
           default: null
     ResetPasswordDto:
       type: object
-      additionalProperties: false
-      required:
-        - otp
-        - email
-        - password
       properties:
         email:
           type: string
           format: email
-        otp:
-          type: string
-          pattern: \d{6}
         password:
           type: string
-          format: password
+          minLength: 8
+        otp:
+          type: string
+          minLength: 4
+      required:
+        - email
+        - password
+        - otp
+      additionalProperties: false
     ResetPasswordResponse:
       type: object
       additionalProperties: false
@@ -533,19 +574,19 @@ components:
           default: null
     ChangePasswordDto:
       type: object
-      additionalProperties: false
-      required:
-        - oldPassword
-        - newPassword
       properties:
-        oldPassword:
+        newPassword:
           type: string
           minLength: 8
-        newPassword:
+        oldPassword:
           type: string
           minLength: 8
         reauth:
           type: boolean
+      required:
+        - newPassword
+        - oldPassword
+      additionalProperties: false
     ChangePasswordResponse:
       type: object
       additionalProperties: false
@@ -622,29 +663,32 @@ components:
           type: string
     CategoryDto:
       type: object
-      additionalProperties: false
-      required:
-        - id
-        - name
       properties:
         id:
           type: string
+          format: uuid
         name:
           type: string
+          minLength: 3
         comment:
           type: string
           nullable: true
+      required:
+        - id
+        - name
+      additionalProperties: false
     CreateCategoryDto:
       type: object
-      additionalProperties: false
-      required:
-        - name
       properties:
         name:
           type: string
+          minLength: 3
         comment:
           type: string
           nullable: true
+      required:
+        - name
+      additionalProperties: false
     CreateCategoryResponse:
       type: object
       additionalProperties: false
@@ -672,16 +716,40 @@ components:
           items:
             $ref: "#/components/schemas/CategoryDto"
     CreateFileDto:
-      type: object
-      additionalProperties: false
-      required:
-        - files
-      properties:
-        files:
-          type: array
-          items:
+      type: array
+      items:
+        type: object
+        properties:
+          fieldname:
             type: string
-            format: binary
+          originalname:
+            type: string
+          encoding:
+            type: string
+          mimetype:
+            type: string
+          destination:
+            type: string
+          filename:
+            type: string
+          path:
+            type: string
+          size:
+            type: number
+          hash:
+            type: string
+        required:
+          - fieldname
+          - originalname
+          - encoding
+          - mimetype
+          - destination
+          - filename
+          - path
+          - size
+          - hash
+        additionalProperties: false
+      maxItems: 6
     CreateFileResponse:
       type: object
       additionalProperties: false
@@ -714,25 +782,16 @@ components:
       additionalProperties: false
     ListingsDto:
       type: object
-      additionalProperties: false
-      required:
-        - id
-        - name
-        - address
-        - type
-        - status
-        - images
-        - userId
-        - categoryId
       properties:
         id:
           type: string
           format: uuid
         name:
           type: string
+          minLength: 3
         address:
           type: string
-          format: email
+          minLength: 3
         type:
           type: string
           enum:
@@ -762,29 +821,130 @@ components:
           items:
             type: string
             format: uri
-            pattern: www\.[a-z]{2,20}\.[a-z]{2,4}
+          minItems: 3
+          maxItems: 6
         userId:
           type: string
           format: uuid
         categoryId:
           type: string
           format: uuid
-    CreateListingsDto:
-      type: object
-      additionalProperties: false
       required:
+        - id
         - name
         - address
         - type
+        - status
         - images
+        - userId
         - categoryId
-        - facilities
+      additionalProperties: false
+    ListingWithUserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 3
+        address:
+          type: string
+          minLength: 3
+        type:
+          type: string
+          enum:
+            - SHORTLET
+            - RENTAL
+            - SALE
+        status:
+          type: string
+          enum:
+            - AWAITING_REVIEW
+            - REJECTED
+            - APPROVED
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+          nullable: true
+        rate:
+          type: number
+          nullable: true
+        restrictions:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+          minItems: 3
+          maxItems: 6
+        userId:
+          type: string
+          format: uuid
+        categoryId:
+          type: string
+          format: uuid
+        user:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+              format: email
+            photo:
+              type: string
+              nullable: true
+            mobileNumber:
+              type: string
+            businessName:
+              type: string
+              nullable: true
+          required:
+            - firstName
+            - lastName
+            - email
+            - photo
+            - mobileNumber
+            - businessName
+          additionalProperties: false
+      required:
+        - id
+        - name
+        - address
+        - type
+        - status
+        - images
+        - userId
+        - categoryId
+        - user
+      additionalProperties: false
+    ReviewListingDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ACCEPT
+            - DECLINE
+      required:
+        - status
+      additionalProperties: false
+    CreateListingsDto:
+      type: object
       properties:
         name:
           type: string
+          minLength: 3
         address:
           type: string
-          format: email
+          minLength: 3
         type:
           type: string
           enum:
@@ -800,11 +960,6 @@ components:
         rate:
           type: number
           nullable: true
-        facilities:
-          type: array
-          items:
-            type: string
-            format: uuid
         restrictions:
           type: string
           nullable: true
@@ -813,9 +968,23 @@ components:
           items:
             type: string
             format: uri
+          minItems: 3
+          maxItems: 6
         categoryId:
           type: string
           format: uuid
+        facilities:
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - address
+        - type
+        - images
+        - categoryId
+        - facilities
+      additionalProperties: false
     CreateListingResponse:
       type: object
       additionalProperties: false
@@ -851,32 +1020,30 @@ components:
         message:
           type: string
         data:
+          $ref: "#/components/schemas/ListingWithUserDto"
+    ListingsResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+        data:
           $ref: "#/components/schemas/ListingsDto"
     UserDto:
       type: object
-      description: User model
-      additionalProperties: false
-      required:
-        - id
-        - firstName
-        - lastName
-        - email
-        - mobileNumber
-        - role
-        - createdAt
-        - updatedAt
       properties:
         id:
           type: string
-          uniqueItems: true
-          format: uuid
         firstName:
           type: string
         lastName:
           type: string
         email:
           type: string
-          uniqueItems: true
+          format: email
         mobileNumber:
           type: string
         businessName:
@@ -894,20 +1061,22 @@ components:
         role:
           type: string
           enum:
-            - USER
             - ADMIN
+            - USER
         gender:
           type: string
           enum:
             - M
             - F
           nullable: true
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - mobileNumber
+        - role
+      additionalProperties: false
     UserProfileResponse:
       type: object
       additionalProperties: false
@@ -922,8 +1091,6 @@ components:
           $ref: "#/components/schemas/UserDto"
     UpdateUserDto:
       type: object
-      description: User model
-      additionalProperties: false
       properties:
         firstName:
           type: string
@@ -946,44 +1113,47 @@ components:
             - M
             - F
           nullable: true
+      additionalProperties: false
     FacilityDto:
       type: object
-      additionalProperties: false
-      required:
-        - id
-        - name
-        - icon
       properties:
         id:
           type: string
           format: uuid
         name:
           type: string
+          minLength: 3
         icon:
           type: string
-        color:
-          type: string
-          nullable: true
         comment:
           type: string
           nullable: true
-    CreateFacilityDto:
-      type: object
-      additionalProperties: false
+        color:
+          type: string
+          nullable: true
       required:
+        - id
         - name
         - icon
+      additionalProperties: false
+    CreateFacilityDto:
+      type: object
       properties:
         name:
           type: string
+          minLength: 3
         icon:
           type: string
-        color:
-          type: string
-          nullable: true
         comment:
           type: string
           nullable: true
+        color:
+          type: string
+          nullable: true
+      required:
+        - name
+        - icon
+      additionalProperties: false
     CreateFacilityResponse:
       type: object
       additionalProperties: false
@@ -1024,20 +1194,9 @@ components:
           $ref: "#/components/schemas/FacilityDto"
     ReservationDto:
       type: object
-      additionalProperties: false
-      required:
-        - id
-        - code
-        - amount
-        - startDate
-        - endDate
-        - userId
-        - listingId
-        - listingOwnerId
       properties:
         id:
           type: string
-          format: uuid
         code:
           type: string
         amount:
@@ -1048,6 +1207,13 @@ components:
         endDate:
           type: string
           format: date
+        status:
+          type: string
+          enum:
+            - ACCEPTED
+            - PENDING
+            - REJECTED
+          default: PENDING
         userId:
           type: string
           format: uuid
@@ -1057,13 +1223,134 @@ components:
         listingOwnerId:
           type: string
           format: uuid
-    CreateReservationDto:
-      type: object
-      additionalProperties: false
       required:
+        - id
+        - code
+        - amount
         - startDate
         - endDate
+        - userId
         - listingId
+        - listingOwnerId
+      additionalProperties: false
+    ReservationWithUserAndListingDto:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        amount:
+          type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - ACCEPTED
+            - PENDING
+            - REJECTED
+          default: PENDING
+        userId:
+          type: string
+          format: uuid
+        listingId:
+          type: string
+          format: uuid
+        listingOwnerId:
+          type: string
+          format: uuid
+        user:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+              format: email
+            mobileNumber:
+              type: string
+          required:
+            - firstName
+            - lastName
+            - email
+            - mobileNumber
+          additionalProperties: false
+        listing:
+          type: object
+          properties:
+            name:
+              type: string
+              minLength: 3
+            address:
+              type: string
+              minLength: 3
+            type:
+              type: string
+              enum:
+                - SHORTLET
+                - RENTAL
+                - SALE
+            status:
+              type: string
+              enum:
+                - AWAITING_REVIEW
+                - REJECTED
+                - APPROVED
+            description:
+              type: string
+              nullable: true
+            price:
+              type: number
+              nullable: true
+            rate:
+              type: number
+              nullable: true
+            restrictions:
+              type: string
+              nullable: true
+            images:
+              type: array
+              items:
+                type: string
+                format: uri
+              minItems: 3
+              maxItems: 6
+            userId:
+              type: string
+              format: uuid
+            categoryId:
+              type: string
+              format: uuid
+          required:
+            - name
+            - address
+            - type
+            - status
+            - images
+            - userId
+            - categoryId
+          additionalProperties: false
+      required:
+        - id
+        - code
+        - amount
+        - startDate
+        - endDate
+        - userId
+        - listingId
+        - listingOwnerId
+        - user
+        - listing
+      additionalProperties: false
+    CreateReservationDto:
+      type: object
       properties:
         startDate:
           type: string
@@ -1074,6 +1361,11 @@ components:
         listingId:
           type: string
           format: uuid
+      required:
+        - startDate
+        - endDate
+        - listingId
+      additionalProperties: false
     CreateReservationsResponse:
       type: object
       additionalProperties: false
@@ -1109,7 +1401,30 @@ components:
         message:
           type: string
         data:
+          $ref: "#/components/schemas/ReservationWithUserAndListingDto"
+    ReviewReservationDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ACCEPT
+            - DECLINE
+      required:
+        - status
+      additionalProperties: false
+    ReviewReservationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - data
+        - message
+      properties:
+        message:
+          type: string
+        data:
           $ref: "#/components/schemas/ReservationDto"
+          nullable: true
   securitySchemes:
     BearerAuth:
       description: JWT authentication

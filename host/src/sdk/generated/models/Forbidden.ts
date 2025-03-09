@@ -6,3 +6,4 @@ export type Forbidden = {
   message: string;
   error: string;
 };
+

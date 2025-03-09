@@ -2,19 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ChangePasswordDto } from "../models/ChangePasswordDto";
-import type { ChangePasswordResponse } from "../models/ChangePasswordResponse";
-import type { ForgotPasswordDto } from "../models/ForgotPasswordDto";
-import type { ForgotPasswordResponse } from "../models/ForgotPasswordResponse";
-import type { LoginDto } from "../models/LoginDto";
-import type { LoginResponse } from "../models/LoginResponse";
-import type { RegisterDto } from "../models/RegisterDto";
-import type { RegisterResponse } from "../models/RegisterResponse";
-import type { ResetPasswordDto } from "../models/ResetPasswordDto";
-import type { ResetPasswordResponse } from "../models/ResetPasswordResponse";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { ChangePasswordDto } from '../models/ChangePasswordDto';
+import type { ChangePasswordResponse } from '../models/ChangePasswordResponse';
+import type { ForgotPasswordDto } from '../models/ForgotPasswordDto';
+import type { ForgotPasswordResponse } from '../models/ForgotPasswordResponse';
+import type { LoginDto } from '../models/LoginDto';
+import type { LoginResponse } from '../models/LoginResponse';
+import type { RegisterDto } from '../models/RegisterDto';
+import type { RegisterResponse } from '../models/RegisterResponse';
+import type { ResetPasswordDto } from '../models/ResetPasswordDto';
+import type { ResetPasswordResponse } from '../models/ResetPasswordResponse';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class AuthenticationService {
   /**
    * Create an account
@@ -27,10 +27,10 @@ export class AuthenticationService {
     requestBody?: RegisterDto,
   ): CancelablePromise<RegisterResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/auth/register",
+      method: 'POST',
+      url: '/api/v1/auth/register',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -39,12 +39,14 @@ export class AuthenticationService {
    * @returns LoginResponse Success
    * @throws ApiError
    */
-  public static postApiV1AuthLogin(requestBody?: LoginDto): CancelablePromise<LoginResponse> {
+  public static postApiV1AuthLogin(
+    requestBody?: LoginDto,
+  ): CancelablePromise<LoginResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/auth/login",
+      method: 'POST',
+      url: '/api/v1/auth/login',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -57,10 +59,10 @@ export class AuthenticationService {
     requestBody?: ForgotPasswordDto,
   ): CancelablePromise<ForgotPasswordResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/auth/forgot-password",
+      method: 'POST',
+      url: '/api/v1/auth/forgot-password',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -73,10 +75,10 @@ export class AuthenticationService {
     requestBody?: ResetPasswordDto,
   ): CancelablePromise<ResetPasswordResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/auth/reset-password",
+      method: 'POST',
+      url: '/api/v1/auth/reset-password',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -94,10 +96,10 @@ export class AuthenticationService {
     requestBody?: ChangePasswordDto,
   ): CancelablePromise<ChangePasswordResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/auth/change-password",
+      method: 'POST',
+      url: '/api/v1/auth/change-password',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
 }

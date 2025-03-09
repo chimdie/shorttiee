@@ -2,12 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreateCategoryDto } from "../models/CreateCategoryDto";
-import type { CreateCategoryResponse } from "../models/CreateCategoryResponse";
-import type { GetAllCategoryResponse } from "../models/GetAllCategoryResponse";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { CreateCategoryDto } from '../models/CreateCategoryDto';
+import type { CreateCategoryResponse } from '../models/CreateCategoryResponse';
+import type { GetAllCategoryResponse } from '../models/GetAllCategoryResponse';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class CategoryService {
   /**
    * Create a category
@@ -20,10 +20,10 @@ export class CategoryService {
     requestBody?: CreateCategoryDto,
   ): CancelablePromise<CreateCategoryResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/categories/",
+      method: 'POST',
+      url: '/api/v1/categories/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -34,8 +34,8 @@ export class CategoryService {
    */
   public static getApiV1Categories(): CancelablePromise<GetAllCategoryResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/categories/",
+      method: 'GET',
+      url: '/api/v1/categories/',
     });
   }
 }

@@ -4,6 +4,7 @@
 /* eslint-disable */
 export type ResetPasswordDto = {
   email: string;
-  otp: string;
   password: string;
+  otp: string;
 };
+

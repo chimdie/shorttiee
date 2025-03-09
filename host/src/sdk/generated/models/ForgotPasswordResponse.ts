@@ -6,3 +6,4 @@ export type ForgotPasswordResponse = {
   message: string;
   data: string | null;
 };
+

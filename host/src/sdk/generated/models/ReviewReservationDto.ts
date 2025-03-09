@@ -2,9 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ListingsDto } from './ListingsDto';
-export type GetAllListingResponse = {
-  message: string;
-  data: Array<ListingsDto>;
+export type ReviewReservationDto = {
+  status: 'ACCEPT' | 'DECLINE';
 };
 

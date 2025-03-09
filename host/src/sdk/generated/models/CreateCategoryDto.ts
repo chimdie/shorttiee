@@ -6,3 +6,4 @@ export type CreateCategoryDto = {
   name: string;
   comment?: string | null;
 };
+

@@ -9,7 +9,6 @@ import { QueryKeys } from "@/utils/queryKeys";
 import { ApiSDK } from "@/sdk";
 import { Hotel } from "lucide-react";
 
-
 export default function Reservation(): JSX.Element {
   const user = useAtomValue(loggedinUserAtom)
   const userId = user?.data?.id
@@ -21,6 +20,20 @@ export default function Reservation(): JSX.Element {
     refetchOnMount: false,
   })
 
+
+  const allReservations = reservationsData?.data
+    ? [
+      {
+        id: reservationsData.data.id,
+        code: reservationsData.data.code,
+        amount: reservationsData.data.amount,
+        startDate: reservationsData.data.startDate,
+        endDate: reservationsData.data.endDate,
+        name: `${reservationsData.data.user.firstName} ${reservationsData.data.user.lastName}`,
+        apartment: reservationsData.data.listing.name,
+      },
+    ]
+    : [];
 
 
   return (
@@ -56,7 +69,7 @@ export default function Reservation(): JSX.Element {
                 variant="underlined"
         >
                 <Tab key="incoming" title="Incoming Reservations">
-                  <IncomingReservation reservations={[]} isLoading={isLoading} />
+                  <IncomingReservation reservations={allReservations} isLoading={isLoading} />
                 </Tab>
 
                 <Tab key="confirm" title="Confirmed Reservations">
