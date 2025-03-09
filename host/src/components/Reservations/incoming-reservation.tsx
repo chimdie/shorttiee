@@ -22,14 +22,14 @@ import { calculateNights } from "@/utils";
 export interface ReservationProps {
   reservations: {
     id: string;
-    name: string;
     code: string;
-    apartment: string;
     amount: number;
     startDate: string;
     endDate: string;
+    name: string;
+    apartment: string;
   }[];
-  isLoading: boolean
+  isLoading: boolean;
 }
 
 export default function IncomingReservation({ reservations, isLoading }: ReservationProps): JSX.Element {

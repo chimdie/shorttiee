@@ -9,19 +9,23 @@ import { QueryKeys } from "@/utils/queryKeys";
 import { ApiSDK } from "@/sdk";
 import { Hotel } from "lucide-react";
 
+
 export default function Reservation(): JSX.Element {
   const user = useAtomValue(loggedinUserAtom)
   const userId = user?.data?.id
 
   const { data: reservationsData, isLoading } = useQuery({
     queryKey: [QueryKeys.reservations, userId],
-    queryFn: () => ApiSDK.ReservationService.getApiV1UsersReservations(JSON.stringify([["userId", "eq", userId]])),
+    // queryFn: () => ApiSDK.ReservationService.getApiV1UsersReservations(JSON.stringify([["userId", "eq", userId]])),
+    queryFn: () => ApiSDK.ReservationService.getApiV1UsersReservations1(userId as string),
     refetchOnMount: false,
   })
 
+
+
   return (
     <>
-      {reservationsData?.data.length === 0 ? (
+      {!reservationsData?.data ? (
         <div className="flex flex-col justify-center items-center mx-auto h-full">
           <div className="p-4 border rounded-md ">
             <Hotel className="size-12" />
