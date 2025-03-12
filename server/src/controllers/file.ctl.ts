@@ -64,6 +64,15 @@ export const getFileCtl = ctlWrapper(async (req: Request<FindFileDto>, res) => {
   }
 
   const filePath = path.resolve(appEnv.UPLOAD_PATH, file.filename);
+  const fileHandler = await fs.promises
+    .access(filePath, fs.constants.R_OK)
+    .then(() => true)
+    .catch(() => false);
+
+  if (!fileHandler) {
+    return NotFoundResponse(res);
+  }
+
   const reader = fs.createReadStream(filePath);
 
   res.type(mime.lookup(req.params.name));
