@@ -80,6 +80,7 @@ oapi.component("schemas", "GetAllReservationResponse", {
 export const getAllReservationsDocs = oapi.path({
   tags: ["Reservation"],
   parameters: [...BasicQueriesDocs],
+  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",
@@ -106,6 +107,7 @@ oapi.component("schemas", "GetReservationResponse", {
 });
 export const getReservationDocs = oapi.path({
   tags: ["Reservation"],
+  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",
@@ -137,6 +139,7 @@ oapi.component("schemas", "ReviewReservationResponse", {
 });
 export const reviewReservationDocs = oapi.path({
   tags: ["Reservation"],
+  security: [{ BearerAuth: [] }],
   requestBody: {
     content: {
       "application/json": {
