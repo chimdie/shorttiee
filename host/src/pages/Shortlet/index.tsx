@@ -30,10 +30,10 @@ import { useAtomValue } from "jotai";
 import { loggedinUserAtom } from "@/atoms/user.atom";
 
 const statusTheme = {
-  active: "text-shorttiee-green-dark bg-shorttiee-green-light",
-  pending: "text-shorttiee-yellow-dark bg-shorttiee-yellow-light",
-  rejected: "text-shorttiee-red-dark bg-shorttiee-red-light",
-  terminated: "text-grey-300 bg-grey-200",
+  APPROVED: "text-shorttiee-green-dark bg-shorttiee-green-light",
+  AWAITING_REVIEW: "text-shorttiee-yellow-dark bg-shorttiee-yellow-light",
+  REJECTED: "text-shorttiee-red-dark bg-shorttiee-red-light",
+  TERMINATED: "text-grey-300 bg-grey-200",
 };
 
 export default function Shortlet(): JSX.Element {
@@ -63,7 +63,7 @@ export default function Shortlet(): JSX.Element {
   const getStatusClass = (status: string) => {
     return Object.keys(statusTheme).find((key) => status.includes(key))
       ? statusTheme[status as keyof typeof statusTheme]
-      : statusTheme.terminated;
+      : statusTheme.TERMINATED;
   };
 
   return (
