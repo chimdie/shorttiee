@@ -7,6 +7,7 @@ import {getColor} from '@/config/theme';
 import {Heart} from 'iconsax-react-native';
 import {ListingsDto} from '@/sdk/generated';
 import {ListRenderItemInfo} from '@shopify/flash-list';
+import {currencyParser} from '@/utils/currencyParser';
 
 export type ShortletCardT = {
   isVertical?: boolean;
@@ -65,7 +66,7 @@ export const ShortletCard = ({isVertical, data}: ShortletCardT) => {
                   tw`text-lg font-bold`,
                   {color: getColor('shorttiee-primary')},
                 ]}>
-                {item.rate}
+                {item.rate && currencyParser(item.rate)}
               </Text>
               <Text style={tw`text-gray-500 text-xs`}>/night</Text>
             </View>
