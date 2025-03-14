@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ReservationDto } from "./ReservationDto";
+import type { ReservationDto } from './ReservationDto';
 export type CreateReservationsResponse = {
   message: string;
   data: ReservationDto;
 };
+

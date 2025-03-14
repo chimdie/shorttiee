@@ -37,7 +37,6 @@ const statusTheme = {
 };
 
 export default function Shortlet(): JSX.Element {
-  const [isShortlet] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [shortletId, setShortletId] = useState<string | null>(null);
   const user = useAtomValue(loggedinUserAtom);
@@ -69,7 +68,7 @@ export default function Shortlet(): JSX.Element {
 
   return (
     <>
-      {isShortlet ? (
+      {filteredShortlets.length === 0 ? (
         <div className="flex flex-col justify-center items-center mx-auto h-full">
           <div className="p-4 border rounded-md ">
             <Hotel className="size-12" />

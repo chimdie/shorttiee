@@ -2,10 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserDto } from "./UserDto";
+import type { UserDto } from './UserDto';
 export type LoginResponse = {
   message: string;
-  data: UserDto & {
+  data: (UserDto & {
     token: string;
-  };
+  });
 };
+

@@ -162,3 +162,43 @@ export const reviewReservationDocs = oapi.path({
     }
   }
 });
+
+// patch reservation
+oapi.component(
+  "schemas",
+  "ReviewReservationDto",
+  dtoToJsonSchema(ReviewReservationDto)
+);
+oapi.component("schemas", "ReviewReservationResponse", {
+  type: "object",
+  additionalProperties: false,
+  required: ["data", "message"],
+  properties: {
+    message: { type: "string" },
+    data: { $ref: "#/components/schemas/ReservationDto", nullable: true }
+  }
+});
+export const reviewReservationDocs = oapi.path({
+  tags: ["Reservation"],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          $ref: "#/components/schemas/ReviewReservationDto"
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: "Success",
+      content: {
+        "application/json": {
+          schema: {
+            $ref: "#/components/schemas/GetReservationResponse"
+          }
+        }
+      }
+    }
+  }
+});

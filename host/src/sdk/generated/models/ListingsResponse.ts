@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ListingsDto } from './ListingsDto';
-export type GetAllListingResponse = {
+export type ListingsResponse = {
   message: string;
-  data: Array<ListingsDto>;
+  data: ListingsDto;
 };
 
