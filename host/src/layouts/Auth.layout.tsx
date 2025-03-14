@@ -1,9 +1,9 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import HelmetHeader from "@/components/HelmetHeader";
 import { HomeHashtag } from "iconsax-react";
+import { Spinner } from "@heroui/spinner";
+import HelmetHeader from "@/components/HelmetHeader";
 import { AuthRoutes } from "@/types/routes";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
-import { Spinner } from "@heroui/spinner";
 
 const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string }> = {
   [AuthRoutes.login]: {
@@ -30,14 +30,14 @@ const routeHelmetTitle: Record<AuthRoutes, { title: string; description: string 
 
 export default function AuthLayout(): JSX.Element {
   const currentPath = useLocation().pathname as AuthRoutes;
-  const { loggedInUser, authToken } = useAuthRedirect({ requireAuth: false });
+  const { authToken } = useAuthRedirect(false);
 
   const { title, description } = routeHelmetTitle[currentPath] || {
     title: "Shorttie",
     description: "Home away from home",
   };
 
-  if (loggedInUser || authToken) {
+  if (authToken) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" color="warning" />

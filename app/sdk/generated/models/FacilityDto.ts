@@ -6,7 +6,7 @@ export type FacilityDto = {
   id: string;
   name: string;
   icon: string;
-  color?: string | null;
   comment?: string | null;
+  color?: string | null;
 };
 

@@ -11,6 +11,7 @@ import { DashboardRoutes } from "@/types/routes";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "@/utils/queryKeys";
 import { ApiSDK } from "@/sdk";
+import { currencyParser } from "@/utils/currencyParser";
 
 export default function ShortletDetails() {
   const { id } = useParams();
@@ -42,8 +43,9 @@ export default function ShortletDetails() {
               <p className="text-shorttiee-primary font-semibold">{shortletDetail?.data?.type}</p>
               <p className="text-sm">
                 <span className="text-base text-shorttiee-green-dark font-semibold">
-                  #{shortletDetail?.data?.price}
-                </span>{" "}
+                  {shortletDetail?.data?.price &&
+                    currencyParser(Number(shortletDetail?.data?.price))}
+                </span>
                 /night
               </p>
               <Chip
@@ -51,7 +53,7 @@ export default function ShortletDetails() {
                 size="sm"
                 className="text-shorttiee-yellow-dark bg-shorttiee-yellow-light text-xs font-bold capitalize"
               >
-                {shortletDetail?.data?.status}
+                {shortletDetail?.data?.status ?? ""}
               </Chip>
             </div>
           </div>
@@ -84,16 +86,18 @@ export default function ShortletDetails() {
           <div className="py-6 space-y-3">
             <div>
               <h3 className="text-shorttiee-primary text-md font-bold">Address</h3>
-              <p className="text-grey-400">{shortletDetail?.data?.address}</p>
+              <p className="text-grey-400">{shortletDetail?.data?.address ?? ""}</p>
             </div>
             <div>
               <h3 className="text-shorttiee-primary text-md font-bold">Rate</h3>
-              <p className="text-grey-400">{shortletDetail?.data?.rate}</p>
+              <p className="text-grey-400">
+                {shortletDetail?.data.rate && currencyParser(Number(shortletDetail?.data?.rate))}
+              </p>
             </div>
             <div>
               <h3 className="text-shorttiee-primary text-md font-bold">Description</h3>
               <div className="w-3/4 space-y-2">
-                <p className="text-grey-400">{shortletDetail?.data?.description}</p>
+                <p className="text-grey-400">{shortletDetail?.data?.description ?? ""}</p>
               </div>
             </div>
           </div>
@@ -102,7 +106,7 @@ export default function ShortletDetails() {
             <ul className="flex flex-wrap  p-0  list-disc list-inside w-2/6">
               {restrictionList?.map((restriction, index) => (
                 <li key={index} className="w-1/2 p-1 text-grey-400">
-                  {restriction}
+                  {restriction ?? ""}
                 </li>
               ))}
             </ul>

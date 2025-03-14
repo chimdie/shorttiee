@@ -36,18 +36,16 @@ export default function DeleteShortletModal({
           </div>
         </ModalBody>
         <ModalFooter>
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full">
             <Button
               onPress={onClose}
-              size="lg"
-              fullWidth={true}
+              fullWidth
               className="bg-white shadow-sm border text-shorttiee-primary font-medium"
             >
               Cancel
             </Button>
             <Button
-              size="lg"
-              fullWidth={true}
+              fullWidth
               className="bg-shorttiee-primary text-white shadow-sm font-medium"
               onPress={() => {
                 console.log(id);
