@@ -85,6 +85,7 @@ oapi.component("schemas", "GetAllListingResponse", {
 export const getAllListingsDocs = oapi.path({
   tags: ["Listing"],
   parameters: [...BasicQueriesDocs],
+  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",
@@ -111,6 +112,7 @@ oapi.component("schemas", "GetListingResponse", {
 });
 export const getListingsDocs = oapi.path({
   tags: ["Listing"],
+  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",
@@ -128,6 +130,7 @@ export const getListingsDocs = oapi.path({
 // get listing facilities
 export const getListingFacilitiesDocs = oapi.path({
   tags: ["Listing"],
+  security: [{ BearerAuth: [] }],
   responses: {
     200: {
       description: "Success",
@@ -157,6 +160,7 @@ oapi.component("schemas", "ListingsResponse", {
 });
 export const reviewListingsDocs = oapi.path({
   tags: ["Listing"],
+  security: [{ BearerAuth: [] }],
   requestBody: {
     content: {
       "application/json": {
