@@ -34,7 +34,7 @@ export function NavUser() {
     queryFn: () => ApiSDK.UserService.getApiV1UsersProfile(),
   });
 
-  console.log("hpoe", user?.data?.photo)
+  console.log("hpoe", user?.data?.photo);
 
   const fullName = [user?.data?.firstName, user?.data?.lastName].filter(Boolean).join(" ");
 
@@ -49,8 +49,6 @@ export function NavUser() {
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-
-
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user?.data?.photo as string} alt={fullName} />
                     <AvatarFallback className="rounded-lg uppercase">

@@ -8,4 +8,3 @@ export type CreateFacilityDto = {
   comment?: string | null;
   color?: string | null;
 };
-

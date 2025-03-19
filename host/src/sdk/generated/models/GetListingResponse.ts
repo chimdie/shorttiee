@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ListingWithUserDto } from './ListingWithUserDto';
+import type { ListingWithUserDto } from "./ListingWithUserDto";
 export type GetListingResponse = {
   message: string;
   data: ListingWithUserDto;
 };
-

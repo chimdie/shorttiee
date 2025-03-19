@@ -26,13 +26,17 @@ export interface ReservationProps {
     amount: number;
     startDate: string;
     endDate: string;
-    name: string;
-    apartment: string;
+    name?: string;
+    apartment?: string;
+    reason?: string;
   }[];
   isLoading: boolean;
 }
 
-export default function IncomingReservation({ reservations, isLoading }: ReservationProps): JSX.Element {
+export default function IncomingReservation({
+  reservations,
+  isLoading,
+}: ReservationProps): JSX.Element {
   const acceptReservation = useDisclosure();
   const rejectReservation = useDisclosure();
   const [reservationId, setReservationId] = useState<string | null>(null);
@@ -66,11 +70,13 @@ export default function IncomingReservation({ reservations, isLoading }: Reserva
                 className="bg-white border-y-5 border-grey_100  cursor-pointer"
                 key={item.id}
               >
-                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.name || "John Doe"}</TableCell>
                 <TableCell>{item.code}</TableCell>
-                <TableCell>{item.startDate} -  {item.endDate}</TableCell>
+                <TableCell>
+                  {item.startDate} - {item.endDate}
+                </TableCell>
                 <TableCell>{calculateNights(item.startDate, item.endDate)}</TableCell>
-                <TableCell>{item.apartment}</TableCell>
+                <TableCell>{item.apartment || "Vibes Lounge"}</TableCell>
                 <TableCell>{item.amount}</TableCell>
                 <TableCell>
                   <div>

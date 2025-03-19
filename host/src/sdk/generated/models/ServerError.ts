@@ -6,4 +6,3 @@ export type ServerError = {
   message: string;
   error: string;
 };
-

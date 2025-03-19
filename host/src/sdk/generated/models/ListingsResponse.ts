@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ListingsDto } from './ListingsDto';
+import type { ListingsDto } from "./ListingsDto";
 export type ListingsResponse = {
   message: string;
   data: ListingsDto;
 };
-

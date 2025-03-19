@@ -5,7 +5,7 @@
 export type CreateListingsDto = {
   name: string;
   address: string;
-  type: 'SHORTLET' | 'RENTAL' | 'SALE';
+  type: "SHORTLET" | "RENTAL" | "SALE";
   description?: string | null;
   price?: number | null;
   rate?: number | null;
@@ -14,4 +14,3 @@ export type CreateListingsDto = {
   categoryId: string;
   facilities: Array<string>;
 };
-

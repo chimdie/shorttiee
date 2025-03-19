@@ -6,8 +6,8 @@ export type ListingsDto = {
   id: string;
   name: string;
   address: string;
-  type: 'SHORTLET' | 'RENTAL' | 'SALE';
-  status: 'AWAITING_REVIEW' | 'REJECTED' | 'APPROVED';
+  type: "SHORTLET" | "RENTAL" | "SALE";
+  status: "AWAITING_REVIEW" | "REJECTED" | "APPROVED";
   description?: string | null;
   price?: number | null;
   rate?: number | null;
@@ -16,4 +16,3 @@ export type ListingsDto = {
   userId: string;
   categoryId: string;
 };
-

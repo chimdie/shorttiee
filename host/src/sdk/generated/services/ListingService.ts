@@ -2,16 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreateListingResponse } from '../models/CreateListingResponse';
-import type { CreateListingsDto } from '../models/CreateListingsDto';
-import type { FacilityDto } from '../models/FacilityDto';
-import type { GetAllListingResponse } from '../models/GetAllListingResponse';
-import type { GetListingResponse } from '../models/GetListingResponse';
-import type { ListingsResponse } from '../models/ListingsResponse';
-import type { ReviewListingDto } from '../models/ReviewListingDto';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { CreateListingResponse } from "../models/CreateListingResponse";
+import type { CreateListingsDto } from "../models/CreateListingsDto";
+import type { FacilityDto } from "../models/FacilityDto";
+import type { GetAllListingResponse } from "../models/GetAllListingResponse";
+import type { GetListingResponse } from "../models/GetListingResponse";
+import type { ListingsResponse } from "../models/ListingsResponse";
+import type { ReviewListingDto } from "../models/ReviewListingDto";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class ListingService {
   /**
    * @param filter
@@ -63,12 +63,12 @@ export class ListingService {
     shift?: boolean,
   ): CancelablePromise<GetAllListingResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/listings/',
+      method: "GET",
+      url: "/api/v1/listings/",
       query: {
-        'filter': filter,
-        'or_filter': orFilter,
-        'shift': shift,
+        filter: filter,
+        or_filter: orFilter,
+        shift: shift,
       },
     });
   }
@@ -81,10 +81,10 @@ export class ListingService {
     requestBody?: CreateListingsDto,
   ): CancelablePromise<CreateListingResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/listings/',
+      method: "POST",
+      url: "/api/v1/listings/",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
     });
   }
   /**
@@ -92,14 +92,12 @@ export class ListingService {
    * @returns FacilityDto Success
    * @throws ApiError
    */
-  public static getApiV1ListingsFacilities(
-    id: string,
-  ): CancelablePromise<Array<FacilityDto>> {
+  public static getApiV1ListingsFacilities(id: string): CancelablePromise<Array<FacilityDto>> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/listings/{id}/facilities',
+      method: "GET",
+      url: "/api/v1/listings/{id}/facilities",
       path: {
-        'id': id,
+        id: id,
       },
     });
   }
@@ -108,14 +106,12 @@ export class ListingService {
    * @returns GetListingResponse Success
    * @throws ApiError
    */
-  public static getApiV1Listings1(
-    id: string,
-  ): CancelablePromise<GetListingResponse> {
+  public static getApiV1Listings1(id: string): CancelablePromise<GetListingResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/listings/{id}',
+      method: "GET",
+      url: "/api/v1/listings/{id}",
       path: {
-        'id': id,
+        id: id,
       },
     });
   }
@@ -130,13 +126,13 @@ export class ListingService {
     requestBody?: ReviewListingDto,
   ): CancelablePromise<ListingsResponse> {
     return __request(OpenAPI, {
-      method: 'PATCH',
-      url: '/api/v1/listings/{id}',
+      method: "PATCH",
+      url: "/api/v1/listings/{id}",
       path: {
-        'id': id,
+        id: id,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
     });
   }
 }

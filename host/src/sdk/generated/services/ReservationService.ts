@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreateListingResponse } from '../models/CreateListingResponse';
-import type { CreateReservationDto } from '../models/CreateReservationDto';
-import type { GetAllReservationResponse } from '../models/GetAllReservationResponse';
-import type { GetReservationResponse } from '../models/GetReservationResponse';
-import type { ReviewReservationDto } from '../models/ReviewReservationDto';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { CreateListingResponse } from "../models/CreateListingResponse";
+import type { CreateReservationDto } from "../models/CreateReservationDto";
+import type { GetAllReservationResponse } from "../models/GetAllReservationResponse";
+import type { GetReservationResponse } from "../models/GetReservationResponse";
+import type { ReviewReservationDto } from "../models/ReviewReservationDto";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class ReservationService {
   /**
    * @param requestBody
@@ -20,10 +20,10 @@ export class ReservationService {
     requestBody?: CreateReservationDto,
   ): CancelablePromise<CreateListingResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/users/reservations/',
+      method: "POST",
+      url: "/api/v1/users/reservations/",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
     });
   }
   /**
@@ -76,12 +76,12 @@ export class ReservationService {
     shift?: boolean,
   ): CancelablePromise<GetAllReservationResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/users/reservations/',
+      method: "GET",
+      url: "/api/v1/users/reservations/",
       query: {
-        'filter': filter,
-        'or_filter': orFilter,
-        'shift': shift,
+        filter: filter,
+        or_filter: orFilter,
+        shift: shift,
       },
     });
   }
@@ -90,14 +90,12 @@ export class ReservationService {
    * @returns GetReservationResponse Success
    * @throws ApiError
    */
-  public static getApiV1UsersReservations1(
-    id: string,
-  ): CancelablePromise<GetReservationResponse> {
+  public static getApiV1UsersReservations1(id: string): CancelablePromise<GetReservationResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/users/reservations/{id}',
+      method: "GET",
+      url: "/api/v1/users/reservations/{id}",
       path: {
-        'id': id,
+        id: id,
       },
     });
   }
@@ -112,13 +110,13 @@ export class ReservationService {
     requestBody?: ReviewReservationDto,
   ): CancelablePromise<GetReservationResponse> {
     return __request(OpenAPI, {
-      method: 'PATCH',
-      url: '/api/v1/users/reservations/{id}',
+      method: "PATCH",
+      url: "/api/v1/users/reservations/{id}",
       path: {
-        'id': id,
+        id: id,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
     });
   }
 }

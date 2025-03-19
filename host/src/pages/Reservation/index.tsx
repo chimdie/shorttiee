@@ -2,39 +2,23 @@ import { Tab, Tabs } from "@heroui/react";
 import IncomingReservation from "@/components/Reservations/incoming-reservation";
 import ConfirmedReservation from "@/components/Reservations/confirmed-reservation";
 import RejectedReservation from "@/components/Reservations/rejected-reservation";
-import { useAtomValue } from "jotai";
-import { loggedinUserAtom } from "@/atoms/user.atom";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "@/utils/queryKeys";
 import { ApiSDK } from "@/sdk";
 import { Hotel } from "lucide-react";
 
 export default function Reservation(): JSX.Element {
-  const user = useAtomValue(loggedinUserAtom)
-  const userId = user?.data?.id
-
   const { data: reservationsData, isLoading } = useQuery({
-    queryKey: [QueryKeys.reservations, userId],
-    // queryFn: () => ApiSDK.ReservationService.getApiV1UsersReservations(JSON.stringify([["userId", "eq", userId]])),
-    queryFn: () => ApiSDK.ReservationService.getApiV1UsersReservations1(userId as string),
+    queryKey: [QueryKeys.reservations],
+    queryFn: () => ApiSDK.ReservationService.getApiV1UsersReservations(),
     refetchOnMount: false,
-  })
+  });
 
+  const confirmedReservations =
+    reservationsData?.data?.filter((reservation) => reservation.status === "ACCEPTED") || [];
 
-  const allReservations = reservationsData?.data
-    ? [
-      {
-        id: reservationsData.data.id,
-        code: reservationsData.data.code,
-        amount: reservationsData.data.amount,
-        startDate: reservationsData.data.startDate,
-        endDate: reservationsData.data.endDate,
-        name: `${reservationsData.data.user.firstName} ${reservationsData.data.user.lastName}`,
-        apartment: reservationsData.data.listing.name,
-      },
-    ]
-    : [];
-
+  const rejectedReservations =
+    reservationsData?.data?.filter((reservation) => reservation.status === "REJECTED") || [];
 
   return (
     <>
@@ -49,8 +33,8 @@ export default function Reservation(): JSX.Element {
                 You currently dont have any Reservations
               </h3>
               <p className="text-grey-300 text-sm md:text-base text-center">
-                Looks like Clients haven't made any reservations yet.This area will light up with your
-                reservations once clients book your shortlets{" "}
+                Looks like Clients haven't made any reservations yet.This area will light up with
+                your reservations once clients book your shortlets{" "}
               </p>
             </div>
           </div>
@@ -58,8 +42,8 @@ export default function Reservation(): JSX.Element {
       ) : (
           <div className="py-6">
             <div className="flex w-full flex-col">
-        <Tabs
-          aria-label="reservations"
+              <Tabs
+                aria-label="reservations"
                 classNames={{
                   tabList: "gap-12 w-full relative rounded-none p-0 border-b border-divider",
                   cursor: "w-full bg-shorttiee-primary",
@@ -67,24 +51,22 @@ export default function Reservation(): JSX.Element {
                   tabContent: "group-data-[selected=true]:text-black text-grey-400 font-bold",
                 }}
                 variant="underlined"
-        >
+              >
                 <Tab key="incoming" title="Incoming Reservations">
-                  <IncomingReservation reservations={allReservations} isLoading={isLoading} />
+                  <IncomingReservation reservations={reservationsData?.data} isLoading={isLoading} />
                 </Tab>
 
                 <Tab key="confirm" title="Confirmed Reservations">
-                  <ConfirmedReservation />
+                  <ConfirmedReservation reservations={confirmedReservations} isLoading={isLoading} />
                 </Tab>
 
                 <Tab key="reject" title="Rejected Reservations">
-                  <RejectedReservation />
+                  <RejectedReservation reservations={rejectedReservations} isLoading={isLoading} />
                 </Tab>
-            </Tabs >
-          </div >
-        </div >
+              </Tabs>
+            </div>
+          </div>
       )}
-
     </>
-
   );
 }

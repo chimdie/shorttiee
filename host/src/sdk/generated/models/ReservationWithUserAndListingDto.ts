@@ -8,7 +8,7 @@ export type ReservationWithUserAndListingDto = {
   amount: number;
   startDate: string;
   endDate: string;
-  status?: 'ACCEPTED' | 'PENDING' | 'REJECTED';
+  status?: "ACCEPTED" | "PENDING" | "REJECTED";
   userId: string;
   listingId: string;
   listingOwnerId: string;
@@ -21,8 +21,8 @@ export type ReservationWithUserAndListingDto = {
   listing: {
     name: string;
     address: string;
-    type: 'SHORTLET' | 'RENTAL' | 'SALE';
-    status: 'AWAITING_REVIEW' | 'REJECTED' | 'APPROVED';
+    type: "SHORTLET" | "RENTAL" | "SALE";
+    status: "AWAITING_REVIEW" | "REJECTED" | "APPROVED";
     description?: string | null;
     price?: number | null;
     rate?: number | null;
@@ -32,4 +32,3 @@ export type ReservationWithUserAndListingDto = {
     categoryId: string;
   };
 };
-

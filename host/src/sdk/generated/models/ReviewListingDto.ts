@@ -3,6 +3,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ReviewListingDto = {
-  status: 'ACCEPT' | 'DECLINE';
+  status: "ACCEPT" | "DECLINE";
 };
-

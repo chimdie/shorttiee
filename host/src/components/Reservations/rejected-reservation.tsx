@@ -1,12 +1,19 @@
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import {
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@heroui/react";
 import TablePagination from "../TablePagination";
-import { rejectedReservations } from "@/dummyData/shortlet";
+import { ReservationProps } from "./incoming-reservation";
 
-export default function RejectedReservation(): JSX.Element {
-  //TODO: import resrvation interface from  incoming reservation file
-  //TODO: set props for reservation as done in incoming reservation component
-  //TODO: implement reservation query to fetch all reservation
-  //TODO: filter through the fetched reservation for reservations with status of rejected
+export default function RejectedReservation({
+  reservations,
+  isLoading,
+}: ReservationProps): JSX.Element {
   return (
     <div className="py-8 overflow-x-auto md:overflow-x-visible">
       <Table
@@ -21,22 +28,22 @@ export default function RejectedReservation(): JSX.Element {
         <TableHeader>
           <TableColumn>Name</TableColumn>
           <TableColumn>Reservation No</TableColumn>
-          <TableColumn>Reject Date</TableColumn>
           <TableColumn>Apartment</TableColumn>
           <TableColumn>Reason</TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={"No reservation to display."}>
-          {rejectedReservations.map((item) => (
+        <TableBody
+          emptyContent={isLoading ? <Spinner size="md" /> : "No  rejected reservation to display."}
+        >
+          {reservations.map((item) => (
             <TableRow
               className="bg-white border-y-5 border-grey_100  cursor-pointer"
               key={item.name}
             >
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.reserveNo}</TableCell>
-              <TableCell>{item.rejectDate}</TableCell>
-              <TableCell>{item.apartment}</TableCell>
-              <TableCell>{item.reason}</TableCell>
+              <TableCell>{item.name || "John Doe"}</TableCell>
+              <TableCell>{item.code}</TableCell>
+              <TableCell>{item.apartment || "Vibes Lounge"}</TableCell>
+              <TableCell>{item?.reason || "Vibes"}</TableCell>
             </TableRow>
           ))}
         </TableBody>

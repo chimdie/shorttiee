@@ -9,4 +9,3 @@ export type CreateFileResponse = {
     checksum: string;
   }>;
 };
-

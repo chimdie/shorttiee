@@ -7,4 +7,3 @@ export type ChangePasswordDto = {
   oldPassword: string;
   reauth?: boolean;
 };
-
