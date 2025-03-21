@@ -5,7 +5,7 @@
 export type CreateFacilityDto = {
   name: string;
   icon: string;
-  color?: string | null;
   comment?: string | null;
+  color?: string | null;
 };
 

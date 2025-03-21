@@ -34,7 +34,7 @@ const dashboardHelmetTitle: Record<DashboardRoutes, { title: string; description
 
 export default function DashboardLayout(): JSX.Element {
   const pathname = useLocation().pathname as DashboardRoutes;
-  const { loggedInUser, authToken } = useAuthRedirect({ requireAuth: true });
+  const { loggedInUser, authToken } = useAuthRedirect(true);
 
   const { title, description } = dashboardHelmetTitle[pathname] || {
     title: "Shorttiee",

@@ -1,4 +1,4 @@
-import {Alert, Text, View} from 'react-native';
+import {Alert, Pressable, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -168,13 +168,16 @@ export default function Signup() {
               />
             }
           />
-          <View className="flex-row items-center gap-2">
+          <Pressable
+            hitSlop={20}
+            onPress={() => setIsSelected(!isSelected)}
+            className="flex-row items-center gap-2">
             <CustomCheckBox
               isSelected={isSelected}
               onChange={() => setIsSelected(!isSelected)}
             />
             <Text>I agree to terms and services</Text>
-          </View>
+          </Pressable>
           <ShorttieeButton
             className="w-full"
             title="Signup"

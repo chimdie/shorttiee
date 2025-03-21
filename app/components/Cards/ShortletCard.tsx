@@ -5,18 +5,26 @@ import tw from 'twrnc';
 import {Link} from 'expo-router';
 import {getColor} from '@/config/theme';
 import {Heart} from 'iconsax-react-native';
+import {ListingsDto} from '@/sdk/generated';
+import {ListRenderItemInfo} from '@shopify/flash-list';
+import {currencyParser} from '@/utils/currencyParser';
 
 export type ShortletCardT = {
   isVertical?: boolean;
+  data: ListRenderItemInfo<ListingsDto>;
 };
 
-export const ShortletCard = ({isVertical}: ShortletCardT) => {
+export const ShortletCard = ({isVertical, data}: ShortletCardT) => {
   const [isFavourite, setIsFavourite] = useState<boolean>(false);
+  const {item} = data;
 
   return (
     <Link
       asChild
-      href="/(tabs)/apartment-details"
+      href={{
+        pathname: '/(tabs)/apartment-details',
+        params: {id: item.id},
+      }}
       style={tw.style('bg-white rounded-lg gap-4 p-4 mb-4 shadow mx-[1px]')}>
       <Pressable
         style={tw.style(
@@ -34,7 +42,7 @@ export const ShortletCard = ({isVertical}: ShortletCardT) => {
           <Text
             numberOfLines={2}
             style={tw`text-lg font-semibold text-gray-800`}>
-            3 Bedroom Shortlet Apar in Opebi
+            {item.name ?? ''}
           </Text>
           <View style={tw`flex-row items-center gap-1`}>
             <Feather name="map-pin" size={16} color="gray" />
@@ -58,7 +66,7 @@ export const ShortletCard = ({isVertical}: ShortletCardT) => {
                   tw`text-lg font-bold`,
                   {color: getColor('shorttiee-primary')},
                 ]}>
-                ₦144K
+                {item.rate && currencyParser(item.rate)}
               </Text>
               <Text style={tw`text-gray-500 text-xs`}>/night</Text>
             </View>

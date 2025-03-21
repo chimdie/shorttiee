@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
@@ -17,7 +17,7 @@ import {
   TableRow,
   useDisclosure,
 } from "@heroui/react";
-import { EllipsisVertical, Hotel, Search } from "lucide-react";
+import { EllipsisVertical, Search } from "lucide-react";
 import AddShortletModal from "@/components/Shortlet/add-shortlet-modal";
 import TablePagination from "@/components/TablePagination";
 import DeleteShortletModal from "@/components/Shortlet/delete-shortlet-modal";
@@ -28,176 +28,161 @@ import { ApiSDK } from "@/sdk";
 import { ListingsDto } from "@/sdk/generated";
 import { useAtomValue } from "jotai";
 import { loggedinUserAtom } from "@/atoms/user.atom";
+import { currencyParser } from "@/utils/currencyParser";
 
-const statusTheme = {
-  active: "text-shorttiee-green-dark bg-shorttiee-green-light",
-  pending: "text-shorttiee-yellow-dark bg-shorttiee-yellow-light",
-  rejected: "text-shorttiee-red-dark bg-shorttiee-red-light",
-  terminated: "text-grey-300 bg-grey-200",
+const statusTheme: Record<ListingsDto["status"], string> = {
+  APPROVED: "bg-shorttiee-green-light",
+  AWAITING_REVIEW: "bg-shorttiee-yellow-light",
+  REJECTED: "bg-shorttiee-red-light",
 };
 
 export default function Shortlet(): JSX.Element {
-  const [isShortlet] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [shortletId, setShortletId] = useState<string | null>(null);
   const user = useAtomValue(loggedinUserAtom);
-  const userId = user?.data?.id;
   const addShortletModal = useDisclosure();
   const deleteShortletModal = useDisclosure();
   const navigate = useNavigate();
 
+  const userId = user?.data?.id;
+
   const { data: shortletData, isLoading } = useQuery({
-    queryKey: [QueryKeys.shortlets, userId],
+    queryKey: [QueryKeys.shortlets, userId, searchQuery],
     queryFn: () =>
-      ApiSDK.ListingService.getApiV1Listings(JSON.stringify([["userId", "eq", userId]])),
+      ApiSDK.ListingService.getApiV1Listings(
+        JSON.stringify([
+          ["userId", "eq", userId],
+          ["name", "like", `%${searchQuery}%`],
+        ]),
+      ),
+    enabled: !!userId,
     refetchOnMount: false,
   });
 
-  const filteredShortlets =
-    shortletData?.data.filter(
+  const filteredShortlets = useMemo(() => {
+    const availableShortlets = shortletData?.data || [];
+
+    if (!searchQuery) return availableShortlets;
+
+    return availableShortlets.filter(
       (item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.address.toLowerCase().includes(searchQuery.toLowerCase()),
-    ) || [];
+    );
+  }, [searchQuery, shortletData?.data]);
 
-  const getStatusClass = (status: string) => {
-    return Object.keys(statusTheme).find((key) => status.includes(key))
-      ? statusTheme[status as keyof typeof statusTheme]
-      : statusTheme.terminated;
+  const getStatusClass = (status: ListingsDto["status"]) => {
+    return statusTheme[status] || "";
   };
+
+  const onSearchChange = useCallback((value?: string) => {
+    if (value) {
+      setSearchQuery(value);
+    } else {
+      setSearchQuery("");
+    }
+  }, []);
 
   return (
     <>
-      {isShortlet ? (
-        <div className="flex flex-col justify-center items-center mx-auto h-full">
-          <div className="p-4 border rounded-md ">
-            <Hotel className="size-12" />
+      <div className="py-6 space-y-6">
+        <div className="flex  justify-between items-center gap-6">
+          <div className="w-full md:w-1/4">
+            <Input
+              radius="sm"
+              variant="bordered"
+              startContent={<Search size={16} className="pointer-events-none text-grey-400" />}
+              placeholder="Search shortlets by name,type or location"
+              value={searchQuery}
+              onValueChange={onSearchChange}
+              isClearable
+            />
           </div>
-          <div className="py-8 md:w-1/2">
-            <div className="space-y-4">
-              <h3 className="text-shorttiee-primary text-lg md:text-xl font-medium text-center">
-                You currently dont have any Shortlets Listed
-              </h3>
-              <p className="text-grey-300 text-sm md:text-base text-center">
-                Looks like you haven't added any shortlets yet.This area will light up with your
-                shortlets once you list or add them{" "}
-              </p>
-            </div>
-          </div>
-          <div>
-            <Button
-              className="bg-shorttiee-primary text-white font-medium w-full"
-              onPress={addShortletModal.onOpen}
-            >
-              Add a Shortlet
-            </Button>
-          </div>
+          <Button
+            className="bg-shorttiee-primary text-white font-medium"
+            onPress={addShortletModal.onOpen}
+          >
+            Add a Shortlet
+          </Button>
         </div>
-      ) : (
-        <>
-          <div className="py-6 space-y-6">
-            <div className="flex  justify-between items-center gap-6">
-              <div className="w-full md:w-1/4">
-                <Input
-                  radius="sm"
-                  variant="bordered"
-                  startContent={<Search size={16} className="pointer-events-none text-grey-400" />}
-                  placeholder="Search shortlets by name,type or location"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+
+        <div className="py-8 overflow-x-auto md:overflow-x-visible">
+          <Table
+            aria-label="shortlet table"
+            removeWrapper
+            bottomContent={
+              <div className="flex justify-end">
+                <TablePagination />
               </div>
-              <Button
-                className="bg-shorttiee-primary text-white font-medium"
-                onPress={addShortletModal.onOpen}
-              >
-                Add a Shortlet
-              </Button>
-            </div>
-
-            <div className="py-8 overflow-x-auto md:overflow-x-visible">
-              <Table
-                aria-label="shortlet table"
-                removeWrapper
-                bottomContent={
-                  <div className="flex justify-end">
-                    <TablePagination />
-                  </div>
-                }
-              >
-                <TableHeader>
-                  <TableColumn>Name</TableColumn>
-                  <TableColumn>Type</TableColumn>
-                  <TableColumn>Location</TableColumn>
-                  <TableColumn>Price</TableColumn>
-                  <TableColumn>Status</TableColumn>
-                  <TableColumn>Actions</TableColumn>
-                </TableHeader>
-                <TableBody
-                  emptyContent={isLoading ? <Spinner size="md" /> : "No shortlet to display."}
+            }
+          >
+            <TableHeader>
+              <TableColumn>Name</TableColumn>
+              <TableColumn>Type</TableColumn>
+              <TableColumn>Location</TableColumn>
+              <TableColumn>Price</TableColumn>
+              <TableColumn>Status</TableColumn>
+              <TableColumn>Actions</TableColumn>
+            </TableHeader>
+            <TableBody emptyContent={isLoading ? <Spinner size="md" /> : "No shortlet to display."}>
+              {filteredShortlets.map((item: ListingsDto) => (
+                <TableRow
+                  className="bg-white border-y-5 border-grey_100  cursor-pointer"
+                  key={item.id}
+                  onClick={() => navigate(`${DashboardRoutes.shortlets}/${item.id}`)}
                 >
-                  {filteredShortlets?.map((item: ListingsDto) => (
-                    <TableRow
-                      className="bg-white border-y-5 border-grey_100  cursor-pointer"
-                      key={item.id}
-                      onClick={() => navigate(`${DashboardRoutes.shortlets}/${item.id}`)}
+                  <TableCell>{item.name ?? ""}</TableCell>
+                  <TableCell>{item.type ?? ""}</TableCell>
+                  <TableCell>{item.address ?? ""}</TableCell>
+                  <TableCell>{item.price && currencyParser(Number(item.price))}</TableCell>
+                  <TableCell>
+                    <Chip
+                      radius="sm"
+                      className={`${getStatusClass(item.status)} text-xs font-normal capitalize`}
                     >
-                      <TableCell>{item.name}</TableCell>
-                      <TableCell>{item.type}</TableCell>
-                      <TableCell>{item.address}</TableCell>
-                      <TableCell>{item.price}</TableCell>
-                      <TableCell>
-                        <Chip
-                          radius="sm"
-                          className={`${getStatusClass(item.status)} text-xs font-normal capitalize`}
+                      {item.status.replace("_", " ")}
+                    </Chip>
+                  </TableCell>
+                  <TableCell>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <EllipsisVertical className="text-xs cursor-pointer" />
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="Shortlet Table Actions">
+                        <DropdownItem key="edit">
+                          <Link to={`${DashboardRoutes.shortlets}/edit/${item.id}`}>
+                            Edit Shortlet
+                          </Link>
+                        </DropdownItem>
+                        <DropdownItem
+                          key="delete"
+                          className="text-danger"
+                          color="danger"
+                          onPress={() => {
+                            if (item.id) {
+                              setShortletId(item.id);
+                              deleteShortletModal.onOpen();
+                            }
+                          }}
                         >
-                          {item.status}
-                        </Chip>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <Dropdown>
-                            <DropdownTrigger>
-                              <EllipsisVertical className="text-xs cursor-pointer" />
-                            </DropdownTrigger>
-                            <DropdownMenu aria-label="Shortlet Table Actions">
-                              <DropdownItem key="edit">
-                                <Link to={`${DashboardRoutes.shortlets}/edit/${item.id}`}>
-                                  Edit Shortlet
-                                </Link>
-                              </DropdownItem>
-                              <DropdownItem
-                                key="delete"
-                                className="text-danger"
-                                color="danger"
-                                onPress={() => {
-                                  if (item.id) {
-                                    setShortletId(item.id);
-                                    deleteShortletModal.onOpen();
-                                  }
-                                }}
-                              >
-                                Delete Shortlet
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </Dropdown>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
+                          Delete Shortlet
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
 
-          <AddShortletModal
-            isOpen={addShortletModal.isOpen}
-            onOpenChange={addShortletModal.onOpenChange}
-            onClose={addShortletModal.onClose}
-          />
-        </>
-      )}
+      <AddShortletModal
+        isOpen={addShortletModal.isOpen}
+        onOpenChange={addShortletModal.onOpenChange}
+        onClose={addShortletModal.onClose}
+      />
 
       {shortletId ? (
         <DeleteShortletModal

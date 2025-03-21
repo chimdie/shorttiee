@@ -2,9 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ChangePasswordDto = {
-  newPassword: string;
-  oldPassword: string;
-  reauth?: boolean;
+export type ReviewListingDto = {
+  status: 'ACCEPT' | 'DECLINE';
 };
 
