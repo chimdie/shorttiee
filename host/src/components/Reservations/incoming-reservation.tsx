@@ -11,14 +11,32 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
+  Spinner,
 } from "@heroui/react";
 import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
-import { incomingReservations } from "@/dummyData/shortlet";
 import AcceptReservationModal from "./accept-reservation-modal";
 import RejectReservationModal from "./reject-reservation-modal";
+import { calculateNights } from "@/utils";
 
-export default function IncomingReservation(): JSX.Element {
+export interface ReservationProps {
+  reservations: {
+    id: string;
+    code: string;
+    amount: number;
+    startDate: string;
+    endDate: string;
+    name?: string;
+    apartment?: string;
+    reason?: string;
+  }[];
+  isLoading: boolean;
+}
+
+export default function IncomingReservation({
+  reservations,
+  isLoading,
+}: ReservationProps): JSX.Element {
   const acceptReservation = useDisclosure();
   const rejectReservation = useDisclosure();
   const [reservationId, setReservationId] = useState<string | null>(null);
@@ -44,18 +62,22 @@ export default function IncomingReservation(): JSX.Element {
             <TableColumn>Actions</TableColumn>
           </TableHeader>
 
-          <TableBody emptyContent={"No reservation to display."}>
-            {incomingReservations.map((item) => (
+          <TableBody
+            emptyContent={isLoading ? <Spinner size="md" /> : "No reservation to display."}
+          >
+            {reservations.map((item) => (
               <TableRow
                 className="bg-white border-y-5 border-grey_100  cursor-pointer"
-                key={item.name}
+                key={item.id}
               >
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.reserveNo}</TableCell>
-                <TableCell>{item.date}</TableCell>
-                <TableCell>{item.nights}</TableCell>
-                <TableCell>{item.apartment}</TableCell>
-                <TableCell>{item.price}</TableCell>
+                <TableCell>{item.name || "John Doe"}</TableCell>
+                <TableCell>{item.code}</TableCell>
+                <TableCell>
+                  {item.startDate} - {item.endDate}
+                </TableCell>
+                <TableCell>{calculateNights(item.startDate, item.endDate)}</TableCell>
+                <TableCell>{item.apartment || "Vibes Lounge"}</TableCell>
+                <TableCell>{item.amount}</TableCell>
                 <TableCell>
                   <div>
                     <Dropdown>
@@ -65,9 +87,9 @@ export default function IncomingReservation(): JSX.Element {
                       <DropdownMenu aria-label="Shortlet Table Actions">
                         <DropdownItem
                           key="accept"
-                          onClick={() => {
-                            if (item.reserveNo) {
-                              setReservationId(item.reserveNo);
+                          onPress={() => {
+                            if (item.id) {
+                              setReservationId(item.id);
                               acceptReservation.onOpen();
                             }
                           }}
@@ -78,9 +100,9 @@ export default function IncomingReservation(): JSX.Element {
                           key="reject"
                           className="text-danger"
                           color="danger"
-                          onClick={() => {
-                            if (item.reserveNo) {
-                              setReservationId(item.reserveNo);
+                          onPress={() => {
+                            if (item.id) {
+                              setReservationId(item.id);
                               rejectReservation.onOpen();
                             }
                           }}

@@ -2,9 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-/**
- * User model
- */
 export type UserDto = {
   id: string;
   firstName: string;
@@ -15,8 +12,6 @@ export type UserDto = {
   referrerCode?: string | null;
   address?: string | null;
   photo?: string | null;
-  role: "USER" | "ADMIN";
+  role: "ADMIN" | "USER";
   gender?: "M" | "F" | null;
-  createdAt: string;
-  updatedAt: string;
 };

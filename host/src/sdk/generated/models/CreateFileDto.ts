@@ -2,6 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateFileDto = {
-  files: Array<Blob>;
-};
+export type CreateFileDto = Array<{
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+  hash: string;
+}>;

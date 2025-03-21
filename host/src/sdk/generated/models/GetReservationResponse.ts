@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ReservationDto } from "./ReservationDto";
+import type { ReservationWithUserAndListingDto } from "./ReservationWithUserAndListingDto";
 export type GetReservationResponse = {
   message: string;
-  data: ReservationDto;
+  data: ReservationWithUserAndListingDto;
 };

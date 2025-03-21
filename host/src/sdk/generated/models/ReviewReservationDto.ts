@@ -2,9 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateFacilityDto = {
-  name: string;
-  icon: string;
-  comment?: string | null;
-  color?: string | null;
+export type ReviewReservationDto = {
+  status: "ACCEPT" | "DECLINE";
 };
