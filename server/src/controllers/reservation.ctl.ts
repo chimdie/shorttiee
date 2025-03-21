@@ -164,9 +164,8 @@ export const updateReservationCtl = ctlWrapper(
   async (req: Request<IdDto, unknown, ReviewReservationDto>, res, next) => {
     assert(req.user);
 
-    let status: ReservationDto["status"] = req.body.status
-      ? "ACCEPTED"
-      : "REJECTED";
+    let status: ReservationDto["status"] =
+      req.body.status === "ACCEPT" ? "ACCEPTED" : "REJECTED";
 
     const [updateError, reservation] = updateResvartionStatusQuery(
       req.params.id,
