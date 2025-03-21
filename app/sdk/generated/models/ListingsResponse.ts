@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ChangePasswordDto = {
-  newPassword: string;
-  oldPassword: string;
-  reauth?: boolean;
+import type { ListingsDto } from './ListingsDto';
+export type ListingsResponse = {
+  message: string;
+  data: ListingsDto;
 };
 

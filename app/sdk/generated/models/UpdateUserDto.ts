@@ -2,9 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-/**
- * User model
- */
 export type UpdateUserDto = {
   firstName?: string;
   lastName?: string;
