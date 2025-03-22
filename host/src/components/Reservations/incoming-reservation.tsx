@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Dropdown,
   DropdownMenu,
@@ -10,14 +9,19 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  useDisclosure,
   Spinner,
 } from "@heroui/react";
 import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
-import AcceptReservationModal from "./accept-reservation-modal";
-import RejectReservationModal from "./reject-reservation-modal";
+// import AcceptReservationModal from "./accept-reservation-modal";
+// import RejectReservationModal from "./reject-reservation-modal";
 import { calculateNights } from "@/utils";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ApiSDK } from "@/sdk";
+import { apiErrorParser } from "@/utils/errorParser";
+import { ReviewReservationDto } from "@/sdk/generated";
+import { useToast } from "@/hooks/use-toast";
+import { QueryKeys } from "@/utils/queryKeys";
 
 export interface ReservationProps {
   reservations: {
@@ -37,9 +41,31 @@ export default function IncomingReservation({
   reservations,
   isLoading,
 }: ReservationProps): JSX.Element {
-  const acceptReservation = useDisclosure();
-  const rejectReservation = useDisclosure();
-  const [reservationId, setReservationId] = useState<string | null>(null);
+  // const acceptReservation = useDisclosure();
+  // const rejectReservation = useDisclosure();
+  // const [reservationId, setReservationId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const reservationMutation = useMutation({
+    mutationFn: ({ id, requestBody }: { id: string; requestBody?: ReviewReservationDto }) =>
+      ApiSDK.ReservationService.patchApiV1UsersReservations(id, requestBody),
+    onSuccess(data) {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.reservations],
+      });
+      toast({
+        description: data.message,
+      });
+    },
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+      toast({
+        variant: "destructive",
+        description: parsedError.message,
+      });
+    },
+  });
   return (
     <>
       <div className="py-8 overflow-x-auto md:overflow-x-visible">
@@ -89,8 +115,14 @@ export default function IncomingReservation({
                           key="accept"
                           onPress={() => {
                             if (item.id) {
-                              setReservationId(item.id);
-                              acceptReservation.onOpen();
+                              // setReservationId(item.id);
+                              // acceptReservation.onOpen();
+                              reservationMutation.mutate({
+                                id: item.id,
+                                requestBody: {
+                                  status: "ACCEPT",
+                                },
+                              });
                             }
                           }}
                         >
@@ -102,8 +134,14 @@ export default function IncomingReservation({
                           color="danger"
                           onPress={() => {
                             if (item.id) {
-                              setReservationId(item.id);
-                              rejectReservation.onOpen();
+                              // setReservationId(item.id);
+                              // rejectReservation.onOpen();
+                              reservationMutation.mutate({
+                                id: item.id,
+                                requestBody: {
+                                  status: "DECLINE",
+                                },
+                              });
                             }
                           }}
                         >
@@ -119,7 +157,7 @@ export default function IncomingReservation({
         </Table>
       </div>
 
-      {reservationId ? (
+      {/* {reservationId ? (
         <AcceptReservationModal
           isOpen={acceptReservation.isOpen}
           onClose={acceptReservation.onClose}
@@ -135,7 +173,7 @@ export default function IncomingReservation({
           onOpenChange={rejectReservation.onOpenChange}
           id={reservationId}
         />
-      ) : null}
+      ) : null} */}
     </>
   );
 }

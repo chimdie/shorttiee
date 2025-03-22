@@ -14,6 +14,9 @@ export default function Reservation(): JSX.Element {
     refetchOnMount: false,
   });
 
+  const incomingReservation =
+    reservationsData?.data?.filter((reservation) => reservation.status === "PENDING") || [];
+
   const confirmedReservations =
     reservationsData?.data?.filter((reservation) => reservation.status === "ACCEPTED") || [];
 
@@ -40,32 +43,32 @@ export default function Reservation(): JSX.Element {
           </div>
         </div>
       ) : (
-          <div className="py-6">
-            <div className="flex w-full flex-col">
-              <Tabs
-                aria-label="reservations"
-                classNames={{
-                  tabList: "gap-12 w-full relative rounded-none p-0 border-b border-divider",
-                  cursor: "w-full bg-shorttiee-primary",
-                  tab: "max-w-fit px-0 h-12",
-                  tabContent: "group-data-[selected=true]:text-black text-grey-400 font-bold",
-                }}
-                variant="underlined"
-              >
-                <Tab key="incoming" title="Incoming Reservations">
-                  <IncomingReservation reservations={reservationsData?.data} isLoading={isLoading} />
-                </Tab>
+        <div className="py-6">
+          <div className="flex w-full flex-col">
+            <Tabs
+              aria-label="reservations"
+              classNames={{
+                tabList: "gap-12 w-full relative rounded-none p-0 border-b border-divider",
+                cursor: "w-full bg-shorttiee-primary",
+                tab: "max-w-fit px-0 h-12",
+                tabContent: "group-data-[selected=true]:text-black text-grey-400 font-bold",
+              }}
+              variant="underlined"
+            >
+              <Tab key="incoming" title="Incoming Reservations">
+                <IncomingReservation reservations={incomingReservation} isLoading={isLoading} />
+              </Tab>
 
-                <Tab key="confirm" title="Confirmed Reservations">
-                  <ConfirmedReservation reservations={confirmedReservations} isLoading={isLoading} />
-                </Tab>
+              <Tab key="confirm" title="Confirmed Reservations">
+                <ConfirmedReservation reservations={confirmedReservations} isLoading={isLoading} />
+              </Tab>
 
-                <Tab key="reject" title="Rejected Reservations">
-                  <RejectedReservation reservations={rejectedReservations} isLoading={isLoading} />
-                </Tab>
-              </Tabs>
-            </div>
+              <Tab key="reject" title="Rejected Reservations">
+                <RejectedReservation reservations={rejectedReservations} isLoading={isLoading} />
+              </Tab>
+            </Tabs>
           </div>
+        </div>
       )}
     </>
   );
