@@ -1,18 +1,10 @@
-import {
-  Button,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  Select,
-  SelectItem,
-} from "@heroui/react";
-import { BrainCircuit, Signature } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { RejectedReservationSchema, rejectReasons } from "@/schema/reservation.schema";
+import { Button, Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ApiSDK } from "@/sdk";
+import { ReviewReservationDto } from "@/sdk/generated";
+import { apiErrorParser } from "@/utils/errorParser";
+import { toast } from "@/hooks/use-toast";
+import { QueryKeys } from "@/utils/queryKeys";
 
 type RejectReservationT = {
   isOpen: boolean;
@@ -27,97 +19,64 @@ export default function RejectReservationModal({
   onOpenChange,
   id,
 }: RejectReservationT): JSX.Element {
-  const form = useForm<RejectedReservationSchema>({
-    resolver: zodResolver(RejectedReservationSchema),
-    defaultValues: {
-      reserveNo: id,
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (paload: ReviewReservationDto) =>
+      ApiSDK.ReservationService.patchApiV1UsersReservations(id, paload),
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+
+      toast({
+        variant: "destructive",
+        description: parsedError.message,
+      });
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.reservations] });
+    },
+    onSettled() {
+      onClose();
     },
   });
 
-  const onSubmit = (data: RejectedReservationSchema) => {
-    console.log(data);
-    onClose();
+  const onSubmit = () => {
+    mutation.mutate({ status: "DECLINE" });
   };
 
   return (
-    <Modal size="md" isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal
+      size="md"
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      isDismissable={!mutation.isPending}
+    >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1 text-shorttiee-primary">
           Reject Reservation
         </ModalHeader>
         <ModalBody>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-5 py-4">
-              <FormField
-                control={form.control}
-                name="reserveNo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        radius="sm"
-                        isDisabled
-                        variant="bordered"
-                        placeholder="Reservation Number"
-                        value={id}
-                        type="text"
-                        startContent={
-                          <Signature size={16} className="pointer-events-none text-grey-400" />
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="reason"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      value={field.value}
-                      onChange={field.onChange}
-                      radius="sm"
-                      variant="bordered"
-                      placeholder="Reason for Rejection"
-                      aria-label="type"
-                      startContent={
-                        <BrainCircuit size={16} className="pointer-events-none text-grey-400" />
-                      }
-                      classNames={{ popoverContent: "rounded-md" }}
-                    >
-                      {rejectReasons.map((type) => (
-                        <SelectItem key={type.key}>{type.label}</SelectItem>
-                      ))}
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="py-4 flex  gap-4">
-                <Button
-                  onPress={onClose}
-                  size="md"
-                  fullWidth={true}
-                  className="bg-white shadow-sm border text-shorttiee-primary font-medium"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  size="md"
-                  fullWidth={true}
-                  className="bg-shorttiee-primary text-white shadow-sm font-medium"
-                  type="submit"
-                >
-                  Done
-                </Button>
-              </div>
-            </form>
-          </Form>
+          <div className="py-4 flex  gap-4">
+            <Button
+              onPress={onClose}
+              fullWidth
+              className="bg-white shadow-sm border text-shorttiee-primary font-medium"
+              isLoading={mutation.isPending}
+              isDisabled={mutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              fullWidth
+              className="bg-shorttiee-primary text-white shadow-sm font-medium"
+              type="submit"
+              isLoading={mutation.isPending}
+              isDisabled={mutation.isPending}
+              onPress={onSubmit}
+            >
+              Yes Reject
+            </Button>
+          </div>
         </ModalBody>
       </ModalContent>
     </Modal>
