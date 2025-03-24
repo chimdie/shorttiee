@@ -46,9 +46,15 @@ export const findAllReservationByUserIdQuery = (
       false
     );
 
-    const reservationStatement = db.prepare<unknown[], ReservationDto>(
-      `SELECT *  FROM tblReservations WHERE (userId = ?  or listingOwnerId = ?) ${q ? "and " + q : q}`
-    );
+    const sql = `
+      SELECT  tblReservations.*, CONCAT(tblUsers.firstName, ' ' , tblUsers.lastName) as customerName, tblListings.name as apartmentName
+      FROM tblReservations 
+      JOIN tblUsers on tblReservations.userId = tblUsers.id
+      JOIN tblListings on tblReservations.listingId = tblListings.id
+      WHERE (tblReservations.userId = ?  or tblReservations.listingOwnerId = ?) ${q ? "and " + q : q}
+    `;
+
+    const reservationStatement = db.prepare<unknown[], ReservationDto>(sql);
 
     return reservationStatement.all([id, id, ...replacement]);
   })();
