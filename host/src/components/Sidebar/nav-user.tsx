@@ -34,8 +34,6 @@ export function NavUser() {
     queryFn: () => ApiSDK.UserService.getApiV1UsersProfile(),
   });
 
-  console.log("hpoe", user?.data?.photo);
-
   const fullName = [user?.data?.firstName, user?.data?.lastName].filter(Boolean).join(" ");
 
   return (

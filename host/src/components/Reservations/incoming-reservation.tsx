@@ -15,9 +15,10 @@ import {
 } from "@heroui/react";
 import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
-import AcceptReservationModal from "./accept-reservation-modal";
-import RejectReservationModal from "./reject-reservation-modal";
+import { AcceptReservationModal } from "./accept-reservation-modal";
 import { calculateNights } from "@/utils";
+import { currencyParser } from "@/utils/currencyParser";
+import { ReviewReservationDto } from "@/sdk/generated";
 
 export interface ReservationProps {
   reservations: {
@@ -38,8 +39,9 @@ export default function IncomingReservation({
   isLoading,
 }: ReservationProps): JSX.Element {
   const acceptReservation = useDisclosure();
-  const rejectReservation = useDisclosure();
   const [reservationId, setReservationId] = useState<string | null>(null);
+  const [statusAction, setStatusAction] = useState<ReviewReservationDto | null>(null);
+
   return (
     <>
       <div className="py-8 overflow-x-auto md:overflow-x-visible">
@@ -66,18 +68,15 @@ export default function IncomingReservation({
             emptyContent={isLoading ? <Spinner size="md" /> : "No reservation to display."}
           >
             {reservations.map((item) => (
-              <TableRow
-                className="bg-white border-y-5 border-grey_100  cursor-pointer"
-                key={item.id}
-              >
-                <TableCell>{item.name || "John Doe"}</TableCell>
-                <TableCell>{item.code}</TableCell>
+              <TableRow className="bg-white border-y-5 border-grey_100" key={item?.id}>
+                <TableCell>{item?.user?.firstName || ""}</TableCell>
+                <TableCell>{item?.code || ""}</TableCell>
                 <TableCell>
-                  {item.startDate} - {item.endDate}
+                  {item?.startDate} - {item?.endDate}
                 </TableCell>
-                <TableCell>{calculateNights(item.startDate, item.endDate)}</TableCell>
-                <TableCell>{item.apartment || "Vibes Lounge"}</TableCell>
-                <TableCell>{item.amount}</TableCell>
+                <TableCell>{calculateNights(item?.startDate, item?.endDate)}</TableCell>
+                <TableCell>{item?.listing?.name || ""}</TableCell>
+                <TableCell>{item?.amount && currencyParser(item?.amount)}</TableCell>
                 <TableCell>
                   <div>
                     <Dropdown>
@@ -88,8 +87,9 @@ export default function IncomingReservation({
                         <DropdownItem
                           key="accept"
                           onPress={() => {
-                            if (item.id) {
-                              setReservationId(item.id);
+                            if (item?.id) {
+                              setStatusAction({ status: "ACCEPT" });
+                              setReservationId(item?.id);
                               acceptReservation.onOpen();
                             }
                           }}
@@ -101,9 +101,10 @@ export default function IncomingReservation({
                           className="text-danger"
                           color="danger"
                           onPress={() => {
-                            if (item.id) {
-                              setReservationId(item.id);
-                              rejectReservation.onOpen();
+                            if (item?.id) {
+                              setStatusAction({ status: "DECLINE" });
+                              setReservationId(item?.id);
+                              acceptReservation.onOpen();
                             }
                           }}
                         >
@@ -125,15 +126,7 @@ export default function IncomingReservation({
           onClose={acceptReservation.onClose}
           onOpenChange={acceptReservation.onOpenChange}
           id={reservationId}
-        />
-      ) : null}
-
-      {reservationId ? (
-        <RejectReservationModal
-          isOpen={rejectReservation.isOpen}
-          onClose={rejectReservation.onClose}
-          onOpenChange={rejectReservation.onOpenChange}
-          id={reservationId}
+          statusAction={statusAction}
         />
       ) : null}
     </>
