@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { Tab, Tabs } from "@heroui/react";
 import IncomingReservation from "@/components/Reservations/incoming-reservation";
 import ConfirmedReservation from "@/components/Reservations/confirmed-reservation";
@@ -6,22 +7,28 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "@/utils/queryKeys";
 import { ApiSDK } from "@/sdk";
 import { Hotel } from "lucide-react";
+import { ReservationDto } from "@/sdk/generated";
+
+const ReservationStatus = {
+  ACCEPTED: "ACCEPTED",
+  PENDING: "PENDING",
+  REJECTED: "REJECTED",
+} as const;
 
 export default function Reservation(): JSX.Element {
+  const [currentTab, setCurrentTab] = useState<ReservationDto["status"]>(ReservationStatus.PENDING);
+
   const { data: reservationsData, isLoading } = useQuery({
     queryKey: [QueryKeys.reservations],
     queryFn: () => ApiSDK.ReservationService.getApiV1UsersReservations(),
     refetchOnMount: false,
   });
 
-  const incomingReservation =
-    reservationsData?.data?.filter((reservation) => reservation.status === "PENDING") || [];
+  const reservations = useMemo(() => {
+    const allReservations = reservationsData?.data || [];
 
-  const confirmedReservations =
-    reservationsData?.data?.filter((reservation) => reservation.status === "ACCEPTED") || [];
-
-  const rejectedReservations =
-    reservationsData?.data?.filter((reservation) => reservation.status === "REJECTED") || [];
+    return allReservations.filter((res) => res.status === currentTab);
+  }, [reservationsData?.data, currentTab]);
 
   return (
     <>
@@ -54,17 +61,19 @@ export default function Reservation(): JSX.Element {
                 tabContent: "group-data-[selected=true]:text-black text-grey-400 font-bold",
               }}
               variant="underlined"
+              selectedKey={currentTab}
+              onSelectionChange={(key) => setCurrentTab(key as ReservationDto["status"])}
             >
-              <Tab key="incoming" title="Incoming Reservations">
-                <IncomingReservation reservations={incomingReservation} isLoading={isLoading} />
+              <Tab key={ReservationStatus.PENDING} title="Incoming Reservations">
+                <IncomingReservation reservations={reservations} isLoading={isLoading} />
               </Tab>
 
-              <Tab key="confirm" title="Confirmed Reservations">
-                <ConfirmedReservation reservations={confirmedReservations} isLoading={isLoading} />
+              <Tab key={ReservationStatus.ACCEPTED} title="Confirmed Reservations">
+                <ConfirmedReservation reservations={reservations} isLoading={isLoading} />
               </Tab>
 
-              <Tab key="reject" title="Rejected Reservations">
-                <RejectedReservation reservations={rejectedReservations} isLoading={isLoading} />
+              <Tab key={ReservationStatus.REJECTED} title="Rejected Reservations">
+                <RejectedReservation reservations={reservations} isLoading={isLoading} />
               </Tab>
             </Tabs>
           </div>
