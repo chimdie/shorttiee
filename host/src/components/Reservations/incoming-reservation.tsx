@@ -16,7 +16,7 @@ import {
 import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
 import { AcceptReservationModal } from "./accept-reservation-modal";
-import { calculateNights, Listing, User } from "@/utils";
+import { calculateNights } from "@/utils";
 import { currencyParser } from "@/utils/currencyParser";
 import { ReviewReservationDto } from "@/sdk/generated";
 
@@ -27,8 +27,8 @@ export interface ReservationProps {
     amount: number;
     startDate: string;
     endDate: string;
-    user?: User;
-    listing?: Listing;
+    customerName?: string;
+    apartmentName?: string;
   }[];
   isLoading: boolean;
 }
@@ -68,13 +68,13 @@ export default function IncomingReservation({
           >
             {reservations.map((item) => (
               <TableRow className="bg-white border-y-5 border-grey_100" key={item?.id}>
-                <TableCell>{item?.user?.firstName || ""}</TableCell>
+                <TableCell>{item?.customerName || ""}</TableCell>
                 <TableCell>{item?.code || ""}</TableCell>
                 <TableCell>
                   {item?.startDate} - {item?.endDate}
                 </TableCell>
                 <TableCell>{calculateNights(item?.startDate, item?.endDate)}</TableCell>
-                <TableCell>{item?.listing?.name || ""}</TableCell>
+                <TableCell>{item?.apartmentName || ""}</TableCell>
                 <TableCell>{item?.amount && currencyParser(item?.amount)}</TableCell>
                 <TableCell>
                   <div>

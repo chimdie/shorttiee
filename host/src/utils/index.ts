@@ -21,22 +21,3 @@ export const calculateNights = (startDate: string, endDate: string): number => {
   return Math.max(0, nights);
 };
 
-export interface User {
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNumber: string;
-}
-export interface Listing {
-  name: string;
-  address: string;
-  type: string;
-  status: string;
-  description: string;
-  price: number;
-  rate: number;
-  restrictions: string;
-  images: string[];
-  userId: string;
-  categoryId: string;
-}
