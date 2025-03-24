@@ -29,7 +29,6 @@ export default function RejectedReservation({
           <TableColumn>Name</TableColumn>
           <TableColumn>Reservation No</TableColumn>
           <TableColumn>Apartment</TableColumn>
-          <TableColumn>Reason</TableColumn>
         </TableHeader>
 
         <TableBody
@@ -38,12 +37,11 @@ export default function RejectedReservation({
           {reservations.map((item) => (
             <TableRow
               className="bg-white border-y-5 border-grey_100  cursor-pointer"
-              key={item.name}
+              key={item?.id}
             >
-              <TableCell>{item.name || "John Doe"}</TableCell>
+              <TableCell>{item?.user?.firstName || ""}</TableCell>
               <TableCell>{item.code}</TableCell>
-              <TableCell>{item.apartment || "Vibes Lounge"}</TableCell>
-              <TableCell>{item?.reason || "Vibes"}</TableCell>
+              <TableCell>{item?.listing?.name || ""}</TableCell>
             </TableRow>
           ))}
         </TableBody>

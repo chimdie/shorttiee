@@ -16,7 +16,7 @@ import {
 import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
 import { AcceptReservationModal } from "./accept-reservation-modal";
-import { calculateNights } from "@/utils";
+import { calculateNights, Listing, User } from "@/utils";
 import { currencyParser } from "@/utils/currencyParser";
 import { ReviewReservationDto } from "@/sdk/generated";
 
@@ -27,9 +27,8 @@ export interface ReservationProps {
     amount: number;
     startDate: string;
     endDate: string;
-    name?: string;
-    apartment?: string;
-    reason?: string;
+    user?: User;
+    listing?: Listing;
   }[];
   isLoading: boolean;
 }

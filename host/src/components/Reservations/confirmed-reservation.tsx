@@ -40,13 +40,13 @@ export default function ConfirmedReservation({
         >
           {reservations.map((item) => (
             <TableRow className="bg-white border-y-5 border-grey_100  cursor-pointer" key={item.id}>
-              <TableCell>{item.name || "John Doe"}</TableCell>
+              <TableCell>{item?.user?.firstName || ""}</TableCell>
               <TableCell>{item.code}</TableCell>
               <TableCell>
                 {item.startDate} - {item.endDate}
               </TableCell>
               <TableCell>{calculateNights(item.startDate, item.endDate)}</TableCell>
-              <TableCell>{item.apartment || "Vibes Lounge"}</TableCell>
+              <TableCell>{item?.listing?.name || ""}</TableCell>
               <TableCell>{item.amount}</TableCell>
             </TableRow>
           ))}
