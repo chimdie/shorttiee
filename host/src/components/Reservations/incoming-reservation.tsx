@@ -10,18 +10,45 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Spinner,
   useDisclosure,
 } from "@heroui/react";
 import TablePagination from "../TablePagination";
 import { EllipsisVertical } from "lucide-react";
-import { incomingReservations } from "@/dummyData/shortlet";
-import AcceptReservationModal from "./accept-reservation-modal";
-import RejectReservationModal from "./reject-reservation-modal";
+import { AcceptReservationModal } from "./accept-reservation-modal";
+import { calculateNights } from "@/utils";
+import { currencyParser } from "@/utils/currencyParser";
+import { ReviewReservationDto } from "@/sdk/generated";
 
-export default function IncomingReservation(): JSX.Element {
+export interface ReservationProps {
+  reservations: {
+    id: string;
+    code: string;
+    amount: number;
+    startDate: string;
+    endDate: string;
+    customerName?: string;
+    apartmentName?: string;
+  }[];
+  isLoading: boolean;
+}
+
+export default function IncomingReservation({
+  reservations,
+  isLoading,
+}: ReservationProps): JSX.Element {
   const acceptReservation = useDisclosure();
-  const rejectReservation = useDisclosure();
   const [reservationId, setReservationId] = useState<string | null>(null);
+  const [statusAction, setStatusAction] = useState<ReviewReservationDto | null>(null);
+
+  const handleRequest = (payload: { id: string; status: ReviewReservationDto["status"] }) => {
+    if (payload.id) {
+      setStatusAction({ status: payload.status });
+      setReservationId(payload.id);
+      acceptReservation.onOpen();
+    }
+  };
+
   return (
     <>
       <div className="py-8 overflow-x-auto md:overflow-x-visible">
@@ -44,18 +71,19 @@ export default function IncomingReservation(): JSX.Element {
             <TableColumn>Actions</TableColumn>
           </TableHeader>
 
-          <TableBody emptyContent={"No reservation to display."}>
-            {incomingReservations.map((item) => (
-              <TableRow
-                className="bg-white border-y-5 border-grey_100  cursor-pointer"
-                key={item.name}
-              >
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.reserveNo}</TableCell>
-                <TableCell>{item.date}</TableCell>
-                <TableCell>{item.nights}</TableCell>
-                <TableCell>{item.apartment}</TableCell>
-                <TableCell>{item.price}</TableCell>
+          <TableBody
+            emptyContent={isLoading ? <Spinner size="md" /> : "No reservation to display."}
+          >
+            {reservations.map((item) => (
+              <TableRow className="bg-white border-y-5 border-grey_100" key={item?.id}>
+                <TableCell>{item?.customerName || ""}</TableCell>
+                <TableCell>{item?.code || ""}</TableCell>
+                <TableCell>
+                  {item?.startDate} - {item?.endDate}
+                </TableCell>
+                <TableCell>{calculateNights(item?.startDate, item?.endDate)}</TableCell>
+                <TableCell>{item?.apartmentName || ""}</TableCell>
+                <TableCell>{item?.amount && currencyParser(item?.amount)}</TableCell>
                 <TableCell>
                   <div>
                     <Dropdown>
@@ -65,12 +93,7 @@ export default function IncomingReservation(): JSX.Element {
                       <DropdownMenu aria-label="Shortlet Table Actions">
                         <DropdownItem
                           key="accept"
-                          onClick={() => {
-                            if (item.reserveNo) {
-                              setReservationId(item.reserveNo);
-                              acceptReservation.onOpen();
-                            }
-                          }}
+                          onPress={() => handleRequest({ id: item?.id, status: "ACCEPT" })}
                         >
                           Accept
                         </DropdownItem>
@@ -78,12 +101,7 @@ export default function IncomingReservation(): JSX.Element {
                           key="reject"
                           className="text-danger"
                           color="danger"
-                          onClick={() => {
-                            if (item.reserveNo) {
-                              setReservationId(item.reserveNo);
-                              rejectReservation.onOpen();
-                            }
-                          }}
+                          onPress={() => handleRequest({ id: item?.id, status: "DECLINE" })}
                         >
                           Reject
                         </DropdownItem>
@@ -103,15 +121,7 @@ export default function IncomingReservation(): JSX.Element {
           onClose={acceptReservation.onClose}
           onOpenChange={acceptReservation.onOpenChange}
           id={reservationId}
-        />
-      ) : null}
-
-      {reservationId ? (
-        <RejectReservationModal
-          isOpen={rejectReservation.isOpen}
-          onClose={rejectReservation.onClose}
-          onOpenChange={rejectReservation.onOpenChange}
-          id={reservationId}
+          statusAction={statusAction}
         />
       ) : null}
     </>

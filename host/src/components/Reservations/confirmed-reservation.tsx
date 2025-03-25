@@ -1,8 +1,20 @@
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import {
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@heroui/react";
 import TablePagination from "../TablePagination";
-import { confirmedReservations } from "@/dummyData/shortlet";
+import { ReservationProps } from "./incoming-reservation";
+import { calculateNights } from "@/utils";
 
-export default function ConfirmedReservation(): JSX.Element {
+export default function ConfirmedReservation({
+  reservations,
+  isLoading,
+}: ReservationProps): JSX.Element {
   return (
     <div className="py-8 overflow-x-auto md:overflow-x-visible">
       <Table
@@ -17,26 +29,25 @@ export default function ConfirmedReservation(): JSX.Element {
         <TableHeader>
           <TableColumn>Name</TableColumn>
           <TableColumn>Reservation No</TableColumn>
-          <TableColumn>Confirmation Date</TableColumn>
           <TableColumn>Check-In</TableColumn>
           <TableColumn>No. of Nights</TableColumn>
           <TableColumn>Apartment</TableColumn>
           <TableColumn>Price</TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={"No reservation to display."}>
-          {confirmedReservations.map((item) => (
-            <TableRow
-              className="bg-white border-y-5 border-grey_100  cursor-pointer"
-              key={item.name}
-            >
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.reserveNo}</TableCell>
-              <TableCell>{item.confirmDate}</TableCell>
-              <TableCell>{item.date}</TableCell>
-              <TableCell>{item.nights}</TableCell>
-              <TableCell>{item.apartment}</TableCell>
-              <TableCell>{item.price}</TableCell>
+        <TableBody
+          emptyContent={isLoading ? <Spinner size="md" /> : "No confirmed reservation to display."}
+        >
+          {reservations.map((item) => (
+            <TableRow className="bg-white border-y-5 border-grey_100  cursor-pointer" key={item.id}>
+              <TableCell>{item?.customerName || ""}</TableCell>
+              <TableCell>{item.code || ""}</TableCell>
+              <TableCell>
+                {item.startDate} - {item.endDate}
+              </TableCell>
+              <TableCell>{calculateNights(item.startDate, item.endDate)}</TableCell>
+              <TableCell>{item?.apartmentName || ""}</TableCell>
+              <TableCell>{item.amount || ""}</TableCell>
             </TableRow>
           ))}
         </TableBody>

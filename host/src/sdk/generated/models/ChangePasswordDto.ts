@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ChangePasswordDto = {
-  oldPassword: string;
   newPassword: string;
+  oldPassword: string;
   reauth?: boolean;
 };

@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateFacilityDto = {
-  name: string;
-  icon: string;
-  comment?: string | null;
-  color?: string | null;
+import type { ListingsDto } from "./ListingsDto";
+export type ListingsResponse = {
+  message: string;
+  data: ListingsDto;
 };

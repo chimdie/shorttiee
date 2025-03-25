@@ -4,4 +4,5 @@ export const QueryKeys = {
   categories: "categories",
   shortlets: "shortlets",
   shortletDetail: "shortletDetail",
+  reservations: "reservations",
 } as const;

@@ -6,6 +6,7 @@ import type { CreateListingResponse } from "../models/CreateListingResponse";
 import type { CreateReservationDto } from "../models/CreateReservationDto";
 import type { GetAllReservationResponse } from "../models/GetAllReservationResponse";
 import type { GetReservationResponse } from "../models/GetReservationResponse";
+import type { ReviewReservationDto } from "../models/ReviewReservationDto";
 import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
@@ -96,6 +97,26 @@ export class ReservationService {
       path: {
         id: id,
       },
+    });
+  }
+  /**
+   * @param id
+   * @param requestBody
+   * @returns GetReservationResponse Success
+   * @throws ApiError
+   */
+  public static patchApiV1UsersReservations(
+    id: string,
+    requestBody?: ReviewReservationDto,
+  ): CancelablePromise<GetReservationResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/api/v1/users/reservations/{id}",
+      path: {
+        id: id,
+      },
+      body: requestBody,
+      mediaType: "application/json",
     });
   }
 }
