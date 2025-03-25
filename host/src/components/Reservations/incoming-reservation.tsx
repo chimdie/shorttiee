@@ -41,6 +41,14 @@ export default function IncomingReservation({
   const [reservationId, setReservationId] = useState<string | null>(null);
   const [statusAction, setStatusAction] = useState<ReviewReservationDto | null>(null);
 
+  const handleRequest = (payload: { id: string; status: ReviewReservationDto["status"] }) => {
+    if (payload.id) {
+      setStatusAction({ status: payload.status });
+      setReservationId(payload.id);
+      acceptReservation.onOpen();
+    }
+  };
+
   return (
     <>
       <div className="py-8 overflow-x-auto md:overflow-x-visible">
@@ -85,13 +93,7 @@ export default function IncomingReservation({
                       <DropdownMenu aria-label="Shortlet Table Actions">
                         <DropdownItem
                           key="accept"
-                          onPress={() => {
-                            if (item?.id) {
-                              setStatusAction({ status: "ACCEPT" });
-                              setReservationId(item?.id);
-                              acceptReservation.onOpen();
-                            }
-                          }}
+                          onPress={() => handleRequest({ id: item?.id, status: "ACCEPT" })}
                         >
                           Accept
                         </DropdownItem>
@@ -99,13 +101,7 @@ export default function IncomingReservation({
                           key="reject"
                           className="text-danger"
                           color="danger"
-                          onPress={() => {
-                            if (item?.id) {
-                              setStatusAction({ status: "DECLINE" });
-                              setReservationId(item?.id);
-                              acceptReservation.onOpen();
-                            }
-                          }}
+                          onPress={() => handleRequest({ id: item?.id, status: "DECLINE" })}
                         >
                           Reject
                         </DropdownItem>
