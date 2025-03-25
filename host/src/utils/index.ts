@@ -20,4 +20,3 @@ export const calculateNights = (startDate: string, endDate: string): number => {
 
   return Math.max(0, nights);
 };
-
