@@ -39,9 +39,9 @@ export default function RejectedReservation({
               className="bg-white border-y-5 border-grey_100  cursor-pointer"
               key={item?.id}
             >
-              <TableCell>{item?.customerName || ""}</TableCell>
+              <TableCell>{item?.customerName}</TableCell>
               <TableCell>{item.code}</TableCell>
-              <TableCell>{item?.apartmentName || ""}</TableCell>
+              <TableCell>{item?.apartmentName}</TableCell>
             </TableRow>
           ))}
         </TableBody>
