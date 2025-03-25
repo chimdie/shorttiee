@@ -187,6 +187,10 @@ describe("GET /api/v1/users/reservations", () => {
       expect(elt).toHaveProperty("code");
       expect(elt).toHaveProperty("amount");
       expect(elt).toHaveProperty("id");
+      expect.objectContaining({
+        customerName: expect.any(String),
+        apartmentName: expect.any(String)
+      });
       expect(elt.code).toEqual("RES-031");
     });
   });

@@ -42,6 +42,13 @@ export const ReservationDto = z.object({
 });
 
 export type ReservationDto = z.infer<typeof ReservationDto>;
+export const ReservationUserAndListingNamesDto = ReservationDto.extend({
+  customerName: z.string(),
+  apartmentName: z.string()
+});
+export type ReservationWithUserAndListingNamesDto = z.infer<
+  typeof ReservationUserAndListingNamesDto
+>;
 
 export const ReservationWithUserAndListingDto = ReservationDto.extend({
   user: UserDto.pick({

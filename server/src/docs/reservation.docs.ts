@@ -3,7 +3,8 @@ import {
   CreateReservationDto,
   ReservationWithUserAndListingDto,
   ReservationDto,
-  ReviewReservationDto
+  ReviewReservationDto,
+  ReservationUserAndListingNamesDto
 } from "../dto/reservation.dto";
 import { BasicQueriesDocs } from "./query.docs";
 import { dtoToJsonSchema } from "../utils/dto-to-jsonschema";
@@ -13,6 +14,11 @@ oapi.component(
   "schemas",
   "ReservationWithUserAndListingDto",
   dtoToJsonSchema(ReservationWithUserAndListingDto)
+);
+oapi.component(
+  "schemas",
+  "ReservationUserAndListingNamesDto",
+  dtoToJsonSchema(ReservationUserAndListingNamesDto)
 );
 
 oapi.component(
@@ -72,7 +78,7 @@ oapi.component("schemas", "GetAllReservationResponse", {
     data: {
       type: "array",
       items: {
-        $ref: "#/components/schemas/ReservationDto"
+        $ref: "#/components/schemas/ReservationUserAndListingNamesDto"
       }
     }
   }
