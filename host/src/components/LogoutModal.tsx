@@ -1,5 +1,7 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter } from "@heroui/react";
 import { LogOut } from "lucide-react";
+import { useLogout } from "@/hooks/use-logout";
+import { useState } from "react";
 
 type LogoutModalProps = {
   isOpen: boolean;
@@ -12,6 +14,19 @@ export default function LogoutModal({
   onClose,
   onOpenChange,
 }: LogoutModalProps): JSX.Element {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    setIsLoading(true);
+
+    setTimeout(() => {
+      logout({ redirect: true });
+      setIsLoading(false);
+      onClose();
+    }, 2000);
+  };
   return (
     <Modal size="md" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -45,7 +60,9 @@ export default function LogoutModal({
             <Button
               fullWidth
               className="bg-shorttiee-primary text-white shadow-sm font-medium px-6"
-              onPress={onClose}
+              onPress={handleLogout}
+              isLoading={isLoading}
+              isDisabled={isLoading}
             >
               Yes, log me out
             </Button>
