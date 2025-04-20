@@ -12,13 +12,13 @@
     "rootDir": "./src",
     "strict": true,
     "strictNullChecks": true,
-    "skipLibCheck": true,
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*.ts",
+    "src/**/*",
     ".config/**/*",
-    "db/migrations/*.ts"
+    "db/migrations/*.ts",
+    "db/seeds/*.ts"
   ],
   "exclude": [
     "src/public/**"
