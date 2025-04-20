@@ -1,10 +1,11 @@
 import assert from "assert";
-import Database from "better-sqlite3";
+import Sqlite from "better-sqlite3";
 import { Kysely, PostgresDialect, SqliteDialect } from "kysely";
 import { Pool } from "pg";
 import type { Database as AppDatabase } from "../db/database.db";
 import { AppError } from "../utils/errors";
 import { appEnv } from "./env.config";
+import { SerializePlugin } from "kysely-plugin-serialize";
 
 // export const db = new Database(dbPath);
 // export default db;
@@ -103,7 +104,7 @@ function getLocalDbDialect() {
   assert(appEnv.APP_ENV === "development");
 
   const dbPath = appEnv.DB_PATH.replace("sqlite3:", "");
-  const sqliteDialect = new SqliteDialect({ database: new Database(dbPath) });
+  const sqliteDialect = new SqliteDialect({ database: new Sqlite(dbPath) });
 
   return [null, sqliteDialect] as const;
 }
@@ -121,7 +122,10 @@ const [dialectError, dialect] = getDBDialect();
 if (dialectError) {
   throw dialectError;
 }
-export const DB = new Kysely<AppDatabase>({ dialect });
+export const DB = new Kysely<AppDatabase>({
+  dialect,
+  plugins: [new SerializePlugin()]
+});
 
 // CreateTableBuilder.prototype.addIdColumn = function (
 //   this: CreateTableBuilder<any, any>,
