@@ -8,6 +8,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .ifNotExists()
     .addColumn("id", "varchar", (col) => col.primaryKey().notNull())
     .addColumn("name", "varchar", (col) => col.unique().notNull())
+    .addColumn("icon", "varchar", (col) => col.notNull())
     .addColumn("comment", "varchar")
     .addColumn("color", "varchar");
 
