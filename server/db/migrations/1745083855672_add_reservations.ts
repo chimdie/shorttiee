@@ -3,7 +3,7 @@ import { addDbTimestamp } from "../../src/utils/add-db-timestamp";
 
 // `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
 export async function up(db: Kysely<any>): Promise<void> {
-  const builder = db.schema
+  let builder = db.schema
     .createTable("tblReservations")
     .addColumn("id", "varchar", (col) => col.primaryKey().notNull())
     .addColumn("code", "varchar", (col) => col.notNull())
@@ -31,15 +31,15 @@ export async function up(db: Kysely<any>): Promise<void> {
       (col) => col.onDelete("cascade")
     );
 
-  addDbTimestamp(builder);
+  builder = addDbTimestamp(builder);
   await builder.execute();
 
   await sql`
-		CREATE TRIGGER IF NOT EXISTS trgReservationsUpdatedAt AFTER UPDATE ON tblReservations
-		BEGIN 
-			UPDATE tblReservations SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
-		END;
-	`.execute(db);
+    CREATE TRIGGER IF NOT EXISTS trgReservationsUpdatedAt AFTER UPDATE ON tblReservations
+    BEGIN 
+      UPDATE tblReservations SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
+    END;
+  `.execute(db);
 }
 
 // `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.

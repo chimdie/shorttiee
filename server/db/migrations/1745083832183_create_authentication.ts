@@ -2,7 +2,7 @@ import { sql, type Kysely } from "kysely";
 import { addDbTimestamp } from "../../src/utils/add-db-timestamp";
 
 export async function up(db: Kysely<any>): Promise<void> {
-  const builder = db.schema
+  let builder = db.schema
     .createTable("tblAuthentications")
     .ifNotExists()
     .addColumn("id", "varchar", (col) => col.primaryKey().notNull())
@@ -14,15 +14,15 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .addColumn("nonce", "varchar", (col) => col.notNull());
 
-  addDbTimestamp(builder);
+  builder = addDbTimestamp(builder);
   await builder.execute();
 
   await sql`
-		CREATE TRIGGER IF NOT EXISTS trgAuthenticationsUpdatedAt AFTER UPDATE ON tblAuthentications 
-		BEGIN 
-			UPDATE tblAuthentications SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
-		END;
-	`.execute(db);
+    CREATE TRIGGER IF NOT EXISTS trgAuthenticationsUpdatedAt AFTER UPDATE ON tblAuthentications 
+    BEGIN 
+      UPDATE tblAuthentications SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
+    END;
+  `.execute(db);
 }
 
 export async function down(db: Kysely<any>): Promise<void> {

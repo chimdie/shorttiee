@@ -6,7 +6,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   // up migration code goes here...
   // note: up migrations are mandatory. you must implement this function.
   // For more info, see: https://kysely.dev/docs/migrations
-  const schemaTable = db.schema
+  let builder = db.schema
     .createTable("tblUsers")
     .ifNotExists()
     .addColumn("id", "varchar", (col) => col.primaryKey().notNull())
@@ -19,18 +19,17 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("address", "varchar")
     .addColumn("gender", "varchar", (col) => {
       return col.check(sql`gender IN ('M','F')`);
-    })
-    .addColumn("createdAt", "datetime");
+    });
 
-  addDbTimestamp(schemaTable);
-  await schemaTable.execute();
+  builder = addDbTimestamp(builder);
+  await builder.execute();
 
   await sql`
-		CREATE TRIGGER IF NOT EXISTS trgUsersUpdatedAt AFTER UPDATE ON tblUsers 
-		BEGIN 
-			UPDATE tblUsers SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
-		END;
-	`.execute(db);
+    CREATE TRIGGER IF NOT EXISTS trgUsersUpdatedAt AFTER UPDATE ON tblUsers 
+    BEGIN 
+      UPDATE tblUsers SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
+    END;
+  `.execute(db);
 }
 
 // `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
