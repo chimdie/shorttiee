@@ -16,7 +16,9 @@
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    ".config/**/*",
+    "db/migrations/*.ts"
   ],
   "exclude": [
     "src/public/**"

@@ -1,6 +1,30 @@
-import { db } from "../config/db.config";
+import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { DB } from "../config/db.config";
 import { Auth } from "../dto/types.dto";
 import { WithDBTimestamps } from "../types/utils";
+
+export type AuthTable = {
+  /** uuid */
+  id: string;
+  hash: string;
+  userId: string;
+  /**
+   * a SHA1 hash of `hash`
+   * useful for checking changes in the user auth
+   *
+   * @example invalidate all auth tokens after a password change by checking
+   * the nonce in JWT
+   */
+  nonce: string;
+  otp?: string | null;
+  /** datetime */
+  otpTTL?: string | null;
+  createdAt: ColumnType<Date, string>;
+  updatedAt: ColumnType<Date, string>;
+};
+export type Auth = Selectable<AuthTable>;
+export type CreateAuth = Insertable<AuthTable>;
+export type UpdateAuth = Updateable<AuthTable>;
 
 export function createAuth() {
   return db.prepare<Array<Auth>>(

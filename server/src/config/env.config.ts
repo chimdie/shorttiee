@@ -21,4 +21,4 @@ if (parsed.error) {
 
 const configEnv: EnvDto = parsed.data;
 
-export let appEnv = configEnv;
+export const appEnv = configEnv;

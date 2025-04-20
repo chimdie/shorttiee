@@ -5,7 +5,7 @@ import { appEnv } from "./config/env.config";
 import { CreateApplicationService } from "./config/services.config";
 import { domainValidator } from "./utils/domain-validator";
 import { OTP } from "./utils/otp";
-import { isAllDBTableMigrated, db } from "./config/db.config";
+import { DB } from "./config/db.config";
 import { AppEventEmitter } from "./config/events";
 import assert from "assert";
 import { createAdmin } from "./db/users.db";
@@ -16,10 +16,10 @@ new CreateApplicationService(app)
   .addService("event", AppEventEmitter)
   .build();
 
-if (!isAllDBTableMigrated()) {
-  debug("app:db")("Tables not fully migrated");
-  process.exit(1);
-}
+// if (!isAllDBTableMigrated()) {
+//   debug("app:db")("Tables not fully migrated");
+//   process.exit(1);
+// }
 
 const server = http.createServer(app);
 
@@ -57,9 +57,9 @@ function shutDown(code: number) {
   debug("app:shutDown")("CODE: " + code);
   debug("app:shutDown")("Received kill signal, shutting down gracefully");
 
-  server.close(() => {
+  server.close(async () => {
     debug("app:shutDown")("Closed out remaining connections");
-    db.close();
+    await DB.destroy();
     process.exit(0);
   });
 }
