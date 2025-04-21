@@ -1,8 +1,7 @@
 import { UserDto } from "../dto/user.dto";
 import type { EnvDto } from "../dto/env.dto";
 import { WithDBTimestamps } from "./utils";
-import type { Subjects, Actions } from "../config/types/abilities";
-import type { MongoQuery, MongoAbility } from "@casl/ability";
+import type { Subjects, Actions } from "./abilities";
 import type { MongoQuery, MongoAbility } from "@casl/ability";
 import type { Events } from "../config/events";
 import type { EventEmitter } from "events";
