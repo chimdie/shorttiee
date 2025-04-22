@@ -28,4 +28,4 @@ jobs:
         env:
           TEST_ENV: ${{ secrets.SERVER_TEST_ENV }}
       - name: Run migration, test and rollback
-        run: npm test
+        run: npm test -- --runInBand
