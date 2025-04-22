@@ -20,8 +20,8 @@ export async function seed(db: Kysely<Database>): Promise<void> {
   ]);
 
   await db.transaction().execute(async (trx) => {
-    const listingExecs = [];
-    const listingFacilityExecs = [];
+    const listingExecs: any[] = [];
+    const listingFacilityExecs: any[] = [];
     for (const _ in Array.from({ length: 30 })) {
       const listing: CreateListing = {
         id: crypto.randomUUID(),

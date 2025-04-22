@@ -1,96 +1,147 @@
-import db from "../config/db.config";
 import { ReservationDto } from "../dto/reservation.dto";
-import { WithDBTimestamps } from "../types/utils";
-import { fnToResult } from "../utils/fn-result";
+import { fnToResult, fnToResultAsync } from "../utils/fn-result";
 import { queryToSql } from "../utils/request-query";
 import { RequestQuery } from "../dto/query.dto";
+import { DB } from "../config/db.config";
+import { CreateReservation } from "../dto/types.dto";
 
-export const createReservationQuery = (payload: ReservationDto) => {
-  return fnToResult(() => {
-    const reservationStatement = db.prepare<ReservationDto[]>(`
-      INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId, listingOwnerId)
-      VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId, @listingOwnerId)
-    `);
-    reservationStatement.run(payload);
+export const createReservationQuery = async (payload: CreateReservation) => {
+  const fn = fnToResultAsync(async () => {
+    // const reservationStatement = db.prepare<ReservationDto[]>(`
+    //   INSERT INTO tblReservations (id, code, amount, startDate, endDate, userId, listingId, listingOwnerId)
+    //   VALUES(@id, @code, @amount, @startDate, @endDate, @userId, @listingId, @listingOwnerId)
+    // `);
+    // reservationStatement.run(payload);
+    //
+    // return db
+    //   .prepare<
+    //     string[],
+    //     WithDBTimestamps<ReservationDto>
+    //   >("SELECT * FROM tblReservations WHERE id = ?")
+    //   .get(payload.id);
 
-    return db
-      .prepare<
-        string[],
-        WithDBTimestamps<ReservationDto>
-      >("SELECT * FROM tblReservations WHERE id = ?")
-      .get(payload.id);
-  })();
-};
-
-export const findReservationByIdQuery = (id: string) => {
-  const fn = fnToResult(() => {
-    const reservationStatement = db.prepare<string[], ReservationDto>(
-      "SELECT * FROM tblReservations WHERE id = ?"
-    );
-
-    return reservationStatement.get(id);
+    return await DB.insertInto("tblReservations")
+      .values(payload)
+      .returningAll()
+      .executeTakeFirst();
   });
 
-  return fn();
+  return await fn();
 };
 
-export const findAllReservationByUserIdQuery = (
+export const findReservationByIdQuery = async (id: string) => {
+  const fn = fnToResultAsync(async () => {
+    // const reservationStatement = db.prepare<string[], ReservationDto>(
+    //   "SELECT * FROM tblReservations WHERE id = ?"
+    // );
+    //
+    // return reservationStatement.get(id);
+
+    return await DB.selectFrom("tblReservations")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst();
+  });
+
+  return await fn();
+};
+
+export const findAllReservationByUserIdQuery = async (
   id: string,
   query: RequestQuery
 ) => {
-  return fnToResult(() => {
-    const [q, replacement] = queryToSql(
-      query.filter,
-      query.or_filter,
-      query.shift,
-      false
-    );
+  const fn = fnToResultAsync(async () => {
+    // const sql = `
+    //   SELECT  tblReservations.*, CONCAT(tblUsers.firstName, ' ' , tblUsers.lastName) as customerName, tblListings.name as apartmentName
+    //   FROM tblReservations
+    //   JOIN tblUsers on tblReservations.userId = tblUsers.id
+    //   JOIN tblListings on tblReservations.listingId = tblListings.id
+    //   WHERE (tblReservations.userId = ?  or tblReservations.listingOwnerId = ?) ${q ? "and " + q : q}
+    // `;
 
-    const sql = `
-      SELECT  tblReservations.*, CONCAT(tblUsers.firstName, ' ' , tblUsers.lastName) as customerName, tblListings.name as apartmentName
-      FROM tblReservations 
-      JOIN tblUsers on tblReservations.userId = tblUsers.id
-      JOIN tblListings on tblReservations.listingId = tblListings.id
-      WHERE (tblReservations.userId = ?  or tblReservations.listingOwnerId = ?) ${q ? "and " + q : q}
-    `;
+    // const reservationStatement = db.prepare<unknown[], ReservationDto>(sql);
+    // return reservationStatement.all([id, id, ...replacement]);
 
-    const reservationStatement = db.prepare<unknown[], ReservationDto>(sql);
+    // select "tblReservations".*
+    // from "tblReservations"
+    // inner join "tblUsers" on "tblReservations"."userId" = "tblUsers"."id"
+    // inner join "tblListings" on "tblReservations"."listingId" = "tblListings"."id"
+    // where "tblReservations"."userId" = ? and "tblReservations"."listingOwnerId" = ? and "code" = ?
 
-    return reservationStatement.all([id, id, ...replacement]);
-  })();
+    let stmt = DB.selectFrom("tblReservations")
+      .innerJoin("tblUsers", "tblReservations.userId", "tblUsers.id")
+      .innerJoin("tblListings", "tblReservations.listingId", "tblListings.id")
+      // .where(, "=", id)
+      .where((eb) =>
+        eb.or([
+          eb("tblReservations.userId", "=", id),
+          eb("tblReservations.listingOwnerId", "=", id)
+        ])
+      )
+      .selectAll("tblReservations");
+
+    return await queryToSql(stmt, query.filter, query.or_filter).execute();
+  });
+  return await fn();
 };
 
-export const findReservationByIdAndUserIdQuery = (
+export const findReservationByIdAndUserIdQuery = async (
   id: string,
   userId: string
 ) => {
-  return fnToResult(() => {
-    const reservationStatement = db.prepare<unknown[], ReservationDto>(
-      "SELECT * FROM tblReservations WHERE (userId = ?  or listingOwnerId = ?) and (id = ?) LIMIT 1"
-    );
+  const fn = fnToResultAsync(async () => {
+    // const reservationStatement = db.prepare<unknown[], ReservationDto>(
+    //   "SELECT * FROM tblReservations WHERE (userId = ?  or listingOwnerId = ?) and (id = ?) LIMIT 1"
+    // );
 
-    return reservationStatement.get([userId, userId, id]);
-  })();
+    // return reservationStatement.get([userId, userId, id]);
+    // console.log(
+    //   ">>>sql",
+    //   DB.selectFrom("tblReservations")
+    //     .selectAll()
+    //     .where((eb) => {
+    //       return eb
+    //         .or([eb("userId", "=", userId), eb("listingOwnerId", "=", userId)])
+    //         .and(eb("id", "=", id));
+    //     })
+    //     .compile()
+    // );
+    return await DB.selectFrom("tblReservations")
+      .selectAll()
+      .where((eb) => {
+        return eb
+          .or([eb("userId", "=", userId), eb("listingOwnerId", "=", userId)])
+          .and(eb("id", "=", id));
+      })
+      .executeTakeFirst();
+  });
+
+  return await fn();
 };
 
-const countReservations = () => {
-  return fnToResult(() => {
-    const reservationStatement = db.prepare<[], { total: number }>(
-      "SELECT count(*) as total FROM tblReservations"
-    );
+const countReservations = async () => {
+  const fn = fnToResultAsync(async () => {
+    // const reservationStatement = db.prepare<[], { total: number }>(
+    //   "SELECT count(*) as total FROM tblReservations"
+    // );
+    // return reservationStatement.get();
 
-    return reservationStatement.get();
-  })();
+    return await DB.selectFrom("tblReservations")
+      .select((eb) => eb.fn.countAll().as("total"))
+      .executeTakeFirst();
+  });
+
+  return await fn();
 };
 
-export const createReservationCodeQuery = () => {
-  const [countError, count] = countReservations();
+export const createReservationCodeQuery = async () => {
+  const [countError, count] = await countReservations();
 
   if (countError) {
     return [countError, null] as const;
   }
 
-  const totalResevations = count?.total ?? 0;
+  const totalResevations = Number(count?.total ?? 0);
   let point: string = "";
 
   if (totalResevations < 100) {
@@ -102,26 +153,33 @@ export const createReservationCodeQuery = () => {
   return [null, code] as const;
 };
 
-export function updateResvartionStatusQuery(
+export async function updateResvartionStatusQuery(
   id: string,
   userId: string,
   status: ReservationDto["status"]
 ) {
-  const sql = `
-    UPDATE tblReservations
-    SET status=@status
-    WHERE id=@id AND listingOwnerId=@userId
-    RETURNING *
-  `;
+  // const sql = `
+  //   UPDATE tblReservations
+  //   SET status=@status
+  //   WHERE id=@id AND listingOwnerId=@userId
+  //   RETURNING *
+  // `;
 
-  const fn = fnToResult(() => {
-    return db
-      .prepare<
-        { id: string; userId: string; status: ReservationDto["status"] }[],
-        ReservationDto
-      >(sql)
-      .get({ id, status, userId });
+  const fn = fnToResultAsync(async () => {
+    // return db
+    //   .prepare<
+    //     { id: string; userId: string; status: ReservationDto["status"] }[],
+    //     ReservationDto
+    //   >(sql)
+    //   .get({ id, status, userId });
+
+    return await DB.updateTable("tblReservations")
+      .set({ status })
+      .where("id", "=", id)
+      .where("listingOwnerId", "=", userId)
+      .returningAll()
+      .executeTakeFirst();
   });
 
-  return fn();
+  return await fn();
 }

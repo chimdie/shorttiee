@@ -4,13 +4,11 @@
   "description": "shorttiee server",
   "main": "index.js",
   "scripts": {
-    "pretest": "dbmate --env-file \".env.test\" drop && dbmate --env-file \".env.test\" up && NODE_ENV=test tsx src/tests/seed.ts",
+    "pretest": "NODE_ENV=test kysely migrate:rollback --all && NODE_ENV=test kysely migrate:latest && NODE_ENV=test kysely seed:run",
     "test": "NODE_ENV=test jest",
-    "posttest": "dbmate --env-file \".env.test\" drop",
+    "posttest": "NODE_ENV=test kysely migrate:rollback --all",
     "dev": "DEBUG=app:* tsx watch src/index.ts",
-    "lint": "tsc --noEmit",
-    "migrate:up": "dbmate up",
-    "migrate:down": "dbmate down"
+    "lint": "tsc --noEmit"
   },
   "repository": {
     "type": "git",

@@ -16,27 +16,34 @@ export type Expand<T> = T extends any[] | Date
       [K in keyof T]: T[K];
     } & {};
 
-interface _WithDBTimestamps<T extends Record<string, any>> extends T {
+type _WithDBTimestamps<T = object> = T & {
   createdAt: string;
   updatedAt: string;
-}
+};
 
 export type WithDBTimestamps<T extends Record<string, any>> = Expand<
   _WithDBTimestamps<T>
 >;
 
-interface _WithId<T extends Record<string, any>> extends T {
+type _WithId<T extends Record<string, any>> = T & {
   id: string;
-}
+};
 
 export type WithId<T extends Record<string, any>> = Expand<_WithId<T>>;
 
 type _Id<T extends string> = T extends `${infer U}Id` ? U : T;
 export type PopulatedEntity<T extends Record<string, any>> = {
-  [k in _Id<keyof T>]: k extends keyof T ? T[k] : T[`${k}Id`];
+  [k in _Id<keyof T extends string ? keyof T : never>]: k extends keyof T
+    ? T[k]
+    : T[`${k}Id`];
 };
 
 export type Merge<
   T extends Record<string, any>,
   U extends Record<string, any>
 > = Expand<T & U>;
+
+export type OmitTimestamps<T extends object> = Omit<
+  T,
+  "createdAt" | "updatedAt"
+>;

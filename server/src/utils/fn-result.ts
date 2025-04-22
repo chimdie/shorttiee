@@ -1,3 +1,5 @@
+import { AppError } from "./errors";
+
 export function fnToResult<
   E extends Error,
   T extends (...arg: any[]) => any,
@@ -8,7 +10,7 @@ export function fnToResult<
       const res: U = fn(...arg);
       return [null, res] as const;
     } catch (error: any) {
-      return [error as E] as const;
+      return [AppError.from(error) as AppError] as const;
     }
   };
 }
@@ -23,7 +25,7 @@ export function fnToResultAsync<
       const res: U = await fn(...arg);
       return [null, res] as const;
     } catch (error: any) {
-      return [error as E] as const;
+      return [AppError.from(error) as AppError] as const;
     }
   };
 }

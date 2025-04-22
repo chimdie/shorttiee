@@ -3,10 +3,15 @@ import { NextFunction, Request, Response } from "express";
 import { UnauthorizedResponse } from "../utils/response";
 import { verifyAuthToken } from "../utils/auth-token";
 import { findUserByIdWithAuth } from "../db/users.db";
-import { WithDBTimestamps } from "../types/utils";
-import { UserDto } from "../dto/user.dto";
+import { DB } from "../config/db.config";
+import { ctlWrapper } from "../utils/ctl-wrapper";
+import { User } from "../dto/types.dto";
 
-export function authenticate(req: Request, res: Response, next: NextFunction) {
+export const authenticate = ctlWrapper(async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const header = req.get("Authorization") || "";
   const token = header.replace("Bearer ", "");
 
@@ -27,7 +32,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     return UnauthorizedResponse(res);
   }
 
-  const userWithAuth = findUserByIdWithAuth(payload.id);
+  const userWithAuth = await findUserByIdWithAuth({ id: payload.id, DB });
 
   if (!userWithAuth) {
     return UnauthorizedResponse(res);
@@ -37,7 +42,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     return UnauthorizedResponse(res);
   }
 
-  const user: WithDBTimestamps<UserDto> = {
+  const user: User = {
     id: userWithAuth.id,
     email: userWithAuth.email,
     role: userWithAuth.role,
@@ -48,10 +53,11 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     mobileNumber: userWithAuth.mobileNumber,
     businessName: userWithAuth.businessName,
     referrerCode: userWithAuth.referrerCode,
+    photo: userWithAuth.photo,
     createdAt: userWithAuth.createdAt,
     updatedAt: userWithAuth.updatedAt
   };
 
   req.user = user;
   next();
-}
+});

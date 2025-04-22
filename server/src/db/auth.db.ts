@@ -1,60 +1,46 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 import { DB } from "../config/db.config";
-import { Auth } from "../dto/types.dto";
-import { WithDBTimestamps } from "../types/utils";
+import { UpdateAuth } from "../dto/types.dto";
 
-export type AuthTable = {
-  /** uuid */
-  id: string;
-  hash: string;
-  userId: string;
-  /**
-   * a SHA1 hash of `hash`
-   * useful for checking changes in the user auth
-   *
-   * @example invalidate all auth tokens after a password change by checking
-   * the nonce in JWT
-   */
-  nonce: string;
-  otp?: string | null;
-  /** datetime */
-  otpTTL?: string | null;
-  createdAt: ColumnType<Date, string>;
-  updatedAt: ColumnType<Date, string>;
-};
-export type Auth = Selectable<AuthTable>;
-export type CreateAuth = Insertable<AuthTable>;
-export type UpdateAuth = Updateable<AuthTable>;
-
-export function createAuth() {
-  return db.prepare<Array<Auth>>(
-    "INSERT INTO tblAuthentications(id, hash, userId, nonce) VALUES(@id, @hash, @userId, @nonce)"
-  );
+export async function updateAuthHashByUserId(
+  payload: Required<Pick<UpdateAuth, "hash" | "userId" | "nonce">>
+) {
+  return await DB.updateTable("tblAuthentications")
+    .set(payload)
+    .where("userId", "=", payload.userId)
+    .execute();
+  // return DB.prepare<Array<Pick<AuthTable, "hash" | "userId" | "nonce">>>(
+  //   "UPDATE tblAuthentications SET hash=@hash, nonce=@nonce WHERE userId=@userId"
+  // );
 }
 
-export function updateAuthHashByUserId() {
-  return db.prepare<Array<Pick<Auth, "hash" | "userId" | "nonce">>>(
-    "UPDATE tblAuthentications SET hash=@hash, nonce=@nonce WHERE userId=@userId"
-  );
+export async function updateAuthOtpByUserId(
+  payload: Required<Pick<UpdateAuth, "otp" | "userId" | "otpTTL">>
+) {
+  return await DB.updateTable("tblAuthentications")
+    .set(payload)
+    .where("userId", "=", payload.userId)
+    .execute();
+  // return DB.prepare<Array<Pick<AuthTable, "otp" | "userId" | "otpTTL">>>(
+  //   "UPDATE tblAuthentications SET otp=@otp, otpTTL=@otpTTL WHERE userId=@userId"
+  // );
 }
 
-export function updateAuthOtpByUserId() {
-  return db.prepare<Array<Pick<Auth, "otp" | "userId" | "otpTTL">>>(
-    "UPDATE tblAuthentications SET otp=@otp, otpTTL=@otpTTL WHERE userId=@userId"
-  );
+export async function updateAuthOtpAndHashByUserId(
+  payload: Required<Omit<UpdateAuth, "id">>
+) {
+  return await DB.updateTable("tblAuthentications")
+    .set(payload)
+    .where("userId", "=", payload.userId)
+    .execute();
+
+  //   .prepare<Array<Omit<AuthTable, "id">>>(
+  //   "UPDATE tblAuthentications SET otp=@otp, otpTTL=@otpTTL, hash=@hash, nonce=@nonce WHERE userId=@userId"
+  // );
 }
 
-export function updateAuthOtpAndHashByUserId() {
-  return db.prepare<Array<Omit<Auth, "id">>>(
-    "UPDATE tblAuthentications SET otp=@otp, otpTTL=@otpTTL, hash=@hash, nonce=@nonce WHERE userId=@userId"
-  );
-}
-
-export function findAuthByUserId(userId: string) {
-  return db
-    .prepare<
-      string[],
-      WithDBTimestamps<Auth>
-    >("SELECT * FROM tblAuthentications WHERE userId = ?")
-    .get(userId);
+export async function findAuthByUserId(userId: string) {
+  return await DB.selectFrom("tblAuthentications")
+    .selectAll()
+    .where("userId", "=", userId)
+    .executeTakeFirstOrThrow();
 }

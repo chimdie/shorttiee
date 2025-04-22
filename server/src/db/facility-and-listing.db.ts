@@ -1,15 +1,33 @@
-import { db } from "../config/db.config";
-import { fnToResult } from "../utils/fn-result";
+import { Kysely } from "kysely";
+import { fnToResultAsync } from "../utils/fn-result";
+import { Database } from "./database.db";
+import { CreateListingFacility } from "../dto/types.dto";
+import { DB } from "../config/db.config";
 
-export type FacilityListing = {
-	facilityId: string;
-	listingId: string;
-};
-export const createFacilityAndListingQuery = (payload: FacilityListing) => {
-	const statement = db.prepare(
-		"INSERT INTO tblListingsFacilities (facilityId, listingId) VALUES (@facilityId, @listingId)"
-	);
+export async function createFacilityAndListingQuery(
+  payload: CreateListingFacility
+) {
+  const fn = fnToResultAsync(async () => {
+    return await DB.insertInto("tblListingsFacilities")
+      .values(payload)
+      .execute();
+  });
+  return await fn();
+}
 
-	const fn = fnToResult(statement.run.bind(statement));
-	return fn(payload);
-};
+export async function createFacilityAndListingWithTrx(
+  DB: Kysely<Database>,
+  payload: CreateListingFacility
+) {
+  // const statement = db.prepare(
+  //   "INSERT INTO tblListingsFacilities (facilityId, listingId) VALUES (@facilityId, @listingId)"
+  // );
+
+  const fn = fnToResultAsync(async () => {
+    return await DB.insertInto("tblListingsFacilities")
+      .values(payload)
+      .execute();
+  });
+
+  return await fn();
+}

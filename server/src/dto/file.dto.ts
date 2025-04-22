@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { OmitTimestamps } from "../types/utils";
+import { FileTable } from "./types.dto";
 
 export const FileDto = z.object({
   path: z.string(),
@@ -7,7 +9,7 @@ export const FileDto = z.object({
   checksum: z.string(),
   size: z.number(),
   ownerId: z.string()
-});
+}) satisfies z.ZodType<OmitTimestamps<FileTable>>;
 
 export type FileDto = z.infer<typeof FileDto>;
 

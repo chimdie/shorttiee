@@ -1,132 +1,178 @@
-import { db } from "../config/db.config";
-import {
-  CreateListingsDto,
-  type ListingDBDto,
-  ListingDto
-} from "../dto/listings.dto";
-import { Expand } from "../types/utils";
-import { fnToResult } from "../utils/fn-result";
+import { fnToResultAsync } from "../utils/fn-result";
 import { queryToSql } from "../utils/request-query";
 import { RequestQuery } from "../dto/query.dto";
-import { FacilityDto } from "../dto/facility.dto";
+import { DB } from "../config/db.config";
+import { CreateListing, UpdateListing } from "../dto/types.dto";
+import { Kysely, SelectExpression } from "kysely";
+import { Database } from "./database.db";
+import assert from "assert";
 
-type InsertListings = CreateListingsDto &
-  Pick<ListingDto, "status"> & { id: string; userId: string };
+export async function createListingQuery(data: CreateListing) {
+  const fn = fnToResultAsync(async () => {
+    return await DB.insertInto("tblListings").values(data).execute();
+  });
 
-export function createListingQuery(data: InsertListings) {
-  const statment = db.prepare<
-    Expand<InsertListings>[],
-    ListingDto & { images: string }
-  >(`
-      INSERT INTO tblListings (
-	id, name, address, type, status, description, price, rate, restrictions, userId, categoryId, images
-      ) VALUES (
-	@id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId, @images
-      )
-    `);
+  //  const statment = db.prepare<
+  //    Expand<InsertListings>[],
+  //    ListingDto & { images: string }
+  //  >(`
+  //      INSERT INTO tblListings (
+  // id, name, address, type, status, description, price, rate, restrictions, userId, categoryId, images
+  //      ) VALUES (
+  // @id, @name, @address, @type, @status, @description, @price, @rate, @restrictions, @userId, @categoryId, @images
+  //      )
+  //    `);
 
-  const fn = fnToResult(statment.run.bind(statment));
-  return fn(data);
+  return await fn();
 }
 
-export function findListingByIdQuery(id: string) {
-  function _findListingByIdQuery(id: string) {
-    const sql = "SELECT * FROM tblListings WHERE id=@id";
-    const statment = db.prepare<Pick<ListingDto, "id">[], ListingDBDto>(sql);
-
-    const val = statment.get({ id });
-
-    if (val) {
-      val.images = JSON.parse(val.images);
-    }
-
-    return val as unknown as ListingDto;
-  }
-
-  const fn = fnToResult(_findListingByIdQuery);
-  return fn(id);
-}
-
-export function findListingByIdFilter(
-  id: string,
-  fields: (keyof ListingDto)[] | ["*"] = ["*"]
+export async function createListingWithTrxQuery(
+  DB: Kysely<Database>,
+  data: CreateListing
 ) {
-  function _findListingByIdQuery(id: string) {
-    const sql = `SELECT ${fields.join()} FROM tblListings WHERE id=@id`;
-    const statment = db.prepare<Pick<ListingDto, "id">[], ListingDBDto>(sql);
+  const payload: CreateListing = {
+    name: data.name,
+    address: data.address,
+    type: data.type,
+    status: data.status,
+    images: data.images,
+    userId: data.userId,
+    categoryId: data.categoryId,
+    id: data.id,
+    description: data.description,
+    restrictions: data.restrictions,
+    price: data.price,
+    rate: data.rate
+  };
+  const fn = fnToResultAsync(async () => {
+    return await DB.insertInto("tblListings").values(payload).execute();
+  });
+  return await fn();
+}
 
-    const val = statment.get({ id });
+export async function findListingByIdQuery(id: string) {
+  const fn = fnToResultAsync(async () => {
+    return await DB.selectFrom("tblListings")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst();
+  });
 
-    if (val) {
-      val.images = JSON.parse(val.images);
+  return await fn();
+}
+
+export async function findListingByIdFilter(
+  id: string,
+  fields: ReadonlyArray<SelectExpression<Database, "tblListings">>
+) {
+  const fn = fnToResultAsync(async () => {
+    let stmt = DB.selectFrom("tblListings");
+
+    if (!fields) {
+      stmt = stmt.selectAll();
     }
-
-    return val as unknown as ListingDto;
-  }
-
-  const fn = fnToResult(_findListingByIdQuery);
-  return fn(id);
+    if (Array.isArray(fields) && fields[0] === "*") {
+      stmt = stmt.selectAll();
+    } else {
+      assert(Array.isArray(fields), "Expected not array");
+      stmt = stmt.select(fields);
+    }
+    return await stmt.where("id", "=", id).executeTakeFirst();
+  });
+  return await fn();
 }
 
-export function findAllListingQuery(query: RequestQuery) {
-  const [q, replacement] = queryToSql(
-    query.filter,
-    query.or_filter,
-    query.shift
-  );
-  function run() {
-    const sql = `SELECT * FROM tblListings ${q}`;
+export async function findAllListingQuery(query: RequestQuery) {
+  // function run() {
+  //   const sql = `SELECT * FROM tblListings ${q}`;
+  //
+  //   const result = db.prepare<unknown[], ListingDBDto>(sql).all(replacement);
+  //
+  //   result.forEach((val) => {
+  //     if (val) {
+  //       val.images = JSON.parse(val.images);
+  //     }
+  //   });
+  //
+  //   return result as unknown as ListingDto[];
+  // }
 
-    const result = db.prepare<unknown[], ListingDBDto>(sql).all(replacement);
+  // if (query.filter?.length) {
+  //   query.filter.forEach((f) => {
+  //     const [field, op, val] = f;
+  //     stmt = stmt.where(field as any, op, val);
+  //   });
+  // }
 
-    result.forEach((val) => {
-      if (val) {
-        val.images = JSON.parse(val.images);
-      }
-    });
+  // if (query.or_filter?.length) {
+  //   stmt.where((eb) => {
+  //     assert(query.or_filter);
+  //     return eb.or(
+  //       query.or_filter?.map((f) => {
+  //         const [field, op, val] = f;
+  //         return eb(field as any, op, val);
+  //       })
+  //     );
+  //   });
+  // }
 
-    return result as unknown as ListingDto[];
-  }
+  const fn = fnToResultAsync(async () => {
+    let stmt = DB.selectFrom("tblListings").selectAll();
+    stmt = queryToSql(stmt, query.filter, query.or_filter);
 
-  const fn = fnToResult(run);
-  return fn();
+    return await stmt.execute();
+  });
+
+  return await fn();
 }
 
-export function findListingFacilitiesQuery(listingId: string) {
-  function run() {
-    const sql = `
-      SELECT f.* 
-      FROM tblListingsFacilities  as lf
-      JOIN tblFacilities as f on f.id = lf.facilityId
-      where lf.listingId = ?
-    `;
+export async function findListingFacilitiesQuery(listingId: string) {
+  // function run() {
+  //   const sql = `
+  //     SELECT f.*
+  //     FROM tblListingsFacilities  as lf
+  //     JOIN tblFacilities as f on f.id = lf.facilityId
+  //     where lf.listingId = ?
+  //   `;
+  //
+  //   return db.prepare<string[], FacilityDto>(sql).all(listingId);
+  // }
 
-    return db.prepare<string[], FacilityDto>(sql).all(listingId);
-  }
+  const fn = fnToResultAsync(async () => {
+    const stmt = DB.selectFrom("tblListingsFacilities as lf")
+      .innerJoin("tblFacilities as f", "f.id", "lf.facilityId")
+      .where("lf.listingId", "=", listingId)
+      .selectAll(["f"]);
 
-  const fn = fnToResult(run);
-  return fn();
+    return await stmt.execute();
+  });
+  return await fn();
 }
 
 /**
  * @description should be used for admin operations only
  */
-export function updateListingStatusQuery(
+export async function updateListingStatusQuery(
   id: string,
-  userId: string,
-  status: ListingDto["status"]
+  status: Required<UpdateListing["status"]>
 ) {
-  const sql = `
-    UPDATE tblListings
-    SET status=@status
-    WHERE id=@id 
-    RETURNING *
-  `;
+  // const sql = `
+  //   UPDATE tblListings
+  //   SET status=@status
+  //   WHERE id=@id
+  //   RETURNING *
+  // `;
+  // type Params = { id: string; userId: string; status: ListingDto["status"] };
+  // return db.prepare<Params[], ListingDto>(sql).get({ id, status, userId });
 
-  const fn = fnToResult(() => {
-    type Params = { id: string; userId: string; status: ListingDto["status"] };
-    return db.prepare<Params[], ListingDto>(sql).get({ id, status, userId });
+  const fn = fnToResultAsync(async () => {
+    const stmt = DB.updateTable("tblListings")
+      .set({ status })
+      .where("id", "=", id)
+      .returningAll();
+
+    return await stmt.executeTakeFirst();
   });
 
-  return fn();
+  return await fn();
 }

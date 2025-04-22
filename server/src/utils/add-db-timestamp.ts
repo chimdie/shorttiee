@@ -5,15 +5,23 @@ export function addDbTimestamp<T extends string>(
   tableBuilder: CreateTableBuilder<T>
 ) {
   if (appEnv.APP_ENV === "test" || appEnv.APP_ENV === "development") {
-    tableBuilder.addColumn("createdAt", "datetime", (col) => {
-      return col.defaultTo(sql`STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')`);
-    });
+    return tableBuilder
+      .addColumn("createdAt", "datetime", (col) => {
+        return col.defaultTo(sql`(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'))`);
+      })
+      .addColumn("updatedAt", "datetime", (col) => {
+        return col.defaultTo(sql`(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'))`);
+      });
   }
 
   if (appEnv.APP_ENV === "staging" || appEnv.APP_ENV === "production") {
-    tableBuilder.addColumn("createdAt", "timestamptz", (col) =>
-      col.defaultTo(sql`CURRENT_TIMESTAMP`)
-    );
+    return tableBuilder
+      .addColumn("createdAt", "timestamptz", (col) => {
+        return col.defaultTo(sql`CURRENT_TIMESTAMP`);
+      })
+      .addColumn("updatedAt", "timestamptz", (col) => {
+        return col.defaultTo(sql`CURRENT_TIMESTAMP`);
+      });
   }
 
   return tableBuilder;

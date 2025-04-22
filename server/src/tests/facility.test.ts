@@ -8,9 +8,9 @@ import { helper } from "./helper";
 let token = "";
 let adminToken = "";
 
-beforeAll(() => {
-  token = helper.getUserAuth().token;
-  adminToken = helper.getAdminAuth().token;
+beforeAll(async () => {
+  token = (await helper.getUserAuth()).token;
+  adminToken = (await helper.getAdminAuth()).token;
 });
 
 describe("POST /api/v1/facilities", () => {

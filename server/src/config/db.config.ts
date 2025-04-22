@@ -101,7 +101,7 @@ function getLocalDbDialect() {
   if (!isLocal) {
     return [new AppError("No Database Dialect"), null] as const;
   }
-  assert(appEnv.APP_ENV === "development");
+  assert(appEnv.APP_ENV === "development" || appEnv.APP_ENV === "test");
 
   const dbPath = appEnv.DB_PATH.replace("sqlite3:", "");
   const sqliteDialect = new SqliteDialect({ database: new Sqlite(dbPath) });

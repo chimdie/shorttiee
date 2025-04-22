@@ -8,8 +8,8 @@ import { UpdateUserDto } from "../dto/user.dto";
 let token = "";
 let userId: string;
 
-beforeAll(() => {
-  const result = helper.getUserAuth();
+beforeAll(async () => {
+  const result = await helper.getUserAuth();
   token = result.token;
   userId = result.user.id;
 });

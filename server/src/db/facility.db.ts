@@ -1,48 +1,62 @@
-import { db } from "../config/db.config";
-import { CreateFacilityDto, FacilityDto } from "../dto/facility.dto";
-import { WithId } from "../types/utils";
-import { fnToResult } from "../utils/fn-result";
+import { DB } from "../config/db.config";
+import { CreateFacility } from "../dto/types.dto";
+import { fnToResultAsync } from "../utils/fn-result";
 
-export const createFacilityQuery = (payload: WithId<CreateFacilityDto>) => {
-	const statement = db.prepare<WithId<CreateFacilityDto>[]>(`
-		INSERT INTO tblFacilities (id, name, icon, comment, color)
-		VALUES (@id, @name, @icon, @comment, @color)
-	`);
-	const fn = fnToResult(statement.run.bind(statement));
+export const createFacilityQuery = async (payload: CreateFacility) => {
+  // const statement = db.prepare<WithId<CreateFacilityDto>[]>(`
+  // 	INSERT INTO tblFacilities (id, name, icon, comment, color)
+  // 	VALUES (@id, @name, @icon, @comment, @color)
+  // `);
 
-	return fn(payload);
+  const fn = fnToResultAsync(async () => {
+    return await DB.insertInto("tblFacilities").values(payload).execute();
+  });
+  return await fn();
 };
 
-export const findAllFacilitiesQuery = () => {
-	const statement = db.prepare<[], FacilityDto>("SELECT * FROM tblFacilities");
-	const fn = fnToResult(statement.all.bind(statement));
+export async function findAllFacilitiesQuery() {
+  // const statement = db.prepare<[], FacilityDto>("SELECT * FROM tblFacilities");
+  const fn = fnToResultAsync(async () => {
+    return await DB.selectFrom("tblFacilities").selectAll().execute();
+  });
+  return await fn();
+}
 
-	return fn();
-};
+export async function findFacilityByIdQuery(id: string) {
+  // const statement = db.prepare<{ id: string }[], FacilityDto>(
+  //   "SELECT * FROM tblFacilities WHERE id=@id"
+  // );
+  const fn = fnToResultAsync(async () => {
+    return await DB.selectFrom("tblFacilities")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst();
+  });
+  return await fn();
+}
 
-export const findFacilityByIdQuery = (id: string) => {
-	const statement = db.prepare<{ id: string }[], FacilityDto>(
-		"SELECT * FROM tblFacilities WHERE id=@id"
-	);
-	const fn = fnToResult(statement.get.bind(statement));
+export async function findFacilityByNameQuery(name: string) {
+  // const statement = db.prepare<{ name: string }[], FacilityDto>(
+  //   "SELECT * FROM tblFacilities WHERE name=@name"
+  // );
+  const fn = fnToResultAsync(async () => {
+    return await DB.selectFrom("tblFacilities")
+      .selectAll()
+      .where("name", "=", name)
+      .executeTakeFirst();
+  });
+  return await fn();
+}
 
-	return fn({ id });
-};
-
-export const findFacilityByNameQuery = (name: string) => {
-	const statement = db.prepare<{ name: string }[], FacilityDto>(
-		"SELECT * FROM tblFacilities WHERE name=@name"
-	);
-	const fn = fnToResult(statement.get.bind(statement));
-
-	return fn({ name });
-};
-
-export function findAllFacilitiesInArrayQuery(ids: string[]) {
-	const statement = db.prepare<string[][], FacilityDto>(
-		`SELECT * FROM tblFacilities WHERE id IN (${ids.map((_) => "?").join()})`
-	);
-	const fn = fnToResult(statement.all.bind(statement));
-
-	return fn(ids);
+export async function findAllFacilitiesInArrayQuery(ids: string[]) {
+  // const statement = db.prepare<string[][], FacilityDto>(
+  //   `SELECT * FROM tblFacilities WHERE id IN (${ids.map((_) => "?").join()})`
+  // );
+  const fn = fnToResultAsync(async () => {
+    return await DB.selectFrom("tblFacilities")
+      .selectAll()
+      .where("id", "in", ids)
+      .execute();
+  });
+  return await fn();
 }

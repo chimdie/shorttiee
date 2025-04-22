@@ -1,18 +1,21 @@
 import bcrypt from "bcrypt";
-import { db } from "../config/db.config";
+import { DB } from "../config/db.config";
 import { appEnv } from "../config/env.config";
-import type { Auth } from "../dto/types.dto";
+import type { CreateUser, UpdateUser } from "../dto/types.dto";
 import { UserDto } from "../dto/user.dto";
-import { Merge, WithDBTimestamps, WithId } from "../types/utils";
-import { fnToResult, fnToResultAsync } from "../utils/fn-result";
+import { fnToResultAsync } from "../utils/fn-result";
 import { OTP } from "../utils/otp";
-import { createAuth } from "./auth.db";
 import debug from "debug";
+import { Kysely } from "kysely";
+import { Database } from "./database.db";
+import { AppError } from "../utils/errors";
 
-export function createUser() {
-  return db.prepare<Array<UserDto>>(
-    "INSERT INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address, gender, role) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address, @gender, @role)"
-  );
+export async function createUser(payload: CreateUser) {
+  // db.prepare<Array<UserDto>>(
+  //   "INSERT INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address, gender, role) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address, @gender, @role)"
+  // );
+
+  return await DB.insertInto("tblUsers").values(payload).execute();
 }
 
 export const createAdmin = fnToResultAsync(async () => {
@@ -31,17 +34,22 @@ export const createAdmin = fnToResultAsync(async () => {
   const hash = await bcrypt.hash(appEnv.ADMIN_PASS, 10);
   const nonce = OTP.hashOtp(hash);
 
-  const trx = db.transaction(() => {
-    const adminUser = findUserByEmail(appEnv.ADMIN_EMAIL);
+  return await DB.transaction().execute(async (trx) => {
+    //
+    const adminUser = await trx
+      .selectFrom("tblUsers")
+      .selectAll()
+      .where("email", "=", appEnv.ADMIN_EMAIL)
+      .executeTakeFirst();
+
     if (adminUser) {
-      // return;
+      return;
     }
 
     const userId = crypto.randomUUID();
-    const [caUserError] = fnToResult(() => {
-      db.prepare<Array<UserDto>>(
-        "INSERT OR IGNORE INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address, gender, role) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address, @gender, @role)"
-      ).run({
+    const newAdminUser = await trx
+      .insertInto("tblUsers")
+      .values({
         id: userId,
         firstName: userDto.firstName,
         lastName: userDto.lastName,
@@ -52,143 +60,129 @@ export const createAdmin = fnToResultAsync(async () => {
         businessName: userDto.businessName,
         role: "ADMIN",
         gender: userDto.gender
-      });
-    })();
+      })
+      .returningAll()
+      .executeTakeFirst();
 
-    if (caUserError) {
-      // assert("code" in caUserError);
-      // debug("app:db:createAdmin")("ERROR:", caUserError.code);
-      return;
-    }
-
-    const [caAuthError] = fnToResult(() => {
-      createAuth().run({
+    const auth = await trx
+      .insertInto("tblAuthentications")
+      .values({
         id: crypto.randomUUID(),
         hash,
         userId: userId,
         nonce
-      });
-    })();
+      })
+      .returningAll()
+      .executeTakeFirst();
 
-    if (caAuthError) {
-      // assert("code" in caAuthError);
-      // debug("app:db:createAdmin")("ERROR:", caAuthError.code);
-      return;
+    if (!newAdminUser || !auth) {
+      throw new AppError("Error creating admin");
     }
 
-    const userWithAuth = findUserByIdWithAuth(userId);
+    const userWithAuth = await findUserByIdWithAuth({ id: userId, DB: trx });
     if (!userWithAuth) {
       debug("app:db:createAdmin")("An error occured while creating user");
       const err = new Error("An error occured while creating user");
       throw err;
     }
 
-    const user: UserDto = {
-      id: userWithAuth.id,
-      email: userWithAuth.email,
-      role: userWithAuth.role,
-      gender: userWithAuth.gender,
-      lastName: userWithAuth.lastName,
-      address: userWithAuth.address,
-      firstName: userWithAuth.firstName,
-      mobileNumber: userWithAuth.mobileNumber,
-      businessName: userWithAuth.businessName,
-      referrerCode: userWithAuth.referrerCode
-    };
-
-    const auth: Auth = {
-      id: userWithAuth.authId,
-      hash: userWithAuth.hash,
-      otp: userWithAuth.otp,
-      userId: userWithAuth.userId,
-      nonce: userWithAuth.nonce,
-      otpTTL: userWithAuth.otpTTL
-    };
-
-    return [user, auth] as const;
+    return [newAdminUser, auth] as const;
   });
 
-  return trx();
+  // const trx = db.transaction(() => {
+  //   const [caUserError] = fnToResult(() => {
+  //     db.prepare<Array<UserDto>>(
+  //       "INSERT OR IGNORE INTO tblUsers(id, firstName, lastName, email, mobileNumber, businessName, referrerCode, address, gender, role) VALUES(@id, @firstName, @lastName, @email, @mobileNumber, @businessName, @referrerCode, @address, @gender, @role)"
+  //     ).run();
+  //   })();
+  //
+  //   if (caUserError) {
+  //     // assert("code" in caUserError);
+  //     // debug("app:db:createAdmin")("ERROR:", caUserError.code);
+  //     return;
+  //   }
+  //
+  //   const [caAuthError] = fnToResult(() => {
+  //     createAuth().run();
+  //   })();
+  //
+  //   if (caAuthError) {
+  //     // assert("code" in caAuthError);
+  //     // debug("app:db:createAdmin")("ERROR:", caAuthError.code);
+  //     return;
+  //   }
+  // });
+
+  // return trx();
 });
 
-export function findUserById(id: string) {
-  const fn = fnToResult((id: string) => {
-    return db
-      .prepare<
-        string[],
-        WithDBTimestamps<UserDto>
-      >("SELECT * FROM tblUsers WHERE id = ?")
-      .get(id);
+export async function findUserById(id: string) {
+  const fn = fnToResultAsync(async () => {
+    // return db
+    //   .prepare<
+    //     string[],
+    //     WithDBTimestamps<UserDto>
+    //   >("SELECT * FROM tblUsers WHERE id = ?")
+    //   .get(id);
+    return await DB.selectFrom("tblUsers")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst();
   });
-  return fn(id);
+  return await fn();
 }
 
-export function findUserByEmail(email: string) {
-  return db
-    .prepare<
-      string[],
-      WithDBTimestamps<UserDto>
-    >("SELECT * FROM tblUsers WHERE email = ?")
-    .get(email);
+export async function findUserByEmail(email: string) {
+  return await DB.selectFrom("tblUsers")
+    .selectAll()
+    .where("email", "=", email)
+    .executeTakeFirst();
+  // return db
+  //   .prepare<
+  //     string[],
+  //     WithDBTimestamps<UserDto>
+  //   >("SELECT * FROM tblUsers WHERE email = ?")
+  //   .get(email);
 }
 
-export function findUserByIdWithAuth(id: string) {
-  return db
-    .prepare<
-      string[],
-      WithDBTimestamps<UserDto & Auth & { authId: string }>
-    >("SELECT u.*, a.hash, a.id AS authId, a.nonce , a.otp, a.otpTTL FROM tblAuthentications AS a JOIN  tblUsers AS u ON a.userId=u.id WHERE u.id = ?")
-    .get(id);
+export async function findUserByIdWithAuth(option: {
+  DB?: Kysely<Database>;
+  id: string;
+}) {
+  const db = option.DB || DB;
+  return await db
+    .selectFrom("tblUsers as u")
+    .innerJoin("tblAuthentications as a", "u.id", "a.userId")
+    .selectAll("u")
+    .select(["a.hash", "a.id as authId", "a.nonce", "a.otp", "a.otpTTL"])
+    .where("u.id", "=", option.id)
+    .executeTakeFirst();
+
+  // return db
+  //   .prepare<
+  //     string[],
+  //     WithDBTimestamps<UserDto & AuthTable & { authId: string }>
+  //   >("SELECT u.*, a.hash, a.id AS authId, a.nonce , a.otp, a.otpTTL FROM tblAuthentications AS a JOIN  tblUsers AS u ON a.userId=u.id WHERE u.id = ?")
+  //   .get(id);
 }
 
-type UpdateUserPayload = Pick<
-  UserDto,
-  | "firstName"
-  | "lastName"
-  | "mobileNumber"
-  | "businessName"
-  | "address"
-  | "photo"
-  | "gender"
->;
+export async function updateUserById(id: string, payload: UpdateUser) {
+  // const statement = db.prepare<
+  //   Merge<UpdateUserPayload, { id: string }>[],
+  //   WithDBTimestamps<WithId<UserDto>>
+  // >(
+  //   "UPDATE tblUsers SET firstName=@firstName, lastName=@lastName, mobileNumber=@mobileNumber, businessName=@businessName, address=@address, gender=@gender, photo=@photo WHERE id=@id"
+  // );
 
-export function updateUserById(id: string, payload: UpdateUserPayload) {
-  const statement = db.prepare<
-    Merge<UpdateUserPayload, { id: string }>[],
-    WithDBTimestamps<WithId<UserDto>>
-  >(
-    "UPDATE tblUsers SET firstName=@firstName, lastName=@lastName, mobileNumber=@mobileNumber, businessName=@businessName, address=@address, gender=@gender, photo=@photo WHERE id=@id"
-  );
-
-  const fn = fnToResult(statement.run.bind(statement));
-  return fn({ id, ...payload });
-}
-
-export function findProductOwnerById(id: string) {
-  type User = WithDBTimestamps<
-    Pick<
-      UserDto,
-      "firstName" | "lastName" | "email" | "mobileNumber" | "businessName"
-    >
-  >;
-
-  const fn = fnToResult(() => {
-    const sql =
-      "SELECT firstName, lastName, email, mobileNumber, businessName, photo FROM tblUsers WHERE id = ?";
-    return db.prepare<string[], User>(sql).get(id);
+  const fn = fnToResultAsync(async () => {
+    const stmt = DB.updateTable("tblUsers").set(payload).where("id", "=", id);
+    return await stmt.execute();
   });
-  return fn();
+  return await fn();
 }
 
-export function findReservationOwnerById(id: string) {
-  type User = WithDBTimestamps<
-    Pick<UserDto, "firstName" | "lastName" | "email" | "mobileNumber">
-  >;
-
-  const fn = fnToResult(() => {
-    const sql =
-      "SELECT firstName, lastName, email, mobileNumber, photo FROM tblUsers WHERE id = ?";
-    return db.prepare<string[], User>(sql).get(id);
-  });
-  return fn();
-}
+// export async function createAuth(payload: CreateAuth) {
+//   // return DB.prepare<Array<AuthTable>>(
+//   //   "INSERT INTO tblAuthentications(id, hash, userId, nonce) VALUES(@id, @hash, @userId, @nonce)"
+//   // );
+// }

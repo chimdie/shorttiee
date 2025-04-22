@@ -1,20 +1,7 @@
+import { COMPARISON_OPERATORS } from "kysely";
 import { z } from "zod";
 
-const filters = [
-  "eq",
-  "gt",
-  "lt",
-  "gte",
-  "lte",
-  "in",
-  "between",
-  "like",
-  "exists",
-  "ne",
-  "nin",
-  "not between",
-  "not like"
-] as const;
+const filters = COMPARISON_OPERATORS;
 
 const filterSchema = z
   .string()

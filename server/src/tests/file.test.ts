@@ -17,8 +17,8 @@ let token = "";
 let fileUrl = "";
 const fileSize = appEnv.FILE_SIZE_LIMIT;
 
-beforeAll(() => {
-  token = helper.getUserAuth().token;
+beforeAll(async () => {
+  token = (await helper.getUserAuth()).token;
 });
 
 describe("POST /api/v1/files", () => {

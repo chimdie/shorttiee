@@ -1,6 +1,6 @@
 import assert from "assert";
 import {
-  createListingQuery,
+  createListingWithTrxQuery,
   findAllListingQuery,
   findListingByIdQuery,
   findListingFacilitiesQuery,
@@ -21,24 +21,23 @@ import {
 import { Request } from "express";
 import { findCategoryByIdQuery } from "../db/category.db";
 import { IdDto } from "../dto/util.dto";
-import { db } from "../config/db.config";
-import { createFacilityAndListingQuery } from "../db/facility-and-listing.db";
-import { fnToResult } from "../utils/fn-result";
+import { createFacilityAndListingWithTrx } from "../db/facility-and-listing.db";
+import { fnToResultAsync } from "../utils/fn-result";
 import { findAllFacilitiesInArrayQuery } from "../db/facility.db";
-import { findProductOwnerById } from "../db/users.db";
+import { findUserById } from "../db/users.db";
+import { DB } from "../config/db.config";
 
 export const createListingCtl = ctlWrapper(
   async (req: Request<unknown, unknown, CreateListingsDto>, res) => {
     assert(req.user?.id);
 
-    const category = findCategoryByIdQuery(req.body.categoryId);
+    const category = await findCategoryByIdQuery(req.body.categoryId);
     if (!category) {
       return BadRequestResponse(res, "Category does not exist");
     }
 
-    const [facilitiesError, facilitiesResult] = findAllFacilitiesInArrayQuery(
-      req.body.facilities
-    );
+    const [facilitiesError, facilitiesResult] =
+      await findAllFacilitiesInArrayQuery(req.body.facilities);
     if (facilitiesError) {
       return ErrorResponse(res);
     }
@@ -46,23 +45,27 @@ export const createListingCtl = ctlWrapper(
       return BadRequestResponse(res, "Invalid facilities");
     }
 
-    req.body.facilities = facilitiesResult.map((e) => e.id);
+    const facilities = facilitiesResult.map((e) => e.id);
 
-    const createListingPayload = Object.assign(req.body, {
+    const createListingData = Object.assign(req.body, {
       id: crypto.randomUUID(),
       userId: req.user.id,
       status: "AWAITING_REVIEW" as const,
       images: JSON.stringify(req.body.images)
     });
 
-    const trx = fnToResult(
-      db.transaction(() => {
-        const [createListingError] = createListingQuery(createListingPayload);
-        for (const item of createListingPayload.facilities) {
-          const [createFacilityListingError] = createFacilityAndListingQuery({
-            listingId: createListingPayload.id,
-            facilityId: item
-          });
+    const trx = fnToResultAsync(async () => {
+      return await DB.transaction().execute(async (trx) => {
+        const [createListingError] = await createListingWithTrxQuery(
+          trx,
+          createListingData
+        );
+        for (const item of facilities) {
+          const [createFacilityListingError] =
+            await createFacilityAndListingWithTrx(trx, {
+              listingId: createListingData.id,
+              facilityId: item
+            });
 
           if (createFacilityListingError) {
             throw createFacilityListingError;
@@ -71,17 +74,17 @@ export const createListingCtl = ctlWrapper(
         if (createListingError) {
           throw createListingError;
         }
-      })
-    );
+      });
+    });
 
-    const [createListingError] = trx();
+    const [createListingError] = await trx();
     if (createListingError) {
       console.log("createListingError", createListingError);
       return ErrorResponse(res);
     }
 
-    const [listingError, listingResult] = findListingByIdQuery(
-      createListingPayload.id
+    const [listingError, listingResult] = await findListingByIdQuery(
+      createListingData.id
     );
     if (listingError) {
       console.log("listingError", listingError);
@@ -96,8 +99,8 @@ export const createListingCtl = ctlWrapper(
 );
 
 export const getAllListingCtl = ctlWrapper(
-  async (_req: Request<unknown, unknown, CreateListingsDto>, res, next) => {
-    const [listingError, listingResult] = findAllListingQuery(_req.query);
+  async (req: Request<unknown, unknown, CreateListingsDto>, res, next) => {
+    const [listingError, listingResult] = await findAllListingQuery(req.query);
 
     if (listingError) {
       return next(listingError);
@@ -109,7 +112,9 @@ export const getAllListingCtl = ctlWrapper(
 
 export const getListingCtl = ctlWrapper(
   async (req: Request<IdDto, unknown, CreateListingsDto>, res, next) => {
-    const [listingError, listingResult] = findListingByIdQuery(req.params.id);
+    const [listingError, listingResult] = await findListingByIdQuery(
+      req.params.id
+    );
     if (listingError) {
       return next(listingError);
     }
@@ -118,7 +123,7 @@ export const getListingCtl = ctlWrapper(
       return NotFoundResponse(res);
     }
 
-    const [userError, user] = findProductOwnerById(listingResult.userId);
+    const [userError, user] = await findUserById(listingResult.userId);
     if (userError) {
       return next(userError);
     }
@@ -131,7 +136,7 @@ export const getListingCtl = ctlWrapper(
 
 export const getListingFacilitiesCtl = ctlWrapper(
   async (req: Request<IdDto>, res, next) => {
-    const [facilitiesError, facilities] = findListingFacilitiesQuery(
+    const [facilitiesError, facilities] = await findListingFacilitiesQuery(
       req.params.id
     );
 
@@ -151,9 +156,8 @@ export const reviewListingCtl = ctlWrapper(
       ? "APPROVED"
       : "REJECTED";
 
-    const [updateError, reservation] = reviewListingStatusQuery(
+    const [updateError, listing] = await reviewListingStatusQuery(
       req.params.id,
-      req.user.id,
       status
     );
 
@@ -161,6 +165,6 @@ export const reviewListingCtl = ctlWrapper(
       return next(updateError);
     }
 
-    return SuccessResponse(res, reservation);
+    return SuccessResponse(res, listing);
   }
 );

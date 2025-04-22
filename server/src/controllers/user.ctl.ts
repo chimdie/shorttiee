@@ -11,7 +11,7 @@ import { UserDto } from "../dto/user.dto";
 
 export const getUserProfileCtl = ctlWrapper(async (req, res) => {
   assert(req.user);
-  const [userError, userResult] = findUserById(req.user.id);
+  const [userError, userResult] = await findUserById(req.user.id);
 
   if (userError) {
     return ErrorResponse(res);
@@ -26,7 +26,7 @@ export const getUserProfileCtl = ctlWrapper(async (req, res) => {
 
 export const updateUserProfileCtl = ctlWrapper(async (req, res) => {
   assert(req.user);
-  const [userError, userResult] = findUserById(req.user.id);
+  const [userError, userResult] = await findUserById(req.user.id);
 
   if (userError) {
     return ErrorResponse(res);
@@ -41,7 +41,7 @@ export const updateUserProfileCtl = ctlWrapper(async (req, res) => {
   Object.assign(_data, req.body);
   const data: UserDto = _data as UserDto;
 
-  const [updateUserError] = updateUserById(req.user.id, {
+  const [updateUserError] = await updateUserById(req.user.id, {
     mobileNumber: data.mobileNumber,
     lastName: data.lastName,
     firstName: data.firstName,
@@ -56,7 +56,7 @@ export const updateUserProfileCtl = ctlWrapper(async (req, res) => {
     return ErrorResponse(res);
   }
 
-  const [updatedUserError, updatedUserResult] = findUserById(req.user.id);
+  const [updatedUserError, updatedUserResult] = await findUserById(req.user.id);
 
   if (updatedUserError) {
     return ErrorResponse(res);
