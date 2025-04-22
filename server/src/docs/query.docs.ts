@@ -3,20 +3,21 @@ import { oapi } from "../config/docs.config";
 const description = `
 Available operators include
 
-\`eq\` 
-\`gt\`
-\`lt\`
-\`gte\`
-\`lte\`
+\`=\` 
+\`>\`
+\`<\`
+\`>=\`
+\`<=\`
 \`in\`
-\`between\`
+\`is\`
 \`like\`
 \`exists\`
-\`ne\`
-\`nin\`
-\`not between\`
+\`!=\`
+\`not in\`
 \`not like\`
 `;
+// \`between\`
+// \`not between\`
 
 export const FilterQueryDocs = oapi.component("parameters", "FilterQueryDto", {
   name: "filter",
@@ -52,6 +53,6 @@ filter_condition or or_filter_condition
 
 export const BasicQueriesDocs = [
   { $ref: "#/components/parameters/FilterQueryDto" },
-  { $ref: "#/components/parameters/OrFilterQueryDto" },
-  { $ref: "#/components/parameters/ShiftQueryDto" }
+  { $ref: "#/components/parameters/OrFilterQueryDto" }
+  // { $ref: "#/components/parameters/ShiftQueryDto" }
 ];
