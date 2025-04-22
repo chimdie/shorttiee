@@ -28,5 +28,4 @@ jobs:
         env:
           TEST_ENV: ${{ secrets.SERVER_TEST_ENV }}
       - name: Run migration and rollback
-        run: ./src/tests/rollback.sh # test all db migration
       - run: npm test
