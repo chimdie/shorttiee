@@ -8,7 +8,10 @@
     "test": "NODE_ENV=test jest",
     "posttest": "NODE_ENV=test kysely migrate:rollback --all",
     "dev": "DEBUG=app:* tsx watch src/index.ts",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "migrate:up": "kysely migrate:latest",
+    "migrate:down": "kysely migrate:rollback --all",
+    "seed:run": "kysely seed:run"
   },
   "repository": {
     "type": "git",
