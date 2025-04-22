@@ -27,5 +27,5 @@ jobs:
         run: echo $TEST_ENV | base64 -d > .env.test
         env:
           TEST_ENV: ${{ secrets.SERVER_TEST_ENV }}
-      - name: Run migration and rollback
-      - run: npm test
+      - name: Run migration, test and rollback
+        run: npm test
