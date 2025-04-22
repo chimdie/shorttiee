@@ -6,7 +6,21 @@ export async function up(db: Kysely<any>): Promise<void> {
     .createTable("tblListingsFacilities")
     .ifNotExists()
     .addColumn("facilityId", "varchar", (col) => col.notNull())
+    .addForeignKeyConstraint(
+      "facilityId",
+      ["facilityId"],
+      "tblFacilities",
+      ["id"],
+      (col) => col.onDelete("cascade")
+    )
     .addColumn("listingId", "varchar", (col) => col.notNull())
+    .addForeignKeyConstraint(
+      "listingId",
+      ["listingId"],
+      "tblListings",
+      ["id"],
+      (col) => col.onDelete("cascade")
+    )
     .execute();
 
   await db.schema
