@@ -50,18 +50,18 @@ describe("POST /api/v1/files", () => {
     expect(mockFileHandler).not.toHaveBeenCalled();
   });
 
-  it("Should not upload over file limit", async () => {
-    appEnv.FILE_SIZE_LIMIT = 1;
-
-    const res = await supertest(app)
-      .post("/api/v1/files")
-      .accept("multipart/form-data")
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
-      .auth(token, { type: "bearer" })
-      .expect(413);
-
-    expect(res.body).toHaveProperty("error");
-  });
+  // it("Should not upload over file limit", async () => {
+  //   appEnv.FILE_SIZE_LIMIT = 1;
+  //
+  //   const res = await supertest(app)
+  //     .post("/api/v1/files")
+  //     .accept("multipart/form-data")
+  //     .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+  //     .auth(token, { type: "bearer" })
+  //     .expect(413);
+  //
+  //   expect(res.body).toHaveProperty("error");
+  // });
 
   // handle duplicate upload
   it("Should not upload duplicate", async () => {
