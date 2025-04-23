@@ -1,5 +1,5 @@
 import { ReservationDto } from "../dto/reservation.dto";
-import { fnToResult, fnToResultAsync } from "../utils/fn-result";
+import { fnToResultAsync } from "../utils/fn-result";
 import { queryToSql } from "../utils/request-query";
 import { RequestQuery } from "../dto/query.dto";
 import { DB } from "../config/db.config";
@@ -78,7 +78,12 @@ export const findAllReservationByUserIdQuery = async (
           eb("tblReservations.listingOwnerId", "=", id)
         ])
       )
-      .selectAll("tblReservations");
+      .selectAll("tblReservations")
+      .select((eb) =>
+        eb
+          .fn<string>("concat", ["firstName", eb.val(" "), "lastName"])
+          .as("customerName")
+      );
 
     return await queryToSql(stmt, query.filter, query.or_filter).execute();
   });
