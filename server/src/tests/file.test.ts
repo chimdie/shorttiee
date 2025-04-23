@@ -13,6 +13,9 @@ import path from "path";
 import { MulterStorageHashing } from "../config/upload/hash-storage.upload";
 import { appEnv } from "../config/env.config";
 
+console.log(">>>", process.cwd());
+console.log(">>>", path.resolve(process.cwd(), "db", "schema.sql"));
+
 let token = "";
 let fileUrl = "";
 const fileSize = appEnv.FILE_SIZE_LIMIT;
