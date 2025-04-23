@@ -13,12 +13,15 @@ import path from "path";
 import { MulterStorageHashing } from "../config/upload/hash-storage.upload";
 import { appEnv } from "../config/env.config";
 
-console.log(">>>", process.cwd());
-console.log(">>>", path.resolve(process.cwd(), "db", "schema.sql"));
-
 let token = "";
 let fileUrl = "";
 const fileSize = appEnv.FILE_SIZE_LIMIT;
+
+const schemaFile = path.resolve(process.cwd(), "db", "schema.sql");
+const readmeFile = path.resolve(process.cwd(), "README.md");
+console.log(">>>", process.cwd());
+console.log(">>>", schemaFile);
+console.log(">>>", readmeFile);
 
 beforeAll(async () => {
   token = (await helper.getUserAuth()).token;
@@ -59,7 +62,7 @@ describe("POST /api/v1/files", () => {
     const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .attach("files", schemaFile)
       .auth(token, { type: "bearer" })
       .expect(413);
 
@@ -71,8 +74,8 @@ describe("POST /api/v1/files", () => {
     const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .attach("files", schemaFile)
+      .attach("files", schemaFile)
       .auth(token, { type: "bearer" })
       .expect(201);
 
@@ -86,8 +89,8 @@ describe("POST /api/v1/files", () => {
     const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
-      .attach("files", path.resolve(process.cwd(), "README.md"))
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .attach("files", readmeFile)
+      .attach("files", schemaFile)
       .auth(token, { type: "bearer" })
       .expect(201);
 
