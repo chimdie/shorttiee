@@ -18,7 +18,7 @@ let token = "";
 let fileUrl = "";
 const fileSize = appEnv.FILE_SIZE_LIMIT;
 
-const schemaFile = path.resolve(process.cwd(), "db", "schema.sql");
+const schemaFile = path.resolve(process.cwd(), "package.json");
 const readmeFile = path.resolve(process.cwd(), "README.md");
 console.log(">>>", process.cwd());
 console.log(">>>", schemaFile);
@@ -103,7 +103,7 @@ describe("POST /api/v1/files", () => {
 
     fileUrl = path.basename(
       res.body.data.find((e: { path: string; checksum: string }) =>
-        e.path.includes("sql")
+        e.path.includes("json")
       )?.path
     );
   });
@@ -124,6 +124,6 @@ describe("GET /api/v1/files/:name", () => {
     await supertest(app)
       .get("/api/v1/files/" + fileUrl)
       .expect(200)
-      .expect("Content-Type", /sql/);
+      .expect("Content-Type", /json/);
   });
 });
