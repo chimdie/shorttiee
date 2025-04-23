@@ -12,7 +12,6 @@ import {
 import path from "path";
 import { MulterStorageHashing } from "../config/upload/hash-storage.upload";
 import { appEnv } from "../config/env.config";
-import fs from "fs";
 
 let token = "";
 let fileUrl = "";
@@ -20,10 +19,6 @@ const fileSize = appEnv.FILE_SIZE_LIMIT;
 
 const schemaFile = path.resolve(process.cwd(), "package.json");
 const readmeFile = path.resolve(process.cwd(), "README.md");
-console.log(">>>", process.cwd());
-console.log(">>>", schemaFile);
-console.log(">>>", readmeFile);
-console.log(">>>", fs.existsSync(schemaFile), fs.existsSync(readmeFile));
 
 beforeAll(async () => {
   token = (await helper.getUserAuth()).token;
