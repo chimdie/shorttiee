@@ -20,8 +20,6 @@ export async function seed(db: Kysely<Database>): Promise<void> {
   ]);
 
   await db.transaction().execute(async (trx) => {
-    const listingExecs: any[] = [];
-    const listingFacilityExecs: any[] = [];
     for (const _ in Array.from({ length: 30 })) {
       const listing: CreateListing = {
         id: crypto.randomUUID(),
@@ -35,8 +33,8 @@ export async function seed(db: Kysely<Database>): Promise<void> {
         ]),
         description: faker.commerce.productDescription(),
         restrictions: null,
-        rate: +faker.commerce.price(),
-        price: +faker.commerce.price(),
+        rate: parseInt(faker.commerce.price()),
+        price: parseInt(faker.commerce.price()),
         images: JSON.stringify(
           Array.from<string>({ length: 3 }).fill(faker.image.url())
         ),
@@ -54,20 +52,11 @@ export async function seed(db: Kysely<Database>): Promise<void> {
           return val;
         });
 
-      const listingProm = trx
-        .insertInto("tblListings")
-        .values(listing)
-        .execute();
-      const listingFacilityProm = trx
+      await trx.insertInto("tblListings").values(listing).execute();
+      await trx
         .insertInto("tblListingsFacilities")
         .values(listingFacility)
         .execute();
-
-      listingExecs.push(listingProm);
-      listingFacilityExecs.push(listingFacilityProm);
     }
-
-    await Promise.all(listingExecs);
-    await Promise.all(listingFacilityExecs);
   });
 }

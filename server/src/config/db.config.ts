@@ -1,9 +1,6 @@
-import assert from "assert";
-import Sqlite from "better-sqlite3";
-import { Kysely, PostgresDialect, SqliteDialect } from "kysely";
+import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
 import type { Database as AppDatabase } from "../db/database.db";
-import { AppError } from "../utils/errors";
 import { appEnv } from "./env.config";
 import { SerializePlugin } from "kysely-plugin-serialize";
 
@@ -73,16 +70,7 @@ export function isAllDBTableMigrated() {
   // return true;
 }
 
-const isLocal = ["staging", "production"].includes(appEnv.APP_ENV)
-  ? false
-  : true;
-
-function getHostedDbDialect() {
-  if (isLocal) {
-    return [new AppError("No Database Dialect"), null] as const;
-  }
-  assert(appEnv.APP_ENV === "staging" || appEnv.APP_ENV === "production");
-
+function getPostgresDbDialect() {
   const pgDialect = new PostgresDialect({
     pool: new Pool({
       database: appEnv.DB_NAME,
@@ -97,27 +85,7 @@ function getHostedDbDialect() {
   return [null, pgDialect] as const;
 }
 
-function getLocalDbDialect() {
-  if (!isLocal) {
-    return [new AppError("No Database Dialect"), null] as const;
-  }
-  assert(appEnv.APP_ENV === "development" || appEnv.APP_ENV === "test");
-
-  const dbPath = appEnv.DB_PATH.replace("sqlite3:", "");
-  const sqliteDialect = new SqliteDialect({ database: new Sqlite(dbPath) });
-
-  return [null, sqliteDialect] as const;
-}
-
-function getDBDialect() {
-  if (isLocal) {
-    return getLocalDbDialect();
-  }
-
-  return getHostedDbDialect();
-}
-
-const [dialectError, dialect] = getDBDialect();
+const [dialectError, dialect] = getPostgresDbDialect();
 
 if (dialectError) {
   throw dialectError;
@@ -125,6 +93,7 @@ if (dialectError) {
 export const DB = new Kysely<AppDatabase>({
   dialect,
   plugins: [new SerializePlugin()]
+  // log: ["query", "error"]
 });
 
 // CreateTableBuilder.prototype.addIdColumn = function (

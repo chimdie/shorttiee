@@ -1,10 +1,13 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely } from "kysely";
+import { downTrigger, upTrigger } from "../../src/utils/db-triggers";
 import { addDbTimestamp } from "../../src/utils/add-db-timestamp";
 
+const tableName = "tblFacilities";
+const triggerName = "trgFacilitiesUpdatedAt";
 // `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
 export async function up(db: Kysely<any>): Promise<void> {
   let builder = db.schema
-    .createTable("tblFacilities")
+    .createTable(tableName)
     .ifNotExists()
     .addColumn("id", "varchar", (col) => col.primaryKey().notNull())
     .addColumn("name", "varchar", (col) => col.unique().notNull())
@@ -15,16 +18,11 @@ export async function up(db: Kysely<any>): Promise<void> {
   builder = addDbTimestamp(builder);
   await builder.execute();
 
-  await sql`
-    CREATE TRIGGER IF NOT EXISTS trgFacilitiesUpdatedAt AFTER UPDATE ON tblFacilities
-    BEGIN 
-      UPDATE tblFacilities SET updatedAt=(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')) WHERE id=OLD.id;
-    END;
-  `.execute(db);
+  await upTrigger(db, tableName, triggerName);
 }
 
 // `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
 export async function down(db: Kysely<any>): Promise<void> {
-  await sql`DROP TRIGGER IF EXISTS trgFacilitiesUpdatedAt;`.execute(db);
-  await db.schema.dropTable("tblFacilities").ifExists().execute();
+  await downTrigger(db, tableName, triggerName);
+  await db.schema.dropTable(tableName).ifExists().execute();
 }

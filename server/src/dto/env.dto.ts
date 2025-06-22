@@ -1,12 +1,6 @@
 import { z } from "zod";
 import os from "node:os";
-
-const SqliteEnv = z.object({
-  /**
-   * @example "sqlite3:db/db.sqlite3"
-   */
-  DB_PATH: z.string()
-});
+import { Expand } from "../types/utils";
 
 const AppEnv = z.union([
   z.literal("development"),
@@ -15,14 +9,6 @@ const AppEnv = z.union([
   z.literal("production")
 ]);
 type AppEnv = z.infer<typeof AppEnv>;
-
-const PostgessEnv = z.object({
-  DB_NAME: z.string(),
-  DB_HOST: z.string(),
-  DB_USER: z.string(),
-  DB_PASSWORD: z.string(),
-  DB_PORT: z.coerce.number()
-});
 
 const BaseEnv = z.object({
   PORT: z.coerce.number(),
@@ -45,31 +31,23 @@ const BaseEnv = z.object({
 
   /** admin */
   ADMIN_EMAIL: z.string().email(),
-  ADMIN_PASS: z.string()
+  ADMIN_PASS: z.string(),
+
+  /** env */
+  APP_ENV: AppEnv,
+
+  /** db */
+
+  DB_NAME: z.string(),
+  DB_HOST: z.string(),
+  DB_USER: z.string(),
+  DB_PASSWORD: z.string(),
+  DB_PORT: z.coerce.number()
 });
 
 /**
  *@description for validation `process.env`
  */
-export const EnvDto = z.discriminatedUnion("APP_ENV", [
-  z
-    .object({
-      APP_ENV: z.literal<Extract<AppEnv, "development">>("development")
-    })
-    .merge(SqliteEnv)
-    .merge(BaseEnv),
-  z
-    .object({ APP_ENV: z.literal<Extract<AppEnv, "test">>("test") })
-    .merge(SqliteEnv)
-    .merge(BaseEnv),
-  z
-    .object({ APP_ENV: z.literal<Extract<AppEnv, "staging">>("staging") })
-    .merge(PostgessEnv)
-    .merge(BaseEnv),
-  z
-    .object({ APP_ENV: z.literal<Extract<AppEnv, "production">>("production") })
-    .merge(PostgessEnv)
-    .merge(BaseEnv)
-]);
+export const EnvDto = BaseEnv;
 
-export type EnvDto = z.infer<typeof EnvDto>;
+export type EnvDto = Expand<z.infer<typeof EnvDto>>;

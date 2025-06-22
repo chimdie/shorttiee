@@ -5,41 +5,26 @@ import { CreateAuth, CreateUser } from "../../src/dto/types.dto";
 
 export async function seed(db: Kysely<Database>): Promise<void> {
   await db.transaction().execute(async (trx) => {
-    const execs = [];
     for (let i = 0; i < 2; i++) {
       const user = createUser("USER", true);
       const auth = createAuth(user.id);
 
-      const addUser = trx.insertInto("tblUsers").values(user).execute();
-      const addAuth = trx
-        .insertInto("tblAuthentications")
-        .values(auth)
-        .execute();
-
-      execs.push(addUser, addAuth);
+      await trx.insertInto("tblUsers").values(user).execute();
+      await trx.insertInto("tblAuthentications").values(auth).execute();
     }
 
     for (let i = 0; i <= 10; i++) {
       const user = createUser("USER");
       const auth = createAuth(user.id);
 
-      const addUser = trx.insertInto("tblUsers").values(user).execute();
-      const addAuth = trx
-        .insertInto("tblAuthentications")
-        .values(auth)
-        .execute();
-
-      execs.push(addUser, addAuth);
+      await trx.insertInto("tblUsers").values(user).execute();
+      await trx.insertInto("tblAuthentications").values(auth).execute();
     }
 
     const admin = createUser("ADMIN");
     const auth = createAuth(admin.id);
-    const addAdmin = trx.insertInto("tblUsers").values(admin).execute();
-    const addAuth = trx.insertInto("tblAuthentications").values(auth).execute();
-
-    execs.push(addAdmin, addAuth);
-
-    await Promise.all(execs);
+    await trx.insertInto("tblUsers").values(admin).execute();
+    await trx.insertInto("tblAuthentications").values(auth).execute();
   });
 }
 

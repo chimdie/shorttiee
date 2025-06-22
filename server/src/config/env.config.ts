@@ -16,6 +16,7 @@ function getProcessEnvironmentFile() {
 const parsed = EnvDto.safeParse(_env);
 if (parsed.error) {
   console.error("Invalid environment variables");
+  console.error(parsed.error, _env);
   process.exit(1);
 }
 

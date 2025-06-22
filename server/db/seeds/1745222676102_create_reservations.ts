@@ -25,7 +25,7 @@ export async function seed(db: Kysely<Database>): Promise<void> {
       const reservation: CreateReservation = {
         id: faker.string.uuid(),
         code: faker.commerce.productName(),
-        amount: +faker.commerce.price(),
+        amount: parseInt(faker.commerce.price()),
         startDate: faker.date.soon().toISOString(),
         endDate: faker.date.soon().toISOString(),
         status: faker.helpers.arrayElement(["ACCEPTED", "PENDING", "REJECTED"]),
