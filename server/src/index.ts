@@ -1,16 +1,16 @@
-import http from "http";
+import assert from "assert";
 import debug from "debug";
+import http from "http";
 import { app } from "./app";
+import { DB } from "./config/db.config";
 import { appEnv } from "./config/env.config";
+import { AppEventEmitter } from "./config/events";
 import { CreateApplicationService } from "./config/services.config";
+import { createAdmin } from "./db/users.db";
 import { domainValidator } from "./utils/domain-validator";
 import { OTP } from "./utils/otp";
-import { DB } from "./config/db.config";
-import { AppEventEmitter } from "./config/events";
-import assert from "assert";
-import { createAdmin } from "./db/users.db";
 
-new CreateApplicationService(app)
+const ShorttieeServer = new CreateApplicationService(app)
   .addService("otp", OTP)
   .addService("domainValidator", domainValidator)
   .addService("event", AppEventEmitter)
@@ -21,8 +21,6 @@ new CreateApplicationService(app)
 //   process.exit(1);
 // }
 
-const server = http.createServer(app);
-
 function serverListen(server: http.Server) {
   server.listen(appEnv.PORT, async () => {
     const [err] = await createAdmin();
@@ -32,15 +30,15 @@ function serverListen(server: http.Server) {
   });
 }
 
-serverListen(server);
+serverListen(ShorttieeServer);
 
-server.on("error", (e) => {
+ShorttieeServer.on("error", (e) => {
   assert("code" in e);
   if (e.code === "EADDRINUSE") {
     console.error("Address in use, retrying...");
     setTimeout(() => {
-      server.close();
-      serverListen(server);
+      ShorttieeServer.close();
+      serverListen(ShorttieeServer);
     }, 1000);
   }
 });
@@ -49,7 +47,7 @@ process.on("SIGTERM", shutDown);
 process.on("SIGINT", shutDown);
 process.on("exit", shutDown);
 
-server.on("connection", () => {
+ShorttieeServer.on("connection", () => {
   // console.log("connection");
 });
 
@@ -57,7 +55,7 @@ function shutDown(code: number) {
   debug("app:shutDown")("CODE: " + code);
   debug("app:shutDown")("Received kill signal, shutting down gracefully");
 
-  server.close(async () => {
+  ShorttieeServer.close(async () => {
     debug("app:shutDown")("Closed out remaining connections");
     await DB.destroy();
     process.exit(0);
