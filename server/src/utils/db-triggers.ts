@@ -10,9 +10,7 @@ export async function upTrigger(
       ` CREATE OR REPLACE FUNCTION update_${tableName.toLowerCase()}_updated_at()
         RETURNS TRIGGER AS $$
         BEGIN
-          UPDATE "${tableName}"
-          SET updatedAt = NOW()
-          WHERE id = OLD.id;
+          NEW."updatedAt" = CURRENT_TIMESTAMP;
           RETURN NEW;
         END;
         $$ LANGUAGE plpgsql;
