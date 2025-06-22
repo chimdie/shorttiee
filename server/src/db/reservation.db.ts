@@ -4,6 +4,7 @@ import { queryToSql } from "../utils/request-query";
 import { RequestQuery } from "../dto/query.dto";
 import { DB } from "../config/db.config";
 import { CreateReservation } from "../dto/types.dto";
+import { sql } from "kysely";
 
 export const createReservationQuery = async (payload: CreateReservation) => {
   const fn = fnToResultAsync(async () => {
@@ -79,9 +80,16 @@ export const findAllReservationByUserIdQuery = async (
         ])
       )
       .selectAll("tblReservations")
-      .select((eb) =>
-        eb
-          .fn<string>("concat", ["firstName", eb.val(" "), "lastName"])
+      .select((_eb) =>
+        // sql<string>`concat("firstName", ${sql.val(" ")}::text, "lastName")`.as(
+        //   "customerName"
+        // )
+        _eb
+          .fn<string>("concat", [
+            "firstName",
+            sql`${sql.val(" ")}::text`,
+            "lastName"
+          ])
           .as("customerName")
       );
 
