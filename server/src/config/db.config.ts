@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import type { Database as AppDatabase } from "../db/database.db";
 import { appEnv } from "./env.config";
 import { SerializePlugin } from "kysely-plugin-serialize";
+import * as pg from "pg";
 
 // export const db = new Database(dbPath);
 // export default db;
@@ -90,6 +91,14 @@ const [dialectError, dialect] = getPostgresDbDialect();
 if (dialectError) {
   throw dialectError;
 }
+
+/**
+ * @description type int8 is bigint
+ */
+const int8TypeId = 20;
+pg.types.setTypeParser(int8TypeId, (val) => {
+  return parseInt(val, 10);
+});
 export const DB = new Kysely<AppDatabase>({
   dialect,
   plugins: [new SerializePlugin()]
