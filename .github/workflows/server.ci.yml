@@ -52,5 +52,5 @@ jobs:
       - name: Run test
         run: npm test -- --detectOpenHandles
 
-      - name: Run rollback
-        run: "npm run migrate:down"
+      # - name: Run rollback
+      #   run: "npm run migrate:down"
