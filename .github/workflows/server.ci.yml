@@ -38,7 +38,9 @@ jobs:
         run: npm run lint
 
       - name: Decrypt large secret
-        run: echo $TEST_ENV | base64 -d > .env.test
+        run: |
+          pwd
+          echo $TEST_ENV | base64 -d > .env.test
         env:
           TEST_ENV: ${{ secrets.SERVER_TEST_ENV }}
 
