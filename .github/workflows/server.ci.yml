@@ -40,8 +40,8 @@ jobs:
       - name: Decrypt large secret
         run: |
           pwd
-          cat .env.test
           echo $TEST_ENV | base64 -d > .env.test
+          cat .env.test
         env:
           TEST_ENV: ${{ secrets.SERVER_TEST_ENV }}
 
