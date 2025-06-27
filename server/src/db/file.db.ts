@@ -2,6 +2,10 @@ import { DB } from "../config/db.config";
 import { CreateFile } from "../dto/types.dto";
 
 export async function createFileQuery(payload: CreateFile | CreateFile[]) {
+  if (Array.isArray(payload) && payload.length === 0) {
+    return;
+  }
+
   return await DB.insertInto("tblFiles").values(payload).execute();
   // return db.prepare<FileDto & { type: "FILE" }>(
   //   "INSERT INTO tblFiles (path, filename, contentType, checksum, size, ownerId) VALUES(@path, @filename, @contentType, @checksum, @size, @ownerId)"
