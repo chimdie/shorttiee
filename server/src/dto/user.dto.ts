@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { OmitTimestamps } from "../types/utils";
+import { User } from "./types.dto";
 
 export const UserDto = z.object({
   id: z.string().trim(),
@@ -6,13 +8,13 @@ export const UserDto = z.object({
   lastName: z.string().trim(),
   email: z.string().email().trim(),
   mobileNumber: z.string().trim(),
-  businessName: z.string().nullish(),
-  referrerCode: z.string().nullish(),
-  address: z.string().nullish(),
-  photo: z.string().nullish(),
+  businessName: z.string().nullable(),
+  referrerCode: z.string().nullable(),
+  address: z.string().nullable(),
+  photo: z.string().nullable(),
   role: z.enum(["ADMIN", "USER"]),
-  gender: z.enum(["M", "F"]).nullish()
-});
+  gender: z.enum(["M", "F"]).nullable()
+}) satisfies z.ZodType<OmitTimestamps<User>>;
 
 export type UserDto = z.infer<typeof UserDto>;
 

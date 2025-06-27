@@ -4,7 +4,6 @@ import { ctlWrapper } from "../utils/ctl-wrapper";
 import {
   CreateReservationDto,
   ReservationDto,
-  ReservationWithUserAndListingDto,
   ReviewReservationDto
 } from "../dto/reservation.dto";
 import {
@@ -26,13 +25,13 @@ import { getDayDuration } from "../utils/get-day-duration";
 import { IdDto } from "../dto/util.dto";
 import { ForbiddenError, subject } from "@casl/ability";
 import { Models } from "../types/abilities";
-import { findReservationOwnerById } from "../db/users.db";
+import { findUserById } from "../db/users.db";
 
 export const createReservationCtl = ctlWrapper(
   async (req: Request<unknown, unknown, CreateReservationDto>, res, next) => {
     assert(req.user);
 
-    const [listingError, listingResult] = findListingByIdQuery(
+    const [listingError, listingResult] = await findListingByIdQuery(
       req.body.listingId
     );
 
@@ -48,7 +47,7 @@ export const createReservationCtl = ctlWrapper(
       return BadRequestResponse(res, "Listing not approved");
     }
 
-    const [codeError, code] = createReservationCodeQuery();
+    const [codeError, code] = await createReservationCodeQuery();
 
     if (codeError) {
       return next(codeError);
@@ -70,7 +69,7 @@ export const createReservationCtl = ctlWrapper(
       req.body
     ) satisfies ReservationDto;
 
-    const [createResError, result] = createReservationQuery(payload);
+    const [createResError, result] = await createReservationQuery(payload);
 
     if (createResError) {
       return next(createResError);
@@ -83,10 +82,8 @@ export const createReservationCtl = ctlWrapper(
 export const getAllReservationCtl = ctlWrapper(async (req, res, next) => {
   assert(req.user);
 
-  const [reservationError, reservations] = findAllReservationByUserIdQuery(
-    req.user.id,
-    req.query
-  );
+  const [reservationError, reservations] =
+    await findAllReservationByUserIdQuery(req.user.id, req.query);
 
   if (reservationError) {
     return next(reservationError);
@@ -100,10 +97,8 @@ export const getReservationCtl = ctlWrapper(
     assert(req.user);
     assert(req.userAbility);
 
-    const [reservationError, reservation] = findReservationByIdAndUserIdQuery(
-      req.params.id,
-      req.user.id
-    );
+    const [reservationError, reservation] =
+      await findReservationByIdAndUserIdQuery(req.params.id, req.user.id);
 
     if (reservationError) {
       return next(reservationError);
@@ -113,7 +108,7 @@ export const getReservationCtl = ctlWrapper(
       return NotFoundResponse(res);
     }
 
-    const [userError, user] = findReservationOwnerById(reservation.userId);
+    const [userError, user] = await findUserById(reservation.userId);
     if (userError) {
       return next(userError);
     }
@@ -122,7 +117,7 @@ export const getReservationCtl = ctlWrapper(
       return ErrorResponse(res);
     }
 
-    const [listingError, listing] = findListingByIdFilter(
+    const [listingError, listing] = await findListingByIdFilter(
       reservation.listingId,
       [
         "name",
@@ -136,7 +131,7 @@ export const getReservationCtl = ctlWrapper(
         "images",
         "userId",
         "categoryId"
-      ]
+      ] as const
     );
     if (listingError) {
       return next(listingError);
@@ -145,7 +140,7 @@ export const getReservationCtl = ctlWrapper(
     const reservationWithUser = Object.assign({}, reservation, {
       user,
       listing
-    }) satisfies ReservationWithUserAndListingDto;
+    }); //satisfies ReservationWithUserAndListingDto;
 
     const cannot = ForbiddenError.from(req.userAbility).unlessCan(
       "read",
@@ -167,7 +162,7 @@ export const updateReservationCtl = ctlWrapper(
     let status: ReservationDto["status"] =
       req.body.status === "ACCEPT" ? "ACCEPTED" : "REJECTED";
 
-    const [updateError, reservation] = updateResvartionStatusQuery(
+    const [updateError, reservation] = await updateResvartionStatusQuery(
       req.params.id,
       req.user.id,
       status

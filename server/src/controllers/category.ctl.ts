@@ -11,25 +11,25 @@ import {
 
 export const createCategoryCtl = ctlWrapper(
   async (req: Request<unknown, unknown, CreateCategoryDto>, res) => {
-    const oldCategory = findCategoryByNameQuery(req.body.name);
+    const oldCategory = await findCategoryByNameQuery(req.body.name);
     if (oldCategory) {
       return BadRequestResponse(res, "Duplicate Error");
     }
 
     const id = crypto.randomUUID();
-    createCategoryQuery().run({
+    await createCategoryQuery({
       id,
       name: req.body.name,
       comment: req.body.comment
     });
 
-    const category = findCategoryByIdQuery(id);
+    const category = await findCategoryByIdQuery(id);
 
     return SuccessResponse(res, category, 201);
   }
 );
 
 export const getAllCategoriesCtl = ctlWrapper(async (_, res) => {
-  const category = findAllCategoryQuery();
+  const category = await findAllCategoryQuery();
   return SuccessResponse(res, category);
 });

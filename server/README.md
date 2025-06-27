@@ -15,11 +15,14 @@ Create a .env file and ensure it matches the value in [EnvDto](src/dto/env.dto.t
 ### Run migrations
 
 ```bash
+# Migration down
+npm run migrate:down
+
 # Migration up
 npm run migrate:up
 
-# Migration down
-npm run migrate:down
+# Seed run
+npm run seed:run
 ```
 
 ### Run dev server

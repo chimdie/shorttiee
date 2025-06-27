@@ -6,8 +6,9 @@ import { FacilityDto } from "../dto/facility.dto";
 import { UserDto } from "../dto/user.dto";
 import { Actions, Subjects } from "../types/abilities";
 import { ReservationDto } from "../dto/reservation.dto";
+import { User } from "../dto/types.dto";
 
-export function defineAbilityFor(user: UserDto) {
+export function defineAbilityFor(user: User) {
   return defineAbility<MongoAbility<[Actions, Subjects]>>((can) => {
     if (user.role === "ADMIN") {
       can("manage", "all");

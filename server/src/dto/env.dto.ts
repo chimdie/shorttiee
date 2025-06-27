@@ -1,17 +1,19 @@
 import { z } from "zod";
 import os from "node:os";
+import { Expand } from "../types/utils";
 
-/**
- *@description for validation `process.env`
- */
-export const EnvDto = z.object({
+const AppEnv = z.union([
+  z.literal("development"),
+  z.literal("test"),
+  z.literal("staging"),
+  z.literal("production")
+]);
+type AppEnv = z.infer<typeof AppEnv>;
+
+const BaseEnv = z.object({
   PORT: z.coerce.number(),
   JWT_SECRET: z.string(),
 
-  /**
-   * @example "sqlite3:db/db.sqlite3"
-   */
-  DATABASE_URL: z.string(),
   OTP_SIZE: z.coerce.number(),
   /** duration in seconds */
   OTP_TTL: z.coerce.number(),
@@ -29,7 +31,23 @@ export const EnvDto = z.object({
 
   /** admin */
   ADMIN_EMAIL: z.string().email(),
-  ADMIN_PASS: z.string()
+  ADMIN_PASS: z.string(),
+
+  /** env */
+  APP_ENV: AppEnv,
+
+  /** db */
+
+  DB_NAME: z.string(),
+  DB_HOST: z.string(),
+  DB_USER: z.string(),
+  DB_PASSWORD: z.string(),
+  DB_PORT: z.coerce.number()
 });
 
-export type EnvDto = z.infer<typeof EnvDto>;
+/**
+ *@description for validation `process.env`
+ */
+export const EnvDto = BaseEnv;
+
+export type EnvDto = Expand<z.infer<typeof EnvDto>>;

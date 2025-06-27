@@ -17,8 +17,11 @@ let token = "";
 let fileUrl = "";
 const fileSize = appEnv.FILE_SIZE_LIMIT;
 
-beforeAll(() => {
-  token = helper.getUserAuth().token;
+const schemaFile = path.resolve(process.cwd(), "package.json");
+const readmeFile = path.resolve(process.cwd(), "README.md");
+
+beforeAll(async () => {
+  token = (await helper.getUserAuth()).token;
 });
 
 describe("POST /api/v1/files", () => {
@@ -56,7 +59,7 @@ describe("POST /api/v1/files", () => {
     const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .attach("files", schemaFile)
       .auth(token, { type: "bearer" })
       .expect(413);
 
@@ -68,8 +71,8 @@ describe("POST /api/v1/files", () => {
     const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .attach("files", schemaFile)
+      .attach("files", schemaFile)
       .auth(token, { type: "bearer" })
       .expect(201);
 
@@ -83,8 +86,8 @@ describe("POST /api/v1/files", () => {
     const res = await supertest(app)
       .post("/api/v1/files")
       .accept("multipart/form-data")
-      .attach("files", path.resolve(process.cwd(), "README.md"))
-      .attach("files", path.resolve(process.cwd(), "db", "schema.sql"))
+      .attach("files", readmeFile)
+      .attach("files", schemaFile)
       .auth(token, { type: "bearer" })
       .expect(201);
 
@@ -95,7 +98,7 @@ describe("POST /api/v1/files", () => {
 
     fileUrl = path.basename(
       res.body.data.find((e: { path: string; checksum: string }) =>
-        e.path.includes("sql")
+        e.path.includes("json")
       )?.path
     );
   });
@@ -116,6 +119,6 @@ describe("GET /api/v1/files/:name", () => {
     await supertest(app)
       .get("/api/v1/files/" + fileUrl)
       .expect(200)
-      .expect("Content-Type", /sql/);
+      .expect("Content-Type", /json/);
   });
 });

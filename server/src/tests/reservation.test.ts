@@ -12,37 +12,39 @@ import {
   ReviewReservationDto
 } from "../dto/reservation.dto";
 import { findReservationByIdQuery } from "../db/reservation.db";
-import db from "../config/db.config";
+import { DB } from "../config/db.config";
 
 let payloadNonApprovedListing: CreateReservationDto;
 let payload: CreateReservationDto;
 let user: { token: string; id: string };
 let business: { token: string; id: string };
 
-beforeAll(() => {
-  const _user = helper.getUserAuth();
+beforeAll(async () => {
+  const _user = await helper.getUserAuth();
   user = { id: _user.user.id, token: _user.token };
 
-  const _bus = helper.getUserAuthWithBusiness();
+  const _bus = await helper.getUserAuthWithBusiness();
   business = { id: _bus.user.id, token: _bus.token };
 
   payloadNonApprovedListing = {
-    listingId: faker.helpers.arrayElement(helper.getNonApprovedListings()).id,
+    listingId: faker.helpers.arrayElement(await helper.getNonApprovedListings())
+      .id,
     startDate: new Date().toISOString().split("T")[0],
     endDate: faker.date.future().toISOString().split("T")[0]
   };
 
   payload = {
     listingId: faker.helpers.arrayElement(
-      helper.getApprovedListingsByUserId(business.id)
+      await helper.getApprovedListingsByUserId(business.id)
     ).id,
     startDate: new Date().toISOString().split("T")[0],
     endDate: faker.date.future().toISOString().split("T")[0]
   };
 
-  db.prepare("UPDATE tblListings SET status='APPROVED' WHERE id=@id").run({
-    id: payload.listingId
-  });
+  await DB.updateTable("tblListings")
+    .set({ status: "APPROVED" })
+    .where("id", "=", payload.listingId)
+    .execute();
 });
 
 let createdReservation: ReservationDto;
@@ -173,7 +175,7 @@ describe("GET /api/v1/users/reservations", () => {
   });
 
   it("Should get all reservations for a user", async () => {
-    const filter_query = JSON.stringify([["code", "eq", "RES-031"]]);
+    const filter_query = JSON.stringify([["code", "=", "RES-031"]]);
     const res = await supertest(app)
       .get(
         "/api/v1/users/reservations?filter=" + encodeURIComponent(filter_query)
@@ -290,7 +292,7 @@ describe("PATCH /api/v1/users/reservations/:id", () => {
       .send(payload)
       .expect(200);
 
-    const [error, reservation] = findReservationByIdQuery(
+    const [error, reservation] = await findReservationByIdQuery(
       createdReservation.id
     );
     assert(error === null);

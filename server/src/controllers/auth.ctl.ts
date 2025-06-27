@@ -7,11 +7,7 @@ import {
   ForbiddenResponse,
   SuccessResponse
 } from "../utils/response";
-import {
-  createUser,
-  findUserByEmail,
-  findUserByIdWithAuth
-} from "../db/users.db";
+import { findUserByEmail, findUserByIdWithAuth } from "../db/users.db";
 import {
   ChangePasswordDto,
   ForgotPasswordDto,
@@ -20,7 +16,6 @@ import {
   ResetPasswordDto
 } from "../dto/auth.dto";
 import {
-  createAuth,
   findAuthByUserId,
   updateAuthHashByUserId,
   updateAuthOtpAndHashByUserId,
@@ -28,10 +23,8 @@ import {
 } from "../db/auth.db";
 import { signAuthToken } from "../utils/auth-token";
 import assert from "assert";
-import { db } from "../config/db.config";
 import { appEnv } from "../config/env.config";
-import { Auth } from "../dto/types.dto";
-import { UserDto } from "../dto/user.dto";
+import { DB } from "../config/db.config";
 
 export const registerCtl = ctlWrapper(
   async (req: Request<unknown, unknown, RegisterDto>, res) => {
@@ -43,66 +36,62 @@ export const registerCtl = ctlWrapper(
       return BadRequestResponse(res, "Invalid email domain");
     }
 
-    const result = findUserByEmail(req.body.email);
+    const result = await findUserByEmail(req.body.email);
     if (result) {
       return BadRequestResponse(res, "Account already exist");
     }
 
     const hash = await bcrypt.hash(req.body.password, 10);
 
-    const trx = db.transaction(() => {
+    const [newUser, auth] = await DB.transaction().execute(async (trx) => {
       const userId = crypto.randomUUID();
-      createUser().run({
-        id: userId,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        mobileNumber: req.body.mobileNumber,
-        address: req.body.address,
-        referrerCode: req.body.referrerCode,
-        businessName: req.body.businessName,
-        role: "USER",
-        gender: req.body.gender
-      });
+      const user = await trx
+        .insertInto("tblUsers")
+        .values({
+          id: userId,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          email: req.body.email,
+          mobileNumber: req.body.mobileNumber,
+          address: req.body.address,
+          referrerCode: req.body.referrerCode,
+          businessName: req.body.businessName,
+          role: "USER",
+          gender: req.body.gender
+        })
+        .returning([
+          "id",
+          "email",
+          "role",
+          "gender",
+          "lastName",
+          "address",
+          "firstName",
+          "mobileNumber",
+          "businessName",
+          "referrerCode"
+        ])
+        .executeTakeFirstOrThrow();
 
-      createAuth().run({
-        id: crypto.randomUUID(),
-        hash,
-        userId: userId,
-        nonce: req.app.locals.otp.hashOtp(hash)
-      });
+      const auth = await trx
+        .insertInto("tblAuthentications")
+        .values({
+          id: crypto.randomUUID(),
+          hash,
+          userId: userId,
+          nonce: req.app.locals.otp.hashOtp(hash)
+        })
+        .returning(["id", "hash", "otp", "userId", "nonce", "otpTTL"])
+        .executeTakeFirstOrThrow();
 
-      const userWithAuth = findUserByIdWithAuth(userId);
+      const userWithAuth = await findUserByIdWithAuth({ DB: trx, id: userId });
       if (!userWithAuth) {
         const err = new Error("An error occured while creating user");
         throw err;
       }
-      const user: UserDto = {
-        id: userWithAuth.id,
-        email: userWithAuth.email,
-        role: userWithAuth.role,
-        gender: userWithAuth.gender,
-        lastName: userWithAuth.lastName,
-        address: userWithAuth.address,
-        firstName: userWithAuth.firstName,
-        mobileNumber: userWithAuth.mobileNumber,
-        businessName: userWithAuth.businessName,
-        referrerCode: userWithAuth.referrerCode
-      };
-
-      const auth: Auth = {
-        id: userWithAuth.authId,
-        hash: userWithAuth.hash,
-        otp: userWithAuth.otp,
-        userId: userWithAuth.userId,
-        nonce: userWithAuth.nonce,
-        otpTTL: userWithAuth.otpTTL
-      };
 
       return [user, auth] as const;
     });
-
-    const [newUser, auth] = trx(); // run transaction
 
     if (!newUser) {
       return ErrorResponse(res, "An error occured while creating user");
@@ -130,13 +119,13 @@ export const registerCtl = ctlWrapper(
 
 export const loginCtl = ctlWrapper(
   async (req: Request<unknown, unknown, LoginDto>, res) => {
-    const user = findUserByEmail(req.body.email);
+    const user = await findUserByEmail(req.body.email);
 
     if (!user) {
       return BadRequestResponse(res, "Invalid credentials");
     }
 
-    const auth = findAuthByUserId(user.id);
+    const auth = await findAuthByUserId(user.id);
 
     if (!auth) {
       return BadRequestResponse(res, "Account does not exist");
@@ -163,12 +152,12 @@ export const loginCtl = ctlWrapper(
 
 export const forgetPasswordCtl = ctlWrapper(
   async (req: Request<unknown, unknown, ForgotPasswordDto>, res) => {
-    const user = findUserByEmail(req.body.email);
+    const user = await findUserByEmail(req.body.email);
     if (!user) {
       return BadRequestResponse(res, "Account does not exist");
     }
 
-    const auth = findAuthByUserId(user.id);
+    const auth = await findAuthByUserId(user.id);
     if (!auth) {
       return BadRequestResponse(res, "Account does not exist");
     }
@@ -182,7 +171,7 @@ export const forgetPasswordCtl = ctlWrapper(
     ttl.setSeconds(ttl.getSeconds() + appEnv.OTP_TTL);
 
     // save otp
-    updateAuthOtpByUserId().run({
+    await updateAuthOtpByUserId({
       userId: user.id,
       otp: hash,
       otpTTL: ttl.toISOString()
@@ -202,12 +191,12 @@ export const forgetPasswordCtl = ctlWrapper(
 
 export const resetPasswordCtl = ctlWrapper(
   async (req: Request<unknown, unknown, ResetPasswordDto>, res) => {
-    const user = findUserByEmail(req.body.email);
+    const user = await findUserByEmail(req.body.email);
     if (!user) {
       return BadRequestResponse(res, "Invalid credentials");
     }
 
-    const auth = findAuthByUserId(user.id);
+    const auth = await findAuthByUserId(user.id);
     if (!auth) {
       return BadRequestResponse(res, "Account does not exist");
     }
@@ -226,7 +215,7 @@ export const resetPasswordCtl = ctlWrapper(
     }
 
     const hash = await bcrypt.hash(req.body.password, 10);
-    updateAuthOtpAndHashByUserId().run({
+    await updateAuthOtpAndHashByUserId({
       userId: user.id,
       hash,
       nonce: req.app.locals.otp.hashOtp(hash),
@@ -242,7 +231,7 @@ export const changePasswordCtl = ctlWrapper(
   async (req: Request<unknown, unknown, ChangePasswordDto>, res) => {
     assert(typeof req.user !== "undefined", "User cannot be undefined");
 
-    const auth = findAuthByUserId(req.user.id);
+    const auth = await findAuthByUserId(req.user.id);
     if (!auth) {
       return BadRequestResponse(res, "Account does not exist");
     }
@@ -257,7 +246,7 @@ export const changePasswordCtl = ctlWrapper(
       ? req.app.locals.otp.hashOtp(hash)
       : auth.nonce;
 
-    updateAuthHashByUserId().run({
+    await updateAuthHashByUserId({
       userId: req.user.id,
       hash,
       nonce

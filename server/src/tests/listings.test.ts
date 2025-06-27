@@ -1,6 +1,5 @@
 import { describe, it, beforeAll, expect } from "@jest/globals";
 import { app } from "../app";
-import { db } from "../config/db.config";
 import { CreateApplicationService } from "../config/services.config";
 import { OTP } from "../utils/otp";
 import supertest from "supertest";
@@ -14,29 +13,31 @@ import assert from "node:assert";
 import { helper } from "./helper";
 import { FacilityDto } from "../dto/facility.dto";
 import { findListingByIdQuery } from "../db/listing.db";
+import { DB } from "../config/db.config";
 
 let token = "";
 let businessToken = "";
 let adminToken = "";
 let payload: CreateListingsDto;
 
-beforeAll(() => {
-  token = helper.getUserAuth().token;
-  businessToken = helper.getUserAuthWithBusiness().token;
-  adminToken = helper.getAdminAuth().token;
+beforeAll(async () => {
+  token = (await helper.getUserAuth()).token;
+  businessToken = (await helper.getUserAuthWithBusiness()).token;
+  adminToken = (await helper.getAdminAuth()).token;
 });
 
 const categories: string[] = [];
 const facilities: string[] = [];
 let createdListing: ListingDto;
 
-beforeAll(() => {
-  const categoryResult = db
-    .prepare<[], { id: string }>("SELECT id FROM tblCategories")
-    .all();
-  const facilityResult = db
-    .prepare<[], { id: string }>("SELECT id FROM tblFacilities LIMIT 3")
-    .all();
+beforeAll(async () => {
+  const categoryResult = await DB.selectFrom("tblCategories")
+    .select("id")
+    .execute();
+  const facilityResult = await DB.selectFrom("tblFacilities")
+    .select("id")
+    .limit(3)
+    .execute();
 
   if (!categoryResult.length || !facilityResult.length) {
     throw "Categories cannot be empty";
@@ -175,7 +176,7 @@ describe("GET /api/v1/listings", () => {
   it("Should get filtered query", async () => {
     const res = await supertest(app)
       .get(
-        "/api/v1/listings?filter=%5B%5B%22status%22%2C%22eq%22%2C%22APPROVED%22%5D%5D"
+        "/api/v1/listings?filter=%5B%5B%22status%22%2C%22%3D%22%2C%22APPROVED%22%5D%5D"
       )
       .auth(token, { type: "bearer" })
       .expect(200);
@@ -264,12 +265,10 @@ describe("GET /api/v1/listings/:id/facilities", () => {
       throw Error("no created Listing");
     }
 
-    const totalListingFacitities = db
-      .prepare<
-        string[],
-        { total: number }
-      >("SELECT count(*) as  total FROM tblListingsFacilities where listingId = ?")
-      .get(createdListing.id);
+    const totalListingFacitities = await DB.selectFrom("tblListingsFacilities")
+      .select((eb) => eb.fn.countAll().as("total"))
+      .where("listingId", "=", createdListing.id)
+      .executeTakeFirst();
 
     if (totalListingFacitities === undefined) {
       throw Error("Error getting listings facilities");
@@ -327,7 +326,7 @@ describe("PATCH /api/v1/listings/:id", () => {
       .send(payload)
       .expect(200);
 
-    const [error, listing] = findListingByIdQuery(createdListing.id);
+    const [error, listing] = await findListingByIdQuery(createdListing.id);
     assert(error === null);
     assert(!!listing);
 

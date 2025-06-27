@@ -9,16 +9,21 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "./src",
+    "rootDir": ".",
+    "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "skipLibCheck": true,
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*",
+    ".config/**/*",
+    "db/migrations/*.ts",
+    "db/seeds/*.ts"
   ],
   "exclude": [
-    "src/public/**"
+    "src/public/**",
+    "node_modules",
+    "uploads"
   ]
 }

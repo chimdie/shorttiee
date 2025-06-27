@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { PopulatedEntity } from "../types/utils";
+import { OmitTimestamps, PopulatedEntity } from "../types/utils";
 import { UserDto } from "./user.dto";
+import { Listing } from "./types.dto";
 
 export const ListingDto = z.object({
   id: z.string().uuid(),
@@ -14,11 +15,11 @@ export const ListingDto = z.object({
     .min(3, { message: "Listing address cannot be less that 3" }),
   type: z.enum(["SHORTLET", "RENTAL", "SALE"]),
   status: z.enum(["AWAITING_REVIEW", "REJECTED", "APPROVED"]),
-  description: z.string().nullish(),
-  price: z.number().nullish(),
-  rate: z.number().nullish(),
+  description: z.string().nullable(),
+  price: z.number().nullable(),
+  rate: z.number().nullable(),
   // facilities: z.array(FacilityDto),
-  restrictions: z.string().nullish(),
+  restrictions: z.string().nullable(),
   images: z
     .array(z.string().url({ message: "Images must be valid URL" }))
     .min(3, { message: "Minimum of 3 images" })
@@ -27,7 +28,7 @@ export const ListingDto = z.object({
   // references
   userId: z.string().uuid(),
   categoryId: z.string().uuid()
-});
+}) satisfies z.ZodType<OmitTimestamps<Listing>>;
 
 export const ListingWithUserDto = ListingDto.extend({
   user: UserDto.pick({

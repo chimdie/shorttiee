@@ -18,7 +18,7 @@ import { IdDto } from "../dto/util.dto";
 
 export const createFacilityCtl = ctlWrapper(
   async (req: Request<any, any, CreateFacilityDto>, res) => {
-    const [oldFacilityError, oldFacilityResult] = findFacilityByNameQuery(
+    const [oldFacilityError, oldFacilityResult] = await findFacilityByNameQuery(
       req.body.name
     );
 
@@ -34,15 +34,19 @@ export const createFacilityCtl = ctlWrapper(
       { id: crypto.randomUUID() },
       req.body
     );
-    const [createFacilityError] = createFacilityQuery(payload);
+    const [createFacilityError] = await createFacilityQuery(payload);
 
     if (createFacilityError) {
+      console.log("error", oldFacilityResult);
       return ErrorResponse(res, "An error occurred while creating facility");
     }
 
-    const [facilityError, facilityResult] = findFacilityByIdQuery(payload.id);
+    const [facilityError, facilityResult] = await findFacilityByIdQuery(
+      payload.id
+    );
 
-    if (facilityError || !facilityResult) {
+    if (facilityError) {
+      console.log("ferror", facilityError);
       return ErrorResponse(res, "An error occurred while creating facility");
     }
 
@@ -51,7 +55,7 @@ export const createFacilityCtl = ctlWrapper(
 );
 
 export const getAllFacilityCtl = ctlWrapper(async (_req, res) => {
-  const [facilityError, facilityResult] = findAllFacilitiesQuery();
+  const [facilityError, facilityResult] = await findAllFacilitiesQuery();
 
   if (facilityError) {
     return ErrorResponse(res);
@@ -61,7 +65,9 @@ export const getAllFacilityCtl = ctlWrapper(async (_req, res) => {
 });
 
 export const getFacilityCtl = ctlWrapper(async (req: Request<IdDto>, res) => {
-  const [facilityError, facilityResult] = findFacilityByIdQuery(req.params.id);
+  const [facilityError, facilityResult] = await findFacilityByIdQuery(
+    req.params.id
+  );
 
   if (facilityError) {
     return ErrorResponse(res);

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { UserDto } from "./user.dto";
 import { ListingWithUserDto } from "./listings.dto";
+import { OmitTimestamps } from "../types/utils";
+import { Reservation } from "./types.dto";
 
 export const ReservationDto = z.object({
   id: z.string(),
@@ -31,7 +33,7 @@ export const ReservationDto = z.object({
       },
       { message: "Reservation date cannot be in the past" }
     ),
-  status: z.enum(["ACCEPTED", "PENDING", "REJECTED"]).default("PENDING"),
+  status: z.enum(["ACCEPTED", "PENDING", "REJECTED"]),
 
   /**
    * The user creating the reservation
@@ -39,7 +41,7 @@ export const ReservationDto = z.object({
   userId: z.string().uuid(),
   listingId: z.string().uuid(),
   listingOwnerId: z.string().uuid()
-});
+}) satisfies z.ZodType<OmitTimestamps<Reservation>>;
 
 export type ReservationDto = z.infer<typeof ReservationDto>;
 export const ReservationUserAndListingNamesDto = ReservationDto.extend({

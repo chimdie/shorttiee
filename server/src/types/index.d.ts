@@ -1,11 +1,9 @@
-import { UserDto } from "../dto/user.dto";
 import type { EnvDto } from "../dto/env.dto";
-import { WithDBTimestamps } from "./utils";
-import type { Subjects, Actions } from "../config/types/abilities";
-import type { MongoQuery, MongoAbility } from "@casl/ability";
+import type { Subjects, Actions } from "./abilities";
 import type { MongoQuery, MongoAbility } from "@casl/ability";
 import type { Events } from "../config/events";
 import type { EventEmitter } from "events";
+import { User } from "../dto/types.dto";
 
 declare global {
   namespace NodeJS {
@@ -30,7 +28,7 @@ declare global {
       }
     }
     interface Request {
-      user?: WithDBTimestamps<UserDto>;
+      user?: User;
       userAbility?: MongoAbility<[Actions, Subjects], MongoQuery>;
     }
   }

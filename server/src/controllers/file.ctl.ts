@@ -1,6 +1,5 @@
 import assert from "assert";
 import { Request } from "express";
-import { db } from "../config/db.config";
 import {
   createFileQuery,
   findAllFileByChecksumQuery,
@@ -30,35 +29,32 @@ export const createFileCtl = ctlWrapper(async (req, res) => {
 
   const checksums = dedupedFiles.map((e) => e.hash);
 
-  const oldFiles = new Set(
-    findAllFileByChecksumQuery(checksums).map((e) => e.checksum)
-  );
+  const filesChecksum = await findAllFileByChecksumQuery(checksums);
+  const oldFiles = new Set(filesChecksum.map((e) => e.checksum));
 
   const uploadfiles = dedupedFiles.filter((e) => !oldFiles.has(e.hash));
 
-  const trx = db.transaction(() => {
-    for (const file of uploadfiles as Express.Multer.File[]) {
-      createFileQuery().run({
-        filename: file.filename,
-        size: file.size,
-        type: "FILE",
-        contentType: file.mimetype,
-        ownerId: userId,
-        checksum: file.hash,
-        path: UPLOAD_FILE_PATH + file.filename
-      });
-    }
+  const uploading = uploadfiles.map((file) => {
+    return {
+      filename: file.filename,
+      size: file.size,
+      // type: "FILE",
+      contentType: file.mimetype,
+      ownerId: userId,
+      checksum: file.hash,
+      path: UPLOAD_FILE_PATH + file.filename
+    };
   });
-  trx();
 
-  const files = findAllFileByChecksumQuery(checksums);
-  // console.log("files", req.baseUrl, files);
+  await createFileQuery(uploading);
+
+  const files = await findAllFileByChecksumQuery(checksums);
 
   return SuccessResponse(res, files, 201);
 });
 
 export const getFileCtl = ctlWrapper(async (req: Request<FindFileDto>, res) => {
-  const file = findFileByPathQuery(UPLOAD_FILE_PATH + req.params.name);
+  const file = await findFileByPathQuery(UPLOAD_FILE_PATH + req.params.name);
   if (!file) {
     return NotFoundResponse(res);
   }
