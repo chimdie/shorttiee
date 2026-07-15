@@ -1,50 +1,48 @@
-# Shorttie Host
+# Shorttiee Host Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Web dashboard for property hosts to manage shortlet listings, reservations, and account settings.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS + Radix UI + HeroUI
+- TanStack Query, React Hook Form, Zod
+- Auto-generated API SDK from OpenAPI
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Install dependencies:
 
-- Configure the top-level `parserOptions` property like this:
+   ```bash
+   yarn install
+   ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+2. Configure environment:
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+   ```bash
+   cp .env.example .env
+   ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+   Set `VITE_BASE_URL` to your API server URL (e.g. `http://localhost:8080`).
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+3. Start the dev server:
+
+   ```bash
+   yarn dev
+   ```
+
+## Scripts
+
+| Script          | Description                    |
+| --------------- | ------------------------------ |
+| `yarn dev`      | Start Vite dev server          |
+| `yarn build`    | Production build               |
+| `yarn preview`  | Preview production build       |
+| `yarn lint`     | Run ESLint                     |
+| `yarn gen-sdk`  | Regenerate API client from OpenAPI |
+
+## Routes
+
+- **Auth:** login, sign up, forgot password, OTP verification, change password
+- **Dashboard:** home, shortlets, reservations, profile, settings, notifications
